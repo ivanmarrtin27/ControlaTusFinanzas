@@ -1,6 +1,7 @@
 @import './tokens.css';
 @import './components.css';
 @import './layout.css';
+@import './motion.css';
 
 *,
 *::before,
@@ -117,10 +118,21 @@ button {
     scroll-behavior: auto !important;
   }
 
+  .btn:hover:not(:disabled),
+  .btn:active:not(:disabled),
   .btn-primary:hover:not(:disabled),
   .btn-secondary:hover:not(:disabled),
   .btn-destructive:hover:not(:disabled),
-  .fab:hover {
+  button.chip:hover,
+  button.chip:active,
+  .fab:hover,
+  .fab:active,
+  .card:hover,
+  .more-link:hover,
+  .money-row:hover,
+  .money-row-link:hover,
+  .nav-item:hover,
+  .rail-link:hover {
     transform: none;
   }
 }

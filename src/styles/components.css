@@ -26,6 +26,10 @@
   transform: none;
 }
 
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
 .btn-sm {
   min-height: 2.75rem;
   min-width: 2.75rem;
@@ -56,6 +60,11 @@
   transform: scale(1.04);
 }
 
+.btn-primary:active:not(:disabled) {
+  background: var(--accent-hover);
+  transform: scale(0.97);
+}
+
 .btn-secondary {
   background: transparent;
   color: var(--text);
@@ -65,6 +74,10 @@
 .btn-secondary:hover:not(:disabled) {
   border-color: var(--text);
   transform: scale(1.04);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .btn-ghost {
@@ -86,6 +99,10 @@
 .btn-destructive:hover:not(:disabled) {
   background: var(--danger-hover);
   transform: scale(1.04);
+}
+
+.btn-destructive:active:not(:disabled) {
+  transform: scale(0.97);
 }
 
 .btn-block {
@@ -166,11 +183,17 @@
   border: none;
   border-radius: var(--radius-md);
   padding: var(--space-md);
-  transition: background var(--transition);
+  transition:
+    background var(--transition),
+    transform var(--transition),
+    box-shadow var(--transition);
+  animation: gd-fade-up var(--motion-med) var(--ease-out) both;
 }
 
 .card:hover {
   background: var(--surface-elevated);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .card-elevated {
@@ -210,6 +233,15 @@ button.chip {
     background var(--transition),
     color var(--transition),
     transform var(--transition);
+}
+
+button.chip:hover {
+  background: var(--surface-high);
+  transform: scale(1.04);
+}
+
+button.chip:active {
+  transform: scale(0.97);
 }
 
 .chip:hover {
@@ -295,6 +327,7 @@ button.chip {
   border: none;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
+  animation: gd-fade-up var(--motion-page) var(--ease-out) both;
 }
 
 .auth-brand {
@@ -353,6 +386,7 @@ button.chip {
   background: color-mix(in srgb, var(--danger) 14%, transparent);
   color: #fecaca;
   font-size: var(--text-md);
+  animation: gd-fade-in var(--motion-med) var(--ease-out) both;
 }
 
 .auth-success {
@@ -537,13 +571,20 @@ button.chip {
   border-radius: var(--radius-md);
   color: var(--text);
   text-decoration: none;
-  transition: background var(--transition);
+  transition:
+    background var(--transition),
+    transform var(--motion-fast) var(--ease-press);
   cursor: pointer;
 }
 
 .money-row:hover,
 .money-row-link:hover {
   background: var(--surface-elevated);
+}
+
+.money-row:active:not(.money-row-static),
+.money-row-link:active {
+  transform: scale(0.99);
 }
 
 .money-dot {
@@ -624,6 +665,7 @@ button.chip {
   text-align: center;
   background: var(--surface);
   border-radius: var(--radius-md);
+  animation: gd-fade-in var(--motion-med) var(--ease-out) both;
 }
 
 .empty-state h2 {
@@ -690,6 +732,7 @@ button.chip {
   border: none;
   background: rgb(0 0 0 / 55%);
   padding: 0;
+  animation: gd-backdrop-in var(--motion-med) var(--ease-out) both;
 }
 
 .sheet-panel {
@@ -704,6 +747,7 @@ button.chip {
   border-radius: var(--radius-md) var(--radius-md) 0 0;
   box-shadow: var(--shadow-md);
   overflow: hidden;
+  animation: gd-sheet-up var(--motion-page) var(--ease-out) both;
 }
 
 .sheet-header {
@@ -738,6 +782,7 @@ button.chip {
   .sheet-panel {
     border-radius: var(--radius-md);
     max-height: min(85dvh, 42rem);
+    animation-name: gd-sheet-in;
   }
 
   .sheet-footer {
@@ -796,7 +841,9 @@ button.chip {
 .progress-fill {
   height: 100%;
   border-radius: var(--radius-full);
-  transition: width var(--transition);
+  transform-origin: left center;
+  transition: width var(--motion-slow) var(--ease-out);
+  animation: gd-progress-reveal var(--motion-slow) var(--ease-out) both;
 }
 
 .progress-fill-accent {
@@ -833,11 +880,15 @@ button.chip {
 .vs-bar-income {
   background: var(--success);
   min-width: 0;
+  transform-origin: left center;
+  animation: gd-progress-reveal var(--motion-slow) var(--ease-out) both;
 }
 
 .vs-bar-expense {
   background: #f87171;
   min-width: 0;
+  transform-origin: left center;
+  animation: gd-progress-reveal var(--motion-slow) var(--ease-out) 80ms both;
 }
 
 .cat-bars {
@@ -878,7 +929,9 @@ button.chip {
   height: 100%;
   border-radius: var(--radius-full);
   min-width: 0.25rem;
-  transition: width var(--transition);
+  transform-origin: left center;
+  transition: width var(--motion-slow) var(--ease-out);
+  animation: gd-progress-reveal var(--motion-slow) var(--ease-out) both;
 }
 
 .cat-bar-share {
@@ -957,6 +1010,7 @@ button.chip {
   padding: 0.9rem 1rem;
   border-radius: var(--radius);
   background: var(--surface-elevated);
+  animation: gd-fade-in var(--motion-med) var(--ease-out) both;
 }
 
 .onboarding-tip strong {
@@ -1028,6 +1082,19 @@ button.chip {
   background: transparent;
   color: var(--text);
   cursor: pointer;
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    transform var(--transition);
+}
+
+.notif-bell:hover {
+  background: var(--surface-elevated);
+  transform: scale(1.04);
+}
+
+.notif-bell:active {
+  transform: scale(0.97);
 }
 
 .notif-bell svg {
@@ -1063,6 +1130,7 @@ button.chip {
   border: 1px solid var(--border);
   box-shadow: var(--shadow-bar);
   z-index: 50;
+  animation: gd-fade-up var(--motion-fast) var(--ease-out) both;
 }
 
 .notif-panel-head {
@@ -1119,6 +1187,18 @@ button.chip {
   gap: 0.2rem;
   padding: 0.35rem 0.15rem;
   cursor: pointer;
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    transform var(--motion-fast) var(--ease-press);
+}
+
+.cal-cell:hover {
+  background: var(--surface-elevated);
+}
+
+.cal-cell:active {
+  transform: scale(0.97);
 }
 
 .cal-cell-muted {

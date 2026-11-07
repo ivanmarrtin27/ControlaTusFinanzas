@@ -1,0 +1,257 @@
+/* Motion — Green Deck: short, purposeful, CSS-first */
+
+@keyframes gd-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gd-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes gd-sheet-up {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gd-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes gd-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes gd-progress-reveal {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes gd-nav-pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Page route enter */
+.page-transition {
+  animation: gd-fade-up var(--motion-page) var(--ease-out) both;
+}
+
+/* Soft enter helpers */
+.anim-fade-in {
+  animation: gd-fade-in var(--motion-med) var(--ease-out) both;
+}
+
+.anim-fade-up {
+  animation: gd-fade-up var(--motion-med) var(--ease-out) both;
+}
+
+/* Staggered list rows — capped delays, transform/opacity only */
+.money-list > *,
+.cat-bars > *,
+.more-grid > *,
+.indicator-grid > *,
+.summary-grid > *,
+.notif-list > *,
+.home-shortcuts > * {
+  animation: gd-fade-up var(--motion-med) var(--ease-out) both;
+}
+
+.money-list > *:nth-child(1),
+.cat-bars > *:nth-child(1),
+.more-grid > *:nth-child(1),
+.indicator-grid > *:nth-child(1),
+.summary-grid > *:nth-child(1),
+.notif-list > *:nth-child(1),
+.home-shortcuts > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.money-list > *:nth-child(2),
+.cat-bars > *:nth-child(2),
+.more-grid > *:nth-child(2),
+.indicator-grid > *:nth-child(2),
+.summary-grid > *:nth-child(2),
+.notif-list > *:nth-child(2),
+.home-shortcuts > *:nth-child(2) {
+  animation-delay: 28ms;
+}
+
+.money-list > *:nth-child(3),
+.cat-bars > *:nth-child(3),
+.more-grid > *:nth-child(3),
+.indicator-grid > *:nth-child(3),
+.summary-grid > *:nth-child(3),
+.notif-list > *:nth-child(3),
+.home-shortcuts > *:nth-child(3) {
+  animation-delay: 56ms;
+}
+
+.money-list > *:nth-child(4),
+.cat-bars > *:nth-child(4),
+.more-grid > *:nth-child(4),
+.indicator-grid > *:nth-child(4),
+.summary-grid > *:nth-child(4),
+.notif-list > *:nth-child(4),
+.home-shortcuts > *:nth-child(4) {
+  animation-delay: 84ms;
+}
+
+.money-list > *:nth-child(5),
+.cat-bars > *:nth-child(5),
+.more-grid > *:nth-child(5),
+.indicator-grid > *:nth-child(5),
+.summary-grid > *:nth-child(5),
+.notif-list > *:nth-child(5),
+.home-shortcuts > *:nth-child(5) {
+  animation-delay: 112ms;
+}
+
+.money-list > *:nth-child(6),
+.cat-bars > *:nth-child(6),
+.more-grid > *:nth-child(6),
+.indicator-grid > *:nth-child(6),
+.summary-grid > *:nth-child(6),
+.notif-list > *:nth-child(6),
+.home-shortcuts > *:nth-child(6) {
+  animation-delay: 140ms;
+}
+
+.money-list > *:nth-child(7),
+.cat-bars > *:nth-child(7),
+.more-grid > *:nth-child(7),
+.indicator-grid > *:nth-child(7),
+.summary-grid > *:nth-child(7),
+.notif-list > *:nth-child(7),
+.home-shortcuts > *:nth-child(7) {
+  animation-delay: 168ms;
+}
+
+.money-list > *:nth-child(8),
+.cat-bars > *:nth-child(8),
+.more-grid > *:nth-child(8),
+.indicator-grid > *:nth-child(8),
+.summary-grid > *:nth-child(8),
+.notif-list > *:nth-child(8),
+.home-shortcuts > *:nth-child(8) {
+  animation-delay: 196ms;
+}
+
+.money-list > *:nth-child(9),
+.cat-bars > *:nth-child(9),
+.more-grid > *:nth-child(9),
+.indicator-grid > *:nth-child(9),
+.summary-grid > *:nth-child(9),
+.notif-list > *:nth-child(9),
+.home-shortcuts > *:nth-child(9) {
+  animation-delay: 224ms;
+}
+
+.money-list > *:nth-child(10),
+.cat-bars > *:nth-child(10),
+.more-grid > *:nth-child(10),
+.indicator-grid > *:nth-child(10),
+.summary-grid > *:nth-child(10),
+.notif-list > *:nth-child(10),
+.home-shortcuts > *:nth-child(10) {
+  animation-delay: 252ms;
+}
+
+.money-list > *:nth-child(11),
+.cat-bars > *:nth-child(11),
+.more-grid > *:nth-child(11),
+.indicator-grid > *:nth-child(11),
+.summary-grid > *:nth-child(11),
+.notif-list > *:nth-child(11),
+.home-shortcuts > *:nth-child(11) {
+  animation-delay: 280ms;
+}
+
+.money-list > *:nth-child(12),
+.cat-bars > *:nth-child(12),
+.more-grid > *:nth-child(12),
+.indicator-grid > *:nth-child(12),
+.summary-grid > *:nth-child(12),
+.notif-list > *:nth-child(12),
+.home-shortcuts > *:nth-child(12) {
+  animation-delay: 308ms;
+}
+
+/* Cap: items beyond 12 share the last delay (no extra lag on long lists) */
+.money-list > *:nth-child(n + 13),
+.cat-bars > *:nth-child(n + 13),
+.more-grid > *:nth-child(n + 13),
+.indicator-grid > *:nth-child(n + 13),
+.summary-grid > *:nth-child(n + 13),
+.notif-list > *:nth-child(n + 13),
+.home-shortcuts > *:nth-child(n + 13) {
+  animation-delay: 308ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition,
+  .anim-fade-in,
+  .anim-fade-up,
+  .money-list > *,
+  .cat-bars > *,
+  .more-grid > *,
+  .indicator-grid > *,
+  .summary-grid > *,
+  .notif-list > *,
+  .home-shortcuts > *,
+  .card,
+  .empty-state,
+  .auth-alert,
+  .onboarding-tip,
+  .auth-card,
+  .sheet-backdrop,
+  .sheet-panel,
+  .progress-fill,
+  .cat-bar-fill,
+  .vs-bar-income,
+  .vs-bar-expense,
+  .nav-item.active::after,
+  .rail-link.active::before {
+    animation: none !important;
+    transition: none !important;
+  }
+}

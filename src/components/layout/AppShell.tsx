@@ -1,7 +1,8 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { NotificationBell } from '@/components/NotificationBell'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/Button'
+import { PageTransition } from '@/components/layout/PageTransition'
 import {
   IconAnalysis,
   IconHome,
@@ -70,7 +71,7 @@ export function AppShell() {
           </div>
         </header>
 
-        <Outlet />
+        <PageTransition />
       </div>
 
       <nav className="bottom-nav" aria-label="Navegación móvil">
