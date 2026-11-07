@@ -1,0 +1,231 @@
+.app-shell {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: var(--bg);
+}
+
+.app-main {
+  min-width: 0;
+}
+
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: calc(var(--space-md) + var(--safe-top)) var(--space-md) var(--space-md);
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.top-bar .brand-mark {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.side-rail {
+  display: none;
+}
+
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: end;
+  gap: 0.15rem;
+  padding: 0.5rem 0.35rem calc(0.5rem + var(--safe-bottom));
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  box-shadow: var(--shadow-bar);
+}
+
+.nav-item {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 0.2rem;
+  min-height: 2.75rem;
+  padding: 0.45rem 0.2rem;
+  color: var(--text-neutral);
+  text-decoration: none;
+  border-radius: var(--radius);
+  font-weight: 700;
+  transition:
+    color var(--transition),
+    background var(--transition);
+}
+
+.nav-item span {
+  font-family: var(--font-display);
+  font-size: 0.625rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-weight: 700;
+}
+
+.nav-item svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.nav-item:hover {
+  color: var(--text);
+}
+
+.nav-item.active {
+  color: var(--text);
+}
+
+.nav-item.active svg {
+  color: var(--accent);
+}
+
+.nav-fab-slot {
+  display: grid;
+  place-items: center;
+  transform: translateY(-0.85rem);
+}
+
+.fab {
+  width: 3rem;
+  height: 3rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  box-shadow: var(--shadow-glow);
+  display: grid;
+  place-items: center;
+  transition:
+    transform var(--transition),
+    background var(--transition),
+    box-shadow var(--transition);
+}
+
+.fab:hover {
+  background: var(--accent-hover);
+  transform: scale(1.04);
+}
+
+.fab svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.more-grid {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.more-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  min-height: 2.75rem;
+  padding: 0.95rem var(--space-md);
+  background: var(--surface);
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text);
+  text-decoration: none;
+  transition: background var(--transition);
+}
+
+.more-link:hover {
+  background: var(--surface-elevated);
+}
+
+.more-link strong {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.more-link span {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+@media (min-width: 960px) {
+  .app-shell {
+    grid-template-columns: var(--rail-width) 1fr;
+    grid-template-rows: 1fr;
+  }
+
+  .top-bar,
+  .bottom-nav {
+    display: none;
+  }
+
+  .side-rail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    padding: var(--space-xl) var(--space-md);
+    background: var(--rail-bg);
+    border-right: none;
+    overflow-y: auto;
+  }
+
+  .side-rail .brand-mark {
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    padding: 0 var(--space-sm);
+    line-height: 1.3;
+  }
+
+  .side-rail nav {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .rail-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 0.7rem 0.8rem;
+    border-radius: var(--radius);
+    color: var(--text-neutral);
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+    border: none;
+    transition:
+      color var(--transition),
+      background var(--transition);
+  }
+
+  .rail-link:hover {
+    color: var(--text);
+  }
+
+  .rail-link.active {
+    color: var(--text);
+    background: var(--surface-elevated);
+  }
+
+  .rail-fab {
+    margin-top: auto;
+  }
+}
