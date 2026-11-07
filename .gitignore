@@ -34,3 +34,4 @@ dist-ssr
 # Local tooling / deploy metadata
 .cursor
 .vercel
+supabase/.temp/
