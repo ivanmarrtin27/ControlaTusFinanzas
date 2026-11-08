@@ -1173,10 +1173,183 @@ button.chip:active {
   border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent);
 }
 
-.home-shortcuts {
-  display: flex;
-  flex-wrap: wrap;
+/* —— Inicio · Fase 2 (patrimonio → atajos → periodo → avisos → recientes) —— */
+
+.home-hero {
+  padding: 0.85rem 0.9rem 1rem;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  animation: gd-fade-up var(--motion-med) var(--ease-out) both;
+}
+
+.home-hero-label {
+  margin: 0 0 0.2rem;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.home-hero-amount {
+  margin: 0;
+  font-size: clamp(1.85rem, 7.5vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.home-hero-meta {
+  margin: 0.4rem 0 0;
+  font-size: var(--text-sm);
+}
+
+.home-actions {
+  display: grid;
   gap: 0.5rem;
+}
+
+.home-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.home-shortcut {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    transform var(--transition);
+}
+
+.home-shortcut:hover {
+  background: var(--surface-elevated);
+  border-color: var(--text);
+  transform: scale(1.02);
+}
+
+.home-shortcut:active {
+  transform: scale(0.98);
+}
+
+.home-shortcut-primary {
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--text-on-accent);
+}
+
+.home-shortcut-primary:hover {
+  background: var(--accent-hover);
+  border-color: transparent;
+}
+
+.home-shortcut-label {
+  pointer-events: none;
+}
+
+.home-templates {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.home-templates-head {
+  margin: 0;
+}
+
+.home-templates-label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.home-period {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
+  padding: 0.65rem 0.55rem;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  animation: gd-fade-up var(--motion-med) var(--ease-out) both;
+}
+
+.home-period-cell {
+  min-width: 0;
+  text-align: center;
+  padding: 0.15rem 0.2rem;
+}
+
+.home-period-cell + .home-period-cell {
+  border-left: 1px solid var(--border);
+}
+
+.home-period-label {
+  margin: 0 0 0.2rem;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.home-period-value {
+  margin: 0;
+  font-size: clamp(0.8rem, 3.4vw, 0.95rem);
+  font-weight: 700;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-period-sub {
+  margin: 0.2rem 0 0;
+  font-size: var(--text-xs);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-alerts-list {
+  margin-top: 0.35rem;
+}
+
+.home-alert-row {
+  min-height: var(--tap-min);
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+
+@media (min-width: 720px) {
+  .home-shortcuts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .home-hero {
+    padding: 1rem 1.15rem 1.15rem;
+  }
+
+  .home-period {
+    padding: 0.85rem 0.75rem;
+  }
+
+  .home-period-value {
+    font-size: 1rem;
+  }
 }
 
 .template-chips .chip {

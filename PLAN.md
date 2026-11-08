@@ -332,7 +332,7 @@ Green Deck se mantiene. Objetivo: más contenido útil por viewport en móvil, s
 | Fase | Enfoque | Estado |
 |---|---|---|
 | **1 · Densidad UI** | Headers cortos, leads ocultos en móvil, menos copy decorativo, cards/filas/stacks más compactos (tap ~44px) | **Hecha** |
-| **2 · Inicio útil** | Patrimonio más protagonista, atajos claros, menos bloques/párrafos, IA de Inicio más accionable | Pendiente |
+| **2 · Inicio útil** | Patrimonio más protagonista, atajos claros, menos bloques/párrafos, IA de Inicio más accionable | **Hecha** |
 | **3 · Movimientos** | Alta en menos taps, filtros sticky, edición más rápida | Pendiente |
 | **4 · Feedback** | Toasts al guardar, vacíos con CTA, skeletons | Pendiente |
 | **5 · Onboarding** | 3 pasos: cuenta → primer gasto → listo | Pendiente |
