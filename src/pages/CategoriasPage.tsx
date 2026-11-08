@@ -154,9 +154,7 @@ export function CategoriasPage() {
       <header className="page-header page-header-row">
         <div>
           <h1>Categorías</h1>
-          <p className="page-header-lead">
-            Organiza ingresos y gastos. Las semilla del sistema se pueden desactivar, no borrar.
-          </p>
+          <p className="page-header-lead">Ingresos y gastos. Las semilla se desactivan, no se borran.</p>
         </div>
         <Button onClick={openCreate} disabled={!money.configured || !money.userId}>
           Nueva

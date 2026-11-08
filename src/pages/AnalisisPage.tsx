@@ -70,9 +70,7 @@ export function AnalisisPage() {
       <header className="page-header page-header-row">
         <div>
           <h1>Análisis</h1>
-          <p className="page-header-lead">
-            Compara periodos, ingresos frente a gastos y desglose por categoría.
-          </p>
+          <p className="page-header-lead">Periodos, ingresos vs gastos y categorías.</p>
         </div>
         <Link to="/informes" className="text-link">
           Exportar informe

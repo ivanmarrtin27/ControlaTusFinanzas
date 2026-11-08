@@ -322,3 +322,18 @@ Ampliación gratuita sobre v1. Orden estricto A→F. Diseño Green Deck, UI en e
 | **Backup** | Schema v3: plantillas + `receipt_path` (solo rutas). Las imágenes binarias **no** se incluyen en el JSON | **Hecha** |
 
 Migración: `20261107193000_v12_templates_and_receipts.sql` (aplicar en remoto si no está).
+
+---
+
+## UX · Densidad y utilidad (post v1.2)
+
+Green Deck se mantiene. Objetivo: más contenido útil por viewport en móvil, sin rediseñar marca.
+
+| Fase | Enfoque | Estado |
+|---|---|---|
+| **1 · Densidad UI** | Headers cortos, leads ocultos en móvil, menos copy decorativo, cards/filas/stacks más compactos (tap ~44px) | **Hecha** |
+| **2 · Inicio útil** | Patrimonio más protagonista, atajos claros, menos bloques/párrafos, IA de Inicio más accionable | Pendiente |
+| **3 · Movimientos** | Alta en menos taps, filtros sticky, edición más rápida | Pendiente |
+| **4 · Feedback** | Toasts al guardar, vacíos con CTA, skeletons | Pendiente |
+| **5 · Onboarding** | 3 pasos: cuenta → primer gasto → listo | Pendiente |
+| **6 · Polish** | Tipografía/contraste, iconos unificados, Green Deck más limpio | Pendiente |

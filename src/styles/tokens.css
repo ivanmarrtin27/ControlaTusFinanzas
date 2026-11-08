@@ -63,6 +63,14 @@
   --space-2xl: 3rem;
   --space-3xl: 4rem;
 
+  /* Page density — mobile-first; desktop bumps in layout/global */
+  --page-stack-gap: 0.65rem;
+  --card-pad-y: 0.75rem;
+  --card-pad-x: 0.75rem;
+  --row-pad-y: 0.55rem;
+  --row-pad-x: 0.75rem;
+  --section-title-size: 0.95rem;
+
   /* Radius — pills for actions, 8px for cards */
   --radius-sm: 2px;
   --radius: 4px;

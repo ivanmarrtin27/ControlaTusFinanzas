@@ -144,10 +144,7 @@ export function CuentasPage() {
       <header className="page-header page-header-row">
         <div>
           <h1>Cuentas</h1>
-          <p className="page-header-lead">
-            Bancarias, efectivo, tarjetas y otras. El saldo se calcula con movimientos y
-            transferencias.
-          </p>
+          <p className="page-header-lead">Bancarias, efectivo, tarjetas y otras.</p>
         </div>
         <Button onClick={openCreate} disabled={!money.configured || !money.userId}>
           Nueva

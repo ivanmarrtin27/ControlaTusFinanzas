@@ -340,7 +340,7 @@ export function MovimientosPage() {
       <header className="page-header page-header-row">
         <div>
           <h1>Movimientos</h1>
-          <p className="page-header-lead">Ingresos, gastos y transferencias entre cuentas.</p>
+          <p className="page-header-lead">Ingresos, gastos y transferencias.</p>
         </div>
         <div className="header-actions">
           <Button variant="secondary" size="sm" onClick={openNewTransfer} disabled={!money.userId}>
@@ -372,10 +372,6 @@ export function MovimientosPage() {
               onSelect={applyTemplate}
             />
           </div>
-        ) : money.userId ? (
-          <p className="muted" style={{ fontSize: '0.8rem', margin: 0 }}>
-            Tip: crea <Link to="/plantillas">plantillas rápidas</Link> para gastos habituales.
-          </p>
         ) : null}
 
         <Input

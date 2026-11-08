@@ -232,9 +232,7 @@ export function ObjetivosPage() {
       <header className="page-header page-header-row">
         <div>
           <h1>Objetivos</h1>
-          <p className="page-header-lead">
-            Metas de ahorro con aportaciones desde tus cuentas y progreso visual.
-          </p>
+          <p className="page-header-lead">Metas de ahorro y aportaciones.</p>
         </div>
         <Button onClick={openCreate} disabled={!plan.configured || !plan.userId}>
           Nuevo

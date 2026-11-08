@@ -182,7 +182,7 @@
   background: var(--surface);
   border: none;
   border-radius: var(--radius-md);
-  padding: var(--space-md);
+  padding: var(--card-pad-y) var(--card-pad-x);
   transition:
     background var(--transition),
     transform var(--transition),
@@ -332,9 +332,9 @@ button.chip:active {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: var(--space-md);
-  min-height: 3.5rem;
-  padding: 0 var(--space-md);
+  gap: var(--space-sm);
+  min-height: var(--tap-min);
+  padding: var(--row-pad-y) var(--row-pad-x);
   border-radius: var(--radius-sm);
   color: var(--text);
   transition: background var(--transition);
@@ -458,9 +458,9 @@ button.chip:active {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.65rem;
-  margin-bottom: 1rem;
-  padding: 0.85rem;
+  gap: 0.5rem;
+  margin-bottom: var(--page-stack-gap);
+  padding: var(--card-pad-y) var(--card-pad-x);
   background: var(--surface-elevated);
   border-radius: var(--radius-md);
 }
@@ -576,7 +576,7 @@ button.chip:active {
 
 .stack-md {
   display: grid;
-  gap: var(--space-md);
+  gap: var(--page-stack-gap);
 }
 
 .chip-row {
@@ -610,7 +610,7 @@ button.chip:active {
 
 .money-form {
   display: grid;
-  gap: var(--space-md);
+  gap: var(--page-stack-gap);
 }
 
 .form-actions {
@@ -644,11 +644,11 @@ button.chip:active {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-sm);
   width: 100%;
   min-height: var(--tap-min);
   text-align: left;
-  padding: 0.85rem var(--space-md);
+  padding: var(--row-pad-y) var(--row-pad-x);
   background: var(--surface);
   border: none;
   border-radius: var(--radius-md);
@@ -709,7 +709,7 @@ button.chip:active {
 
 .filters-grid {
   display: grid;
-  gap: var(--space-md);
+  gap: var(--page-stack-gap);
 }
 
 @media (min-width: 720px) {
@@ -749,7 +749,7 @@ button.chip:active {
 .empty-state {
   display: grid;
   gap: var(--space-sm);
-  padding: var(--space-xl) var(--space-md);
+  padding: var(--space-md) var(--card-pad-x);
   text-align: center;
   background: var(--surface);
   border-radius: var(--radius-md);
@@ -1094,7 +1094,7 @@ button.chip:active {
 }
 
 .indicator-card {
-  min-height: 7.5rem;
+  min-height: 0;
 }
 
 .indicator-good {

@@ -181,8 +181,13 @@ button {
 }
 
 .page-header h1 {
-  font-size: 1.2rem;
+  font-size: 1.125rem;
   line-height: 1.2;
+}
+
+.page .stack-md > .card > h2,
+.page .section-head h2 {
+  font-size: var(--section-title-size);
 }
 
 .page-header p,
@@ -238,6 +243,15 @@ button {
 }
 
 @media (min-width: 960px) {
+  :root {
+    --page-stack-gap: var(--space-md);
+    --card-pad-y: var(--space-md);
+    --card-pad-x: var(--space-md);
+    --row-pad-y: 0.75rem;
+    --row-pad-x: var(--space-md);
+    --section-title-size: 1rem;
+  }
+
   .page {
     padding: var(--space-xl) var(--space-2xl) var(--space-3xl);
   }

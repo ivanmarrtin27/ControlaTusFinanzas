@@ -149,7 +149,7 @@ export function InformesPage() {
     <main className="page">
       <header className="page-header">
         <h1>Informes</h1>
-        <p className="page-header-lead">Descarga Excel (.xlsx) o PDF del periodo seleccionado.</p>
+        <p className="page-header-lead">Excel (.xlsx) o PDF del periodo.</p>
       </header>
 
       <div className="stack-md" style={{ maxWidth: '36rem' }}>

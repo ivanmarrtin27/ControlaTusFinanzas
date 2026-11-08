@@ -79,7 +79,7 @@ export function AjustesPage() {
     <main className="page">
       <header className="page-header">
         <h1>Ajustes</h1>
-        <p className="page-header-lead">Perfil, color de acento, moneda, copia de seguridad y PWA.</p>
+        <p className="page-header-lead">Perfil, acento, moneda y copia.</p>
       </header>
 
       <div className="stack-md" style={{ maxWidth: '36rem' }}>
@@ -95,9 +95,6 @@ export function AjustesPage() {
 
         <Card>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>Color de acento</h2>
-          <p className="field-hint" style={{ marginBottom: '0.75rem' }}>
-            El acento se aplica al instante en botones, FAB y estados activos (Green Deck).
-          </p>
 
           <div className="accent-preview" aria-live="polite">
             <span className="accent-preview-swatch" style={{ background: normalizeAccent(accent) }} />
@@ -173,12 +170,8 @@ export function AjustesPage() {
 
         <Card>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>Moneda</h2>
-          <p className="field-hint" style={{ marginBottom: '0.75rem' }}>
-            Por defecto EUR. Cambia el símbolo/formato de importes; no hay conversión entre
-            monedas.
-          </p>
           <label className="field-label" htmlFor="currency-select">
-            Moneda de visualización
+            Formato de importes (sin conversión FX)
           </label>
           <select
             id="currency-select"
@@ -199,8 +192,7 @@ export function AjustesPage() {
         <Card>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>App instalable (PWA)</h2>
           <p className="field-hint" style={{ margin: 0 }}>
-            En el navegador móvil usa «Añadir a la pantalla de inicio» / Instalar. Los atajos del
-            sistema abren registrar gasto (`/?quick=expense`) o ingreso (`/?quick=income`).
+            En el móvil: «Añadir a pantalla de inicio». Atajos: gasto e ingreso rápidos.
           </p>
         </Card>
 
@@ -232,11 +224,8 @@ export function AjustesPage() {
 
         <Card>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Privacidad</h2>
-          <p className="field-hint" style={{ marginBottom: '0.75rem' }}>
-            Consulta cómo tratamos tus datos y cómo eliminarlos.
-          </p>
           <Link to="/privacidad" className="text-link">
-            Ver política de privacidad
+            Cómo tratamos tus datos
           </Link>
         </Card>
 

@@ -186,7 +186,7 @@ export function PlantillasPage() {
       <header className="page-header page-header-row">
         <div>
           <h1>Plantillas</h1>
-          <p className="page-header-lead">Atajos para rellenar un movimiento con un toque.</p>
+          <p className="page-header-lead">Prefills de movimientos habituales.</p>
         </div>
         <Button size="sm" onClick={openCreate} disabled={!money.userId}>
           Nueva

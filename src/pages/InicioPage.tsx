@@ -97,18 +97,18 @@ export function InicioPage() {
         <ConfigBanner configured={money.configured} error={money.error} />
 
         <Card accent>
-          <p className="label muted" style={{ fontSize: '0.75rem', marginBottom: '0.5rem' }}>
+          <p className="label muted" style={{ fontSize: '0.7rem', marginBottom: '0.25rem' }}>
             Patrimonio
           </p>
           <p className="amount" style={{ fontSize: '1.75rem', margin: 0 }}>
             {formatMoney(money.totalBalance, currency)}
           </p>
-          <p className="muted" style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>
+          <p className="muted" style={{ fontSize: '0.75rem', marginTop: '0.35rem' }}>
             {money.loading
-              ? 'Calculando saldos…'
+              ? 'Calculando…'
               : money.activeAccounts.length === 0
-                ? 'Sin cuentas activas. Crea la primera para empezar.'
-                : `${money.activeAccounts.length} cuenta${money.activeAccounts.length === 1 ? '' : 's'} activa${money.activeAccounts.length === 1 ? '' : 's'}`}
+                ? 'Sin cuentas activas'
+                : `${money.activeAccounts.length} cuenta${money.activeAccounts.length === 1 ? '' : 's'}`}
           </p>
         </Card>
 
@@ -363,7 +363,7 @@ export function InicioPage() {
         ) : null}
 
         <Card>
-          <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>Más accesos</h2>
+          <h2 style={{ marginBottom: '0.5rem' }}>Más accesos</h2>
           <div className="more-grid">
             <Link className="more-link" to="/calendario">
               <strong>Calendario</strong>

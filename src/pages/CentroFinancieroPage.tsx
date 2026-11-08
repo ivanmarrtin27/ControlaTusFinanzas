@@ -170,9 +170,7 @@ export function CentroFinancieroPage() {
     <main className="page">
       <header className="page-header">
         <h1>Centro financiero</h1>
-        <p className="page-header-lead">
-          Salud del mes, colchón de emergencia y previsión a 30 días.
-        </p>
+        <p className="page-header-lead">Salud del mes, emergencia y previsión 30 días.</p>
       </header>
 
       <div className="stack-md">
@@ -187,8 +185,7 @@ export function CentroFinancieroPage() {
               {formatPercent(rate)}
             </p>
             <p className="muted" style={{ fontSize: '0.75rem', marginTop: '0.4rem' }}>
-              Objetivo sugerido {formatPercent(SAVINGS_RATE_TARGET)} · (ingresos − gastos) /
-              ingresos
+              Meta {formatPercent(SAVINGS_RATE_TARGET)}
             </p>
           </Card>
 
@@ -200,8 +197,7 @@ export function CentroFinancieroPage() {
               {formatMonths(cushionMonths)}
             </p>
             <p className="muted" style={{ fontSize: '0.75rem', marginTop: '0.4rem' }}>
-              Patrimonio / media de gasto (3 meses). Meta {EMERGENCY_MONTHS_TARGET}–
-              {EMERGENCY_MONTHS_STRETCH} meses.
+              Meta {EMERGENCY_MONTHS_TARGET}–{EMERGENCY_MONTHS_STRETCH} meses
             </p>
           </Card>
 

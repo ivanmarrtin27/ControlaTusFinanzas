@@ -21,7 +21,7 @@ export function MasPage() {
     <main className="page">
       <header className="page-header">
         <h1>Más</h1>
-        <p className="page-header-lead">Accede al resto de secciones de ControlaTusFinanzas.</p>
+        <p className="page-header-lead">Resto de secciones.</p>
       </header>
       <div className="more-grid">
         {links.map((link) => (

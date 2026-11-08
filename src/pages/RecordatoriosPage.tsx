@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ConfigBanner } from '@/components/money/ConfigBanner'
 import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { usePlanData } from '@/hooks/usePlanData'
@@ -76,9 +75,7 @@ export function RecordatoriosPage() {
       <header className="page-header page-header-row">
         <div>
           <h1>Recordatorios</h1>
-          <p className="page-header-lead">
-            Límites, recurrentes próximos, vencimientos e inactividad.
-          </p>
+          <p className="page-header-lead">Límites, vencimientos e inactividad.</p>
         </div>
         <Button size="sm" variant="secondary" onClick={() => void handleEnableBrowser()}>
           Activar avisos
@@ -88,14 +85,6 @@ export function RecordatoriosPage() {
       <div className="stack-md">
         <ConfigBanner configured={plan.configured} error={plan.error} />
         <ErrorBanner message={permMessage} tone="info" />
-
-        <Card>
-          <p className="muted" style={{ margin: 0, fontSize: '0.875rem' }}>
-            Los recordatorios se generan a partir de tus datos (sin servicio de push de pago).
-            Puedes descartarlos en este dispositivo; «Activar avisos» usa la API del navegador
-            si concedes permiso.
-          </p>
-        </Card>
 
         {plan.loading ? (
           <p className="muted">Cargando…</p>

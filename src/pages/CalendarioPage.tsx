@@ -67,7 +67,7 @@ export function CalendarioPage() {
     <main className="page">
       <header className="page-header">
         <h1>Calendario</h1>
-        <p className="page-header-lead">Vencimientos de recurrentes, deudas y objetivos.</p>
+        <p className="page-header-lead">Recurrentes, deudas y objetivos.</p>
       </header>
 
       <div className="stack-md">
