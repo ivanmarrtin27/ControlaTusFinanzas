@@ -1290,19 +1290,105 @@ button.chip:active {
   opacity: 0.85;
 }
 
-.onboarding-tip {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-sm) var(--space-md);
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius);
-  background: var(--surface-elevated);
-  animation: gd-fade-in var(--motion-med) var(--ease-out) both;
+.onboarding-wizard {
+  padding: 0.85rem 0.9rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
+  animation: gd-fade-up var(--motion-med) var(--ease-out) both;
 }
 
-.onboarding-tip strong {
+.onboarding-wizard-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: 0.65rem;
+}
+
+.onboarding-wizard-kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.onboarding-wizard-title {
+  margin: 0.15rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.onboarding-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
+  list-style: none;
+  margin: 0 0 0.85rem;
+  padding: 0;
+}
+
+.onboarding-step {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.onboarding-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--surface-elevated);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+.onboarding-step-label {
+  font-size: 0.72rem;
+  line-height: 1.2;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.onboarding-step-current .onboarding-step-num {
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border-color: transparent;
+}
+
+.onboarding-step-current .onboarding-step-label {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.onboarding-step-done .onboarding-step-num {
+  background: color-mix(in srgb, var(--accent) 22%, var(--surface));
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.onboarding-wizard-lead {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.onboarding-wizard-body .form-actions {
+  margin-top: 0.25rem;
+}
+
+.onboarding-wizard-done .onboarding-wizard-lead {
   font-size: 0.95rem;
 }
 

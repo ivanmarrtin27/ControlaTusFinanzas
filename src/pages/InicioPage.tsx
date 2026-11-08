@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ConfigBanner } from '@/components/money/ConfigBanner'
 import { TemplateChips } from '@/components/money/TemplateChips'
-import { OnboardingTip } from '@/components/OnboardingTip'
+import { OnboardingWizard } from '@/components/OnboardingWizard'
 import { SyncStatus } from '@/components/SyncStatus'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -96,7 +96,15 @@ export function InicioPage() {
       </header>
 
       <div className="stack-md">
-        <OnboardingTip />
+        <OnboardingWizard
+          userId={user?.id ?? null}
+          configured={money.configured}
+          loading={money.loading}
+          accounts={money.accounts}
+          categories={money.categories}
+          tags={money.tags}
+          refresh={money.refresh}
+        />
         <ConfigBanner configured={money.configured} error={money.error} />
 
         {/* 1 · Patrimonio */}

@@ -38,10 +38,13 @@ interface TransactionFormProps {
   tags?: Tag[]
   initial?: Partial<Transaction> & { type?: TransactionType; tag_ids?: string[] }
   submitLabel: string
+  cancelLabel?: string
   onSubmit: (values: TransactionSubmitValues) => Promise<void>
   onCancel: () => void
   /** When true, show receipt upload controls. */
   enableReceipt?: boolean
+  /** Hide income/expense chips and keep `initial.type` (or expense). */
+  lockType?: boolean
 }
 
 function buildInitial(
@@ -72,9 +75,11 @@ export function TransactionForm({
   tags = [],
   initial,
   submitLabel,
+  cancelLabel = 'Cancelar',
   onSubmit,
   onCancel,
   enableReceipt = true,
+  lockType = false,
 }: TransactionFormProps) {
   const [values, setValues] = useState(() => buildInitial(accounts, categories, initial))
   const [error, setError] = useState<string | null>(null)
@@ -161,44 +166,46 @@ export function TransactionForm({
 
   return (
     <form className="money-form" onSubmit={(e) => void handleSubmit(e)}>
-      <div className="chip-row" role="group" aria-label="Tipo de movimiento">
-        <button
-          type="button"
-          className={`chip${values.type === 'expense' ? ' chip-active' : ''}`}
-          onClick={() =>
-            setValues((v) => {
-              const nextCats = categories.filter((c) => c.is_active && c.kind === 'expense')
-              return {
-                ...v,
-                type: 'expense',
-                category_id: nextCats.some((c) => c.id === v.category_id)
-                  ? v.category_id
-                  : (nextCats[0]?.id ?? ''),
-              }
-            })
-          }
-        >
-          Gasto
-        </button>
-        <button
-          type="button"
-          className={`chip${values.type === 'income' ? ' chip-active' : ''}`}
-          onClick={() =>
-            setValues((v) => {
-              const nextCats = categories.filter((c) => c.is_active && c.kind === 'income')
-              return {
-                ...v,
-                type: 'income',
-                category_id: nextCats.some((c) => c.id === v.category_id)
-                  ? v.category_id
-                  : (nextCats[0]?.id ?? ''),
-              }
-            })
-          }
-        >
-          Ingreso
-        </button>
-      </div>
+      {!lockType ? (
+        <div className="chip-row" role="group" aria-label="Tipo de movimiento">
+          <button
+            type="button"
+            className={`chip${values.type === 'expense' ? ' chip-active' : ''}`}
+            onClick={() =>
+              setValues((v) => {
+                const nextCats = categories.filter((c) => c.is_active && c.kind === 'expense')
+                return {
+                  ...v,
+                  type: 'expense',
+                  category_id: nextCats.some((c) => c.id === v.category_id)
+                    ? v.category_id
+                    : (nextCats[0]?.id ?? ''),
+                }
+              })
+            }
+          >
+            Gasto
+          </button>
+          <button
+            type="button"
+            className={`chip${values.type === 'income' ? ' chip-active' : ''}`}
+            onClick={() =>
+              setValues((v) => {
+                const nextCats = categories.filter((c) => c.is_active && c.kind === 'income')
+                return {
+                  ...v,
+                  type: 'income',
+                  category_id: nextCats.some((c) => c.id === v.category_id)
+                    ? v.category_id
+                    : (nextCats[0]?.id ?? ''),
+                }
+              })
+            }
+          >
+            Ingreso
+          </button>
+        </div>
+      ) : null}
 
       <Input
         ref={amountRef}
@@ -310,7 +317,7 @@ export function TransactionForm({
 
       <div className="form-actions">
         <Button type="button" variant="secondary" onClick={onCancel} disabled={saving}>
-          Cancelar
+          {cancelLabel}
         </Button>
         <Button type="submit" disabled={saving || accountOptions.length === 0}>
           {saving ? 'Guardando…' : submitLabel}

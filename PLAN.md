@@ -335,5 +335,5 @@ Green Deck se mantiene. Objetivo: más contenido útil por viewport en móvil, s
 | **2 · Inicio útil** | Patrimonio más protagonista, atajos claros, menos bloques/párrafos, IA de Inicio más accionable | **Hecha** |
 | **3 · Movimientos** | Alta en menos taps, filtros sticky, edición más rápida | **Hecha** |
 | **4 · Feedback** | Toasts al guardar, vacíos con CTA, skeletons | **Hecha** (`ToastProvider`, `MoneyListSkeleton`, CTAs en vacíos clave) |
-| **5 · Onboarding** | 3 pasos: cuenta → primer gasto → listo | Pendiente |
+| **5 · Onboarding** | 3 pasos: cuenta → primer gasto → listo | **Hecha** (`OnboardingWizard` en Inicio; skip + localStorage por usuario; reutiliza `createAccount` / `TransactionForm`) |
 | **6 · Polish** | Tipografía/contraste, iconos unificados, Green Deck más limpio | Pendiente |
