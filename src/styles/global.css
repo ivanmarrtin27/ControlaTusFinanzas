@@ -168,15 +168,16 @@ button {
 .page {
   width: min(100%, var(--content-max));
   margin: 0 auto;
-  padding: var(--space-lg) var(--space-md) var(--content-bottom-inset);
+  /* Compact top on mobile: top-bar already owns safe-area + chrome. */
+  padding: var(--space-md) var(--space-md) var(--content-bottom-inset);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-xl);
-  padding-bottom: var(--space-md);
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+  padding-bottom: 0;
 }
 
 .page-header h1 {
@@ -211,5 +212,10 @@ button {
 @media (min-width: 960px) {
   .page {
     padding: var(--space-xl) var(--space-2xl) var(--space-3xl);
+  }
+
+  .page-header {
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
   }
 }
