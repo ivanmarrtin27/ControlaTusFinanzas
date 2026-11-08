@@ -41,6 +41,15 @@ type SheetMode = 'transaction' | 'transfer' | null
 
 type Prefill = Partial<Transaction> & { type?: TransactionType; tag_ids?: string[] }
 
+type TypeFilter = TransactionType | 'all' | 'transfer'
+
+const TYPE_FILTERS: { value: TypeFilter; label: string }[] = [
+  { value: 'all', label: 'Todos' },
+  { value: 'expense', label: 'Gastos' },
+  { value: 'income', label: 'Ingresos' },
+  { value: 'transfer', label: 'Transfer.' },
+]
+
 export function MovimientosPage() {
   const { profile } = useAuth()
   const currency = profile?.currency ?? 'EUR'
@@ -52,7 +61,7 @@ export function MovimientosPage() {
   const [accountId, setAccountId] = useState('')
   const [categoryId, setCategoryId] = useState('')
   const [tagId, setTagId] = useState('')
-  const [typeFilter, setTypeFilter] = useState<TransactionType | 'all' | 'transfer'>('all')
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
   const [sheetMode, setSheetMode] = useState<SheetMode>(null)
   const [editingTx, setEditingTx] = useState<Transaction | null>(null)
   const [editingTransfer, setEditingTransfer] = useState<Transfer | null>(null)
@@ -214,6 +223,17 @@ export function MovimientosPage() {
     setSheetMode('transfer')
   }
 
+  function openEditTransaction(tx: Transaction) {
+    setEditingTx(tx)
+    setFormKey((k) => k + 1)
+    setSheetMode('transaction')
+  }
+
+  function openEditTransfer(tr: Transfer) {
+    setEditingTransfer(tr)
+    setSheetMode('transfer')
+  }
+
   async function handleSaveTransaction(values: TransactionSubmitValues) {
     if (!money.userId) throw new MoneyApiError('Inicia sesión para guardar movimientos.')
     setBusyError(null)
@@ -335,6 +355,8 @@ export function MovimientosPage() {
       }
     : prefill
 
+  const filtersActive = Boolean(query || accountId || categoryId || tagId || typeFilter !== 'all')
+
   return (
     <main className="page">
       <header className="page-header page-header-row">
@@ -374,48 +396,74 @@ export function MovimientosPage() {
           </div>
         ) : null}
 
-        <Input
-          label="Buscar"
-          name="search"
-          placeholder="Concepto, cuenta, categoría…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+        <div className="movimientos-filters">
+          <Input
+            label="Buscar"
+            name="search"
+            hideLabel
+            placeholder="Buscar concepto, cuenta…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            autoComplete="off"
+            enterKeyHint="search"
+          />
 
-        <div className="filters-grid">
-          <Select
-            label="Tipo"
-            value={typeFilter}
-            onChange={(e) =>
-              setTypeFilter(e.target.value as TransactionType | 'all' | 'transfer')
-            }
-            options={[
-              { value: 'all', label: 'Todos' },
-              { value: 'expense', label: 'Gastos' },
-              { value: 'income', label: 'Ingresos' },
-              { value: 'transfer', label: 'Transferencias' },
-            ]}
-          />
-          <Select
-            label="Cuenta"
-            value={accountId}
-            onChange={(e) => setAccountId(e.target.value)}
-            options={accountOptions}
-          />
-          <Select
-            label="Categoría"
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            options={categoryOptions}
-            disabled={typeFilter === 'transfer'}
-          />
-          <Select
-            label="Etiqueta"
-            value={tagId}
-            onChange={(e) => setTagId(e.target.value)}
-            options={tagOptions}
-            disabled={typeFilter === 'transfer' || money.tags.length === 0}
-          />
+          <div className="chip-row chip-row-scroll" role="group" aria-label="Filtrar por tipo">
+            {TYPE_FILTERS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                className={`chip${typeFilter === opt.value ? ' chip-active' : ''}`}
+                onClick={() => setTypeFilter(opt.value)}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="filters-grid filters-grid-compact">
+            <Select
+              label="Cuenta"
+              hideLabel
+              value={accountId}
+              onChange={(e) => setAccountId(e.target.value)}
+              options={accountOptions}
+            />
+            <Select
+              label="Categoría"
+              hideLabel
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              options={categoryOptions}
+              disabled={typeFilter === 'transfer'}
+            />
+            {money.tags.length > 0 ? (
+              <Select
+                label="Etiqueta"
+                hideLabel
+                value={tagId}
+                onChange={(e) => setTagId(e.target.value)}
+                options={tagOptions}
+                disabled={typeFilter === 'transfer'}
+              />
+            ) : null}
+          </div>
+
+          {filtersActive ? (
+            <button
+              type="button"
+              className="text-link movimientos-clear-filters"
+              onClick={() => {
+                setQuery('')
+                setAccountId('')
+                setCategoryId('')
+                setTagId('')
+                setTypeFilter('all')
+              }}
+            >
+              Limpiar filtros
+            </button>
+          ) : null}
         </div>
 
         {money.loading ? (
@@ -426,15 +474,32 @@ export function MovimientosPage() {
             description={
               money.activeAccounts.length === 0
                 ? 'Primero crea una cuenta, luego registra un ingreso o gasto.'
-                : 'Añade un movimiento o una transferencia para verlos aquí.'
+                : filtersActive
+                  ? 'Ningún movimiento coincide con los filtros.'
+                  : 'Añade un movimiento o una transferencia para verlos aquí.'
             }
             action={
-              <div className="header-actions">
-                <Button variant="secondary" onClick={openNewTransfer}>
-                  Transferir
+              filtersActive ? (
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setQuery('')
+                    setAccountId('')
+                    setCategoryId('')
+                    setTagId('')
+                    setTypeFilter('all')
+                  }}
+                >
+                  Limpiar filtros
                 </Button>
-                <Button onClick={() => openNewTransaction('expense')}>Añadir movimiento</Button>
-              </div>
+              ) : (
+                <div className="header-actions">
+                  <Button variant="secondary" onClick={openNewTransfer}>
+                    Transferir
+                  </Button>
+                  <Button onClick={() => openNewTransaction('expense')}>Añadir movimiento</Button>
+                </div>
+              )
             }
           />
         ) : (
@@ -450,16 +515,19 @@ export function MovimientosPage() {
                   .map((id) => money.tagsById.get(id))
                   .filter(Boolean)
                 const signed = tx.type === 'income' ? tx.amount : -tx.amount
+                const metaParts = [
+                  formatShortDate(tx.occurred_at),
+                  account?.name,
+                  category?.name,
+                  txTags.length > 0 ? txTags.map((t) => t!.name).join(', ') : null,
+                ].filter(Boolean)
                 return (
                   <button
                     key={`tx-${tx.id}`}
                     type="button"
                     className="money-row"
-                    onClick={() => {
-                      setEditingTx(tx)
-                      setFormKey((k) => k + 1)
-                      setSheetMode('transaction')
-                    }}
+                    aria-label={`Editar ${tx.concept}`}
+                    onClick={() => openEditTransaction(tx)}
                   >
                     <span
                       className="money-dot"
@@ -469,22 +537,20 @@ export function MovimientosPage() {
                       <strong>
                         {tx.concept}
                         {tx.receipt_path ? (
-                          <span className="muted" style={{ fontWeight: 500 }}>
-                            {' '}
-                            · ticket
+                          <span className="money-row-badge" title="Con ticket" aria-label="Con ticket">
+                            ticket
                           </span>
                         ) : null}
                       </strong>
-                      <span className="muted">
-                        {formatShortDate(tx.occurred_at)} · {account?.name ?? 'Cuenta'}
-                        {category ? ` · ${category.name}` : ''}
-                        {txTags.length > 0
-                          ? ` · ${txTags.map((t) => t!.name).join(', ')}`
-                          : ''}
-                      </span>
+                      <span className="muted money-row-meta">{metaParts.join(' · ')}</span>
                     </span>
-                    <span className={`amount${tx.type === 'expense' ? ' amount-expense' : ' amount-income'}`}>
-                      {formatMoney(signed, currency)}
+                    <span className="money-row-end">
+                      <span
+                        className={`amount${tx.type === 'expense' ? ' amount-expense' : ' amount-income'}`}
+                      >
+                        {formatMoney(signed, currency)}
+                      </span>
+                      <span className="money-row-hint muted">Editar</span>
                     </span>
                   </button>
                 )
@@ -498,19 +564,20 @@ export function MovimientosPage() {
                   key={`tr-${tr.id}`}
                   type="button"
                   className="money-row"
-                  onClick={() => {
-                    setEditingTransfer(tr)
-                    setSheetMode('transfer')
-                  }}
+                  aria-label={`Editar transferencia ${tr.concept?.trim() || ''}`}
+                  onClick={() => openEditTransfer(tr)}
                 >
                   <span className="money-dot" style={{ background: 'var(--text-muted)' }} />
                   <span className="money-row-main">
                     <strong>{tr.concept?.trim() || 'Transferencia'}</strong>
-                    <span className="muted">
+                    <span className="muted money-row-meta">
                       {formatShortDate(tr.occurred_at)} · {from} → {to}
                     </span>
                   </span>
-                  <span className="amount">{formatMoney(tr.amount, currency)}</span>
+                  <span className="money-row-end">
+                    <span className="amount">{formatMoney(tr.amount, currency)}</span>
+                    <span className="money-row-hint muted">Editar</span>
+                  </span>
                 </button>
               )
             })}

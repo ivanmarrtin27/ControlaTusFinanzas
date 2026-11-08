@@ -1,10 +1,11 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { ReceiptField } from '@/components/money/ReceiptField'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Textarea } from '@/components/ui/Textarea'
 import { dateInputToIso, toDateInputValue } from '@/lib/dates'
+import { resolveDefaultAccountId, setLastAccountId } from '@/lib/txDefaults'
 import type { Account, Category, Tag, Transaction, TransactionType } from '@/types/database'
 
 export interface TransactionFormValues {
@@ -49,14 +50,16 @@ function buildInitial(
   initial?: TransactionFormProps['initial'],
 ): TransactionFormValues {
   const type = initial?.type ?? 'expense'
-  const activeAccounts = accounts.filter((a) => a.is_active)
   const cats = categories.filter((c) => c.is_active && c.kind === type)
+  const isEdit = Boolean(initial && 'id' in initial && initial.id)
   return {
     type,
     amount: initial?.amount != null ? String(initial.amount) : '',
     concept: initial?.concept ?? '',
     note: initial?.note ?? '',
-    account_id: initial?.account_id ?? activeAccounts[0]?.id ?? '',
+    account_id: isEdit
+      ? (initial?.account_id ?? '')
+      : resolveDefaultAccountId(accounts, initial?.account_id),
     category_id: initial?.category_id ?? cats[0]?.id ?? '',
     occurred_at: toDateInputValue(initial?.occurred_at ?? new Date()),
     tag_ids: initial?.tag_ids ?? [],
@@ -78,6 +81,24 @@ export function TransactionForm({
   const [saving, setSaving] = useState(false)
   const [receiptFile, setReceiptFile] = useState<File | null>(null)
   const [clearReceipt, setClearReceipt] = useState(false)
+  const amountRef = useRef<HTMLInputElement>(null)
+  const isEdit = Boolean(initial && 'id' in initial && initial.id)
+  const hasExtras =
+    Boolean(values.note.trim()) ||
+    Boolean(initial?.receipt_path) ||
+    Boolean(receiptFile) ||
+    clearReceipt
+
+  useEffect(() => {
+    if (isEdit) return
+    const node = amountRef.current
+    if (!node) return
+    const id = window.setTimeout(() => {
+      node.focus()
+      node.select()
+    }, 40)
+    return () => window.clearTimeout(id)
+  }, [isEdit])
 
   const categoryOptions = categories
     .filter((c) => c.is_active && c.kind === values.type)
@@ -129,6 +150,7 @@ export function TransactionForm({
         receipt_file: receiptFile,
         clear_receipt: clearReceipt,
       })
+      setLastAccountId(values.account_id)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo guardar.')
       setSaving(false)
@@ -179,6 +201,7 @@ export function TransactionForm({
       </div>
 
       <Input
+        ref={amountRef}
         label="Importe"
         name="amount"
         inputMode="decimal"
@@ -186,6 +209,7 @@ export function TransactionForm({
         value={values.amount}
         onChange={(e) => setValues((v) => ({ ...v, amount: e.target.value }))}
         required
+        autoComplete="off"
       />
       <Input
         label="Concepto"
@@ -193,16 +217,29 @@ export function TransactionForm({
         value={values.concept}
         onChange={(e) => setValues((v) => ({ ...v, concept: e.target.value }))}
         required
+        autoComplete="off"
       />
-      <Select
-        label="Cuenta"
-        name="account_id"
-        value={values.account_id}
-        onChange={(e) => setValues((v) => ({ ...v, account_id: e.target.value }))}
-        options={accountOptions}
-        placeholder={accountOptions.length ? undefined : 'Crea una cuenta primero'}
-        required
-      />
+
+      <div className="form-grid-2">
+        <Select
+          label="Cuenta"
+          name="account_id"
+          value={values.account_id}
+          onChange={(e) => setValues((v) => ({ ...v, account_id: e.target.value }))}
+          options={accountOptions}
+          placeholder={accountOptions.length ? undefined : 'Crea una cuenta primero'}
+          required
+        />
+        <Input
+          label="Fecha"
+          name="occurred_at"
+          type="date"
+          value={values.occurred_at}
+          onChange={(e) => setValues((v) => ({ ...v, occurred_at: e.target.value }))}
+          required
+        />
+      </div>
+
       <Select
         label="Categoría"
         name="category_id"
@@ -217,7 +254,7 @@ export function TransactionForm({
       {tags.length > 0 ? (
         <div className="field">
           <span className="field-label">Etiquetas</span>
-          <div className="chip-row" role="group" aria-label="Etiquetas del movimiento">
+          <div className="chip-row chip-row-scroll" role="group" aria-label="Etiquetas del movimiento">
             {tags.map((tag) => {
               const active = values.tag_ids.includes(tag.id)
               return (
@@ -240,33 +277,30 @@ export function TransactionForm({
         </div>
       ) : null}
 
-      <Input
-        label="Fecha"
-        name="occurred_at"
-        type="date"
-        value={values.occurred_at}
-        onChange={(e) => setValues((v) => ({ ...v, occurred_at: e.target.value }))}
-        required
-      />
-      <Textarea
-        label="Nota (opcional)"
-        name="note"
-        value={values.note}
-        onChange={(e) => setValues((v) => ({ ...v, note: e.target.value }))}
-      />
+      <details className="form-more" open={hasExtras || isEdit}>
+        <summary>Más opciones</summary>
+        <div className="form-more-body">
+          <Textarea
+            label="Nota (opcional)"
+            name="note"
+            value={values.note}
+            onChange={(e) => setValues((v) => ({ ...v, note: e.target.value }))}
+          />
 
-      {enableReceipt ? (
-        <ReceiptField
-          receiptPath={initial?.receipt_path ?? null}
-          file={receiptFile}
-          clearExisting={clearReceipt}
-          onFileChange={(f) => {
-            setReceiptFile(f)
-            if (f) setClearReceipt(false)
-          }}
-          onClearExisting={() => setClearReceipt(true)}
-        />
-      ) : null}
+          {enableReceipt ? (
+            <ReceiptField
+              receiptPath={initial?.receipt_path ?? null}
+              file={receiptFile}
+              clearExisting={clearReceipt}
+              onFileChange={(f) => {
+                setReceiptFile(f)
+                if (f) setClearReceipt(false)
+              }}
+              onClearExisting={() => setClearReceipt(true)}
+            />
+          ) : null}
+        </div>
+      </details>
 
       {error ? (
         <p className="field-error" role="alert">

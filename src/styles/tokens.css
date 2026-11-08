@@ -118,4 +118,6 @@
   );
   /* Sheet / sticky footers above home indicator + keyboard */
   --sheet-footer-pad: calc(var(--space-md) + max(var(--safe-bottom), var(--keyboard-inset)));
+  /* Sticky toolbars sit below the app top-bar (safe-top + bar chrome). */
+  --top-bar-offset: calc(var(--safe-top) + 3.5rem);
 }

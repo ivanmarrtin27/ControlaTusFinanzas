@@ -6,6 +6,8 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   error?: string
   options: { value: string; label: string; disabled?: boolean }[]
   placeholder?: string
+  /** Keep label for a11y but hide it visually (compact toolbars). */
+  hideLabel?: boolean
 }
 
 export function Select({
@@ -16,13 +18,14 @@ export function Select({
   className = '',
   options,
   placeholder,
+  hideLabel = false,
   ...rest
 }: SelectProps) {
   const selectId = id ?? rest.name ?? label.toLowerCase().replace(/\s+/g, '-')
 
   return (
     <div className="field">
-      <label className="field-label" htmlFor={selectId}>
+      <label className={`field-label${hideLabel ? ' sr-only' : ''}`} htmlFor={selectId}>
         {label}
       </label>
       <select
