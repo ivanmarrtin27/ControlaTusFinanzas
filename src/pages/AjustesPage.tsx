@@ -206,18 +206,9 @@ export function AjustesPage() {
 
         <Card>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>Pantalla táctil</h2>
-          <label
-            className="list-row"
-            htmlFor="zoom-lock-toggle"
-            style={{
-              padding: 0,
-              minHeight: 'auto',
-              gridTemplateColumns: '1fr auto',
-              cursor: 'pointer',
-            }}
-          >
+          <label className="settings-toggle" htmlFor="zoom-lock-toggle">
             <span>
-              <span style={{ display: 'block', fontWeight: 600 }}>Bloquear zoom</span>
+              <span className="settings-toggle-title">Bloquear zoom</span>
               <span className="field-hint" style={{ display: 'block', marginTop: '0.25rem' }}>
                 Evita zoom con pellizco o doble toque en iPhone/PWA. Útil para no mover la
                 interfaz, pero puede limitar la accesibilidad.
@@ -226,7 +217,7 @@ export function AjustesPage() {
             <input
               id="zoom-lock-toggle"
               type="checkbox"
-              className="checkbox"
+              className="switch"
               role="switch"
               checked={zoomLock}
               aria-checked={zoomLock}
@@ -254,12 +245,13 @@ export function AjustesPage() {
         <ErrorBanner message={error} />
         <ErrorBanner message={message} tone="success" />
 
-        <Button onClick={() => void handleSavePreferences()} disabled={saving}>
+        <Button block onClick={() => void handleSavePreferences()} disabled={saving}>
           {saving ? 'Guardando…' : 'Guardar preferencias'}
         </Button>
 
         <Button
           variant="secondary"
+          block
           onClick={() => void signOut()}
           disabled={!configured}
           aria-label="Cerrar sesión"

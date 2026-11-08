@@ -94,14 +94,20 @@
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
+  /* iOS keyboard inset when supported (progressive) */
+  --keyboard-inset: env(keyboard-inset-bottom, 0px);
+  /* Minimum comfortable tap target (~44px) */
+  --tap-min: 2.75rem;
   /* Bottom nav bar (padding + item row), without home-indicator */
-  --bottom-nav-height: 4.25rem;
-  /* FAB sits above the nav row */
-  --fab-clearance: 1.35rem;
+  --bottom-nav-height: 4.5rem;
+  /* How far the FAB lifts above the nav chrome / tab labels */
+  --fab-clearance: 1.85rem;
   /* Legacy alias used by page padding */
   --nav-height: var(--bottom-nav-height);
   /* Space so lists clear nav + FAB + home indicator */
   --content-bottom-inset: calc(
     var(--bottom-nav-height) + var(--fab-clearance) + var(--safe-bottom) + var(--space-xl)
   );
+  /* Sheet / sticky footers above home indicator + keyboard */
+  --sheet-footer-pad: calc(var(--space-md) + max(var(--safe-bottom), var(--keyboard-inset)));
 }

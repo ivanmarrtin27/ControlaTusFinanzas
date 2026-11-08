@@ -89,6 +89,7 @@ export function DeleteAccountPanel() {
       <ErrorBanner message={error} />
       <Button
         variant="destructive"
+        block
         onClick={() => void handleDelete()}
         disabled={busy || !configured}
         style={{ marginTop: '0.75rem' }}

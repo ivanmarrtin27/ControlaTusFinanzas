@@ -82,7 +82,7 @@ export function PlanificacionPage() {
           </div>
         </Card>
 
-        <div className="chip-row" role="tablist" aria-label="Secciones de planificación">
+        <div className="chip-row chip-row-scroll" role="tablist" aria-label="Secciones de planificación">
           {TABS.map((item) => (
             <button
               key={item.id}

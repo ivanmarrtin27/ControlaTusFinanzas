@@ -84,7 +84,7 @@ export function AnalisisPage() {
           <p className="label muted" style={{ fontSize: '0.75rem', marginBottom: '0.65rem' }}>
             Periodo
           </p>
-          <div className="chip-row" role="tablist" aria-label="Selector de periodo">
+          <div className="chip-row chip-row-scroll" role="tablist" aria-label="Selector de periodo">
             {PRESETS.map((item) => (
               <button
                 key={item.id}

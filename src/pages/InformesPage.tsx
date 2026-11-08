@@ -160,7 +160,7 @@ export function InformesPage() {
           <p className="label muted" style={{ fontSize: '0.75rem', marginBottom: '0.65rem' }}>
             Periodo
           </p>
-          <div className="chip-row" role="group" aria-label="Periodo del informe">
+          <div className="chip-row chip-row-scroll" role="group" aria-label="Periodo del informe">
             {PRESETS.map((p) => (
               <button
                 key={p.id}
