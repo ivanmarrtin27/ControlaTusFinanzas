@@ -82,13 +82,13 @@
   --nav-height: 4.5rem;
   --rail-width: 15rem; /* 240px */
   --content-max: 100rem; /* ~1600px */
-  --transition: 200ms ease;
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --transition: 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-press: cubic-bezier(0.4, 0, 0.2, 1);
-  --motion-fast: 120ms;
-  --motion-med: 220ms;
-  --motion-slow: 420ms;
-  --motion-page: 260ms;
+  --motion-fast: 200ms;
+  --motion-med: 480ms;
+  --motion-slow: 560ms;
+  --motion-page: 520ms;
 
   /* Safe areas */
   --safe-bottom: env(safe-area-inset-bottom, 0px);

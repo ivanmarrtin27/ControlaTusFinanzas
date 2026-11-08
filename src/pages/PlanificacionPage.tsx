@@ -96,46 +96,48 @@ export function PlanificacionPage() {
           ))}
         </div>
 
-        {tab === 'limites' ? (
-          <BudgetsPanel
-            currency={currency}
-            userId={plan.userId}
-            configured={plan.configured}
-            loading={plan.loading}
-            periodLabel={periodLabel}
-            periodMonth={plan.currentPeriod}
-            progress={plan.budgetProgress}
-            expenseCategories={expenseCategories}
-            onChanged={plan.refresh}
-          />
-        ) : null}
+        <div key={tab} className="subsection-enter" role="tabpanel">
+          {tab === 'limites' ? (
+            <BudgetsPanel
+              currency={currency}
+              userId={plan.userId}
+              configured={plan.configured}
+              loading={plan.loading}
+              periodLabel={periodLabel}
+              periodMonth={plan.currentPeriod}
+              progress={plan.budgetProgress}
+              expenseCategories={expenseCategories}
+              onChanged={plan.refresh}
+            />
+          ) : null}
 
-        {tab === 'recurrentes' ? (
-          <RecurringPanel
-            currency={currency}
-            userId={plan.userId}
-            configured={plan.configured}
-            loading={plan.loading}
-            rules={plan.recurringRules}
-            forecast={plan.forecast30}
-            forecastSummary={plan.forecastSummary}
-            accounts={plan.accounts}
-            categories={plan.categories}
-            onChanged={plan.refresh}
-          />
-        ) : null}
+          {tab === 'recurrentes' ? (
+            <RecurringPanel
+              currency={currency}
+              userId={plan.userId}
+              configured={plan.configured}
+              loading={plan.loading}
+              rules={plan.recurringRules}
+              forecast={plan.forecast30}
+              forecastSummary={plan.forecastSummary}
+              accounts={plan.accounts}
+              categories={plan.categories}
+              onChanged={plan.refresh}
+            />
+          ) : null}
 
-        {tab === 'deudas' ? (
-          <DebtsPanel
-            currency={currency}
-            userId={plan.userId}
-            configured={plan.configured}
-            loading={plan.loading}
-            debts={plan.debts}
-            accounts={plan.activeAccounts}
-            onChanged={plan.refresh}
-          />
-        ) : null}
+          {tab === 'deudas' ? (
+            <DebtsPanel
+              currency={currency}
+              userId={plan.userId}
+              configured={plan.configured}
+              loading={plan.loading}
+              debts={plan.debts}
+              accounts={plan.activeAccounts}
+              onChanged={plan.refresh}
+            />
+          ) : null}
+        </div>
       </div>
     </main>
   )

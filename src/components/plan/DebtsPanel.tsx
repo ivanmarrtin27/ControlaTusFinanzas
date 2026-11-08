@@ -296,59 +296,61 @@ export function DebtsPanel({
         </button>
       </div>
 
-      {loading ? (
-        <p className="muted">Cargando deudas…</p>
-      ) : visible.length === 0 ? (
-        <EmptyState
-          title="Sin deudas"
-          description="Registra un préstamo o un favor pendiente."
-          action={
-            <Button size="sm" onClick={openCreate} disabled={!configured || !userId}>
-              Añadir deuda
-            </Button>
-          }
-        />
-      ) : (
-        <div className="money-list">
-          {visible.map((debt) => {
-            const paid = Math.max(0, debt.principal - debt.remaining)
-            const ratio = debt.principal > 0 ? paid / debt.principal : 0
-            return (
-              <div key={debt.id} className="money-row money-row-stack money-row-static">
-                <span
-                  className="money-dot"
-                  style={{
-                    background: debt.direction === 'owe' ? '#f87171' : 'var(--accent)',
-                  }}
-                />
-                <span className="money-row-main">
-                  <button type="button" className="linkish" onClick={() => openEdit(debt)}>
-                    <strong>{debt.person_name}</strong>
-                  </button>
-                  <span className="muted">
-                    {DEBT_DIRECTION_LABELS[debt.direction]} · {DEBT_STATUS_LABELS[debt.status]} ·{' '}
-                    {formatMoney(debt.remaining, currency)} pendiente
-                    {debt.due_date ? ` · vence ${debt.due_date}` : ''}
-                  </span>
-                  <ProgressBar
-                    ratio={ratio}
-                    tone={debt.status === 'settled' ? 'success' : 'accent'}
-                    label={`${Math.round(ratio * 100)}%`}
+      <div key={`${directionTab}-${showSettled}`} className="subsection-enter">
+        {loading ? (
+          <p className="muted">Cargando deudas…</p>
+        ) : visible.length === 0 ? (
+          <EmptyState
+            title="Sin deudas"
+            description="Registra un préstamo o un favor pendiente."
+            action={
+              <Button size="sm" onClick={openCreate} disabled={!configured || !userId}>
+                Añadir deuda
+              </Button>
+            }
+          />
+        ) : (
+          <div className="money-list">
+            {visible.map((debt) => {
+              const paid = Math.max(0, debt.principal - debt.remaining)
+              const ratio = debt.principal > 0 ? paid / debt.principal : 0
+              return (
+                <div key={debt.id} className="money-row money-row-stack money-row-static">
+                  <span
+                    className="money-dot"
+                    style={{
+                      background: debt.direction === 'owe' ? '#f87171' : 'var(--accent)',
+                    }}
                   />
-                  {debt.status === 'pending' ? (
-                    <div className="row-actions">
-                      <Button size="sm" variant="secondary" onClick={() => openPay(debt)}>
-                        Registrar pago
-                      </Button>
-                    </div>
-                  ) : null}
-                </span>
-                <span className="amount">{formatMoney(debt.principal, currency)}</span>
-              </div>
-            )
-          })}
-        </div>
-      )}
+                  <span className="money-row-main">
+                    <button type="button" className="linkish" onClick={() => openEdit(debt)}>
+                      <strong>{debt.person_name}</strong>
+                    </button>
+                    <span className="muted">
+                      {DEBT_DIRECTION_LABELS[debt.direction]} · {DEBT_STATUS_LABELS[debt.status]} ·{' '}
+                      {formatMoney(debt.remaining, currency)} pendiente
+                      {debt.due_date ? ` · vence ${debt.due_date}` : ''}
+                    </span>
+                    <ProgressBar
+                      ratio={ratio}
+                      tone={debt.status === 'settled' ? 'success' : 'accent'}
+                      label={`${Math.round(ratio * 100)}%`}
+                    />
+                    {debt.status === 'pending' ? (
+                      <div className="row-actions">
+                        <Button size="sm" variant="secondary" onClick={() => openPay(debt)}>
+                          Registrar pago
+                        </Button>
+                      </div>
+                    ) : null}
+                  </span>
+                  <span className="amount">{formatMoney(debt.principal, currency)}</span>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
 
       <Sheet
         open={sheetOpen}

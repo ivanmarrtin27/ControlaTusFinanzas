@@ -1130,7 +1130,7 @@ button.chip:active {
   border: 1px solid var(--border);
   box-shadow: var(--shadow-bar);
   z-index: 50;
-  animation: gd-fade-up var(--motion-fast) var(--ease-out) both;
+  animation: gd-fade-up var(--motion-med) var(--ease-out) both;
 }
 
 .notif-panel-head {

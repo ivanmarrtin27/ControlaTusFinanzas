@@ -262,59 +262,61 @@ export function ObjetivosPage() {
           ))}
         </div>
 
-        {plan.loading ? (
-          <p className="muted">Cargando objetivos…</p>
-        ) : visible.length === 0 ? (
-          <EmptyState
-            title="Sin objetivos"
-            description="Crea una meta (viaje, colchón, entrada…) y aporta desde una cuenta."
-            action={
-              <Button onClick={openCreate} disabled={!plan.configured || !plan.userId}>
-                Crear objetivo
-              </Button>
-            }
-          />
-        ) : (
-          <div className="money-list">
-            {visible.map((goal) => {
-              const ratio = goalProgressRatio(goal)
-              const tone =
-                goal.status === 'completed' ? 'success' : goal.status === 'paused' ? 'warn' : 'accent'
-              return (
-                <div key={goal.id} className="money-row money-row-stack money-row-static">
-                  <span className="money-dot" style={{ background: goal.color }} />
-                  <span className="money-row-main">
-                    <button type="button" className="linkish" onClick={() => openEdit(goal)}>
-                      <strong>{goal.name}</strong>
-                    </button>
-                    <span className="muted">
-                      {GOAL_STATUS_LABELS[goal.status]}
-                      {goal.deadline ? ` · hasta ${formatShortDate(goal.deadline)}` : ''}
-                    </span>
-                    <ProgressBar
-                      ratio={ratio}
-                      tone={tone}
-                      label={`${formatMoney(goal.current_amount, currency)} / ${formatMoney(goal.target_amount, currency)}`}
-                    />
-                    {goal.status !== 'completed' ? (
-                      <div className="row-actions">
-                        <Button size="sm" variant="secondary" onClick={() => openContribute(goal)}>
-                          Aportar
-                        </Button>
-                        {goal.status === 'active' || goal.status === 'paused' ? (
-                          <Button size="sm" variant="ghost" onClick={() => void togglePause(goal)}>
-                            {goal.status === 'paused' ? 'Reanudar' : 'Pausar'}
+        <div key={statusTab} className="subsection-enter">
+          {plan.loading ? (
+            <p className="muted">Cargando objetivos…</p>
+          ) : visible.length === 0 ? (
+            <EmptyState
+              title="Sin objetivos"
+              description="Crea una meta (viaje, colchón, entrada…) y aporta desde una cuenta."
+              action={
+                <Button onClick={openCreate} disabled={!plan.configured || !plan.userId}>
+                  Crear objetivo
+                </Button>
+              }
+            />
+          ) : (
+            <div className="money-list">
+              {visible.map((goal) => {
+                const ratio = goalProgressRatio(goal)
+                const tone =
+                  goal.status === 'completed' ? 'success' : goal.status === 'paused' ? 'warn' : 'accent'
+                return (
+                  <div key={goal.id} className="money-row money-row-stack money-row-static">
+                    <span className="money-dot" style={{ background: goal.color }} />
+                    <span className="money-row-main">
+                      <button type="button" className="linkish" onClick={() => openEdit(goal)}>
+                        <strong>{goal.name}</strong>
+                      </button>
+                      <span className="muted">
+                        {GOAL_STATUS_LABELS[goal.status]}
+                        {goal.deadline ? ` · hasta ${formatShortDate(goal.deadline)}` : ''}
+                      </span>
+                      <ProgressBar
+                        ratio={ratio}
+                        tone={tone}
+                        label={`${formatMoney(goal.current_amount, currency)} / ${formatMoney(goal.target_amount, currency)}`}
+                      />
+                      {goal.status !== 'completed' ? (
+                        <div className="row-actions">
+                          <Button size="sm" variant="secondary" onClick={() => openContribute(goal)}>
+                            Aportar
                           </Button>
-                        ) : null}
-                      </div>
-                    ) : null}
-                  </span>
-                  <span className="amount">{Math.round(ratio * 100)}%</span>
-                </div>
-              )
-            })}
-          </div>
-        )}
+                          {goal.status === 'active' || goal.status === 'paused' ? (
+                            <Button size="sm" variant="ghost" onClick={() => void togglePause(goal)}>
+                              {goal.status === 'paused' ? 'Reanudar' : 'Pausar'}
+                            </Button>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </span>
+                    <span className="amount">{Math.round(ratio * 100)}%</span>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
       <Sheet

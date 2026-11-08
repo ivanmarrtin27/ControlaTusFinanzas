@@ -114,6 +114,7 @@ export function AnalisisPage() {
           ) : null}
         </Card>
 
+        <div key={preset} className="subsection-enter stack-md">
         <div className="summary-grid">
           <Card>
             <p className="label muted" style={{ fontSize: '0.7rem', marginBottom: '0.35rem' }}>
@@ -286,6 +287,7 @@ export function AnalisisPage() {
             </div>
           ) : null}
         </Card>
+        </div>
       </div>
     </main>
   )

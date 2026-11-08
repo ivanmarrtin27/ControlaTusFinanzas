@@ -188,37 +188,39 @@ export function CategoriasPage() {
           </button>
         </div>
 
-        {money.loading ? (
-          <p className="muted">Cargando categorías…</p>
-        ) : visible.length === 0 ? (
-          <EmptyState
-            title={`Sin categorías de ${CATEGORY_KIND_LABELS[kindTab].toLowerCase()}`}
-            description="Crea una categoría o espera a que se siembren las predeterminadas al registrarte."
-            action={<Button onClick={openCreate}>Crear categoría</Button>}
-          />
-        ) : (
-          <div className="money-list">
-            {visible.map((category) => (
-              <button
-                key={category.id}
-                type="button"
-                className="money-row"
-                onClick={() => openEdit(category)}
-              >
-                <span className="money-dot" style={{ background: category.color }} />
-                <span className="money-row-main">
-                  <strong>{category.name}</strong>
-                  <span className="muted">
-                    {CATEGORY_KIND_LABELS[category.kind]}
-                    {category.is_system ? ' · Sistema' : ''}
-                    {!category.is_active ? ' · Inactiva' : ''}
+        <div key={kindTab} className="subsection-enter">
+          {money.loading ? (
+            <p className="muted">Cargando categorías…</p>
+          ) : visible.length === 0 ? (
+            <EmptyState
+              title={`Sin categorías de ${CATEGORY_KIND_LABELS[kindTab].toLowerCase()}`}
+              description="Crea una categoría o espera a que se siembren las predeterminadas al registrarte."
+              action={<Button onClick={openCreate}>Crear categoría</Button>}
+            />
+          ) : (
+            <div className="money-list">
+              {visible.map((category) => (
+                <button
+                  key={category.id}
+                  type="button"
+                  className="money-row"
+                  onClick={() => openEdit(category)}
+                >
+                  <span className="money-dot" style={{ background: category.color }} />
+                  <span className="money-row-main">
+                    <strong>{category.name}</strong>
+                    <span className="muted">
+                      {CATEGORY_KIND_LABELS[category.kind]}
+                      {category.is_system ? ' · Sistema' : ''}
+                      {!category.is_active ? ' · Inactiva' : ''}
+                    </span>
                   </span>
-                </span>
-                <span className="muted">Editar</span>
-              </button>
-            ))}
-          </div>
-        )}
+                  <span className="muted">Editar</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <Sheet
