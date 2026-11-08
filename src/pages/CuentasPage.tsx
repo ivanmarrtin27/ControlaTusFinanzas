@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/contexts/ToastContext'
 import { useMoneyData } from '@/hooks/useMoneyData'
 import { ConfigBanner } from '@/components/money/ConfigBanner'
 import { Button } from '@/components/ui/Button'
@@ -10,6 +11,7 @@ import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Sheet } from '@/components/ui/Sheet'
+import { MoneyListSkeleton } from '@/components/ui/Skeleton'
 import { formatMoney } from '@/lib/currency'
 import { ACCOUNT_TYPE_LABELS, ACCOUNT_TYPE_OPTIONS } from '@/lib/labels'
 import {
@@ -41,6 +43,7 @@ export function CuentasPage() {
   const { profile } = useAuth()
   const currency = profile?.currency ?? 'EUR'
   const money = useMoneyData()
+  const toast = useToast()
   const [sheetOpen, setSheetOpen] = useState(false)
   const [draft, setDraft] = useState<Draft>(emptyDraft)
   const [formError, setFormError] = useState<string | null>(null)
@@ -89,6 +92,7 @@ export function CuentasPage() {
 
     setSaving(true)
     setFormError(null)
+    const wasEdit = Boolean(draft.id)
     try {
       if (draft.id) {
         await updateAccount(draft.id, {
@@ -109,6 +113,7 @@ export function CuentasPage() {
         })
       }
       setSheetOpen(false)
+      toast.success(wasEdit ? 'Cuenta actualizada' : 'Cuenta creada')
       await money.refresh()
     } catch (err) {
       setFormError(err instanceof MoneyApiError || err instanceof Error ? err.message : 'Error')
@@ -127,6 +132,7 @@ export function CuentasPage() {
     try {
       await deleteAccount(draft.id)
       setSheetOpen(false)
+      toast.success('Cuenta eliminada')
       await money.refresh()
     } catch (err) {
       setFormError(
@@ -172,7 +178,7 @@ export function CuentasPage() {
         </div>
 
         {money.loading ? (
-          <p className="muted">Cargando cuentas…</p>
+          <MoneyListSkeleton rows={4} />
         ) : visible.length === 0 ? (
           <EmptyState
             title="Sin cuentas"

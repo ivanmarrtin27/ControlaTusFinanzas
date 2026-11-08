@@ -7,6 +7,7 @@ import { SyncStatus } from '@/components/SyncStatus'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { MoneyListSkeleton, Skeleton } from '@/components/ui/Skeleton'
 import { useAuth } from '@/contexts/AuthContext'
 import { usePlanData } from '@/hooks/usePlanData'
 import { dayBounds, summarizeRange, weekBounds } from '@/lib/balances'
@@ -101,7 +102,11 @@ export function InicioPage() {
         {/* 1 · Patrimonio */}
         <section className="home-hero" aria-label="Patrimonio">
           <p className="home-hero-label">Patrimonio</p>
-          <p className="home-hero-amount amount">{formatMoney(money.totalBalance, currency)}</p>
+          {money.loading ? (
+            <Skeleton className="skeleton-line-hero" label="Cargando patrimonio" />
+          ) : (
+            <p className="home-hero-amount amount">{formatMoney(money.totalBalance, currency)}</p>
+          )}
           <p className="home-hero-meta muted">
             {accountsLabel}
             {!money.loading && money.activeAccounts.length > 0 ? (
@@ -241,18 +246,24 @@ export function InicioPage() {
           </div>
 
           {money.loading ? (
-            <p className="muted" style={{ marginTop: '0.5rem' }}>
-              Cargando…
-            </p>
+            <div style={{ marginTop: '0.35rem' }}>
+              <MoneyListSkeleton rows={4} />
+            </div>
           ) : recent.length === 0 ? (
             <div style={{ marginTop: '0.5rem' }}>
               <EmptyState
                 title="Sin movimientos"
-                description="Registra un gasto o ingreso."
+                description="Registra un gasto o ingreso para verlos aquí."
                 action={
-                  <Button size="sm" onClick={() => navigate('/movimientos?nuevo=1')}>
-                    Registrar
-                  </Button>
+                  money.activeAccounts.length === 0 ? (
+                    <Button size="sm" onClick={() => navigate('/cuentas')}>
+                      Crear cuenta
+                    </Button>
+                  ) : (
+                    <Button size="sm" onClick={() => navigate('/movimientos?nuevo=1')}>
+                      Añadir movimiento
+                    </Button>
+                  )
                 }
               />
             </div>

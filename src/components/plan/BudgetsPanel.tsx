@@ -5,7 +5,9 @@ import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Sheet } from '@/components/ui/Sheet'
+import { MoneyListSkeleton } from '@/components/ui/Skeleton'
 import { ProgressBar } from '@/components/plan/ProgressBar'
+import { useToast } from '@/contexts/ToastContext'
 import { formatMoney } from '@/lib/currency'
 import {
   createBudget,
@@ -50,6 +52,7 @@ export function BudgetsPanel({
   expenseCategories,
   onChanged,
 }: BudgetsPanelProps) {
+  const toast = useToast()
   const [sheetOpen, setSheetOpen] = useState(false)
   const [draft, setDraft] = useState<Draft>(emptyDraft())
   const [formError, setFormError] = useState<string | null>(null)
@@ -101,6 +104,7 @@ export function BudgetsPanel({
 
     setSaving(true)
     setFormError(null)
+    const wasEdit = Boolean(draft.id)
     try {
       if (draft.id) {
         await updateBudget(draft.id, {
@@ -117,6 +121,7 @@ export function BudgetsPanel({
         })
       }
       setSheetOpen(false)
+      toast.success(wasEdit ? 'Límite actualizado' : 'Límite creado')
       await onChanged()
     } catch (err) {
       setFormError(err instanceof MoneyApiError || err instanceof Error ? err.message : 'Error')
@@ -133,6 +138,7 @@ export function BudgetsPanel({
     try {
       await deleteBudget(draft.id)
       setSheetOpen(false)
+      toast.success('Límite eliminado')
       await onChanged()
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'No se pudo eliminar.')
@@ -156,7 +162,7 @@ export function BudgetsPanel({
       </div>
 
       {loading ? (
-        <p className="muted">Cargando límites…</p>
+        <MoneyListSkeleton rows={3} />
       ) : progress.length === 0 ? (
         <EmptyState
           title="Sin límites este mes"

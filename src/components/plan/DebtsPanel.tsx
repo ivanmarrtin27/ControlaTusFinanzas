@@ -6,6 +6,8 @@ import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Sheet } from '@/components/ui/Sheet'
+import { MoneyListSkeleton } from '@/components/ui/Skeleton'
+import { useToast } from '@/contexts/ToastContext'
 import { formatMoney } from '@/lib/currency'
 import { toDateInputValue } from '@/lib/dates'
 import { DEBT_DIRECTION_LABELS, DEBT_STATUS_LABELS } from '@/lib/labels'
@@ -66,6 +68,7 @@ export function DebtsPanel({
   accounts,
   onChanged,
 }: DebtsPanelProps) {
+  const toast = useToast()
   const [directionTab, setDirectionTab] = useState<DebtDirection | 'all'>('all')
   const [showSettled, setShowSettled] = useState(false)
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -167,6 +170,7 @@ export function DebtsPanel({
 
     setSaving(true)
     setFormError(null)
+    const wasEdit = Boolean(draft.id)
     try {
       const status = remaining <= 0 ? 'settled' : draft.status === 'settled' ? 'pending' : draft.status
       const due_date = draft.due_date.trim() || null
@@ -191,6 +195,7 @@ export function DebtsPanel({
         })
       }
       setSheetOpen(false)
+      toast.success(wasEdit ? 'Deuda actualizada' : 'Deuda creada')
       await onChanged()
     } catch (err) {
       setFormError(err instanceof MoneyApiError || err instanceof Error ? err.message : 'Error')
@@ -225,6 +230,7 @@ export function DebtsPanel({
         createTransaction: payDraft.createTransaction,
       })
       setSheetOpen(false)
+      toast.success('Pago registrado')
       await onChanged()
     } catch (err) {
       setFormError(err instanceof MoneyApiError || err instanceof Error ? err.message : 'Error')
@@ -241,6 +247,7 @@ export function DebtsPanel({
     try {
       await deleteDebt(draft.id)
       setSheetOpen(false)
+      toast.success('Deuda eliminada')
       await onChanged()
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'No se pudo eliminar.')
@@ -298,7 +305,7 @@ export function DebtsPanel({
 
       <div key={`${directionTab}-${showSettled}`} className="subsection-enter">
         {loading ? (
-          <p className="muted">Cargando deudas…</p>
+          <MoneyListSkeleton rows={3} />
         ) : visible.length === 0 ? (
           <EmptyState
             title="Sin deudas"

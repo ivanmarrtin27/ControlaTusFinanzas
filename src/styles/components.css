@@ -1726,3 +1726,197 @@ button.chip:active {
   font-size: 0.9rem;
   line-height: 1.55;
 }
+
+/* ——— Toasts (Fase 4 · Feedback) — arriba para no tapar sheets ——— */
+.toast-viewport {
+  position: fixed;
+  top: calc(var(--safe-top) + 0.65rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  width: min(22rem, calc(100vw - 1.5rem));
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.7rem 0.75rem 0.7rem 0.9rem;
+  border-radius: var(--radius-md);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-strong);
+  animation: gd-toast-in var(--motion-fast) var(--ease-out) both;
+}
+
+.toast-success {
+  border-color: color-mix(in srgb, var(--success) 45%, var(--border-strong));
+}
+
+.toast-error {
+  border-color: color-mix(in srgb, var(--danger) 55%, var(--border-strong));
+}
+
+.toast-message {
+  flex: 1;
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  color: var(--text);
+}
+
+.toast-success .toast-message {
+  color: color-mix(in srgb, var(--success) 35%, var(--text));
+}
+
+.toast-error .toast-message {
+  color: color-mix(in srgb, var(--danger) 25%, var(--text));
+}
+
+.toast-dismiss {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin: -0.15rem -0.1rem 0 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.toast-dismiss:hover {
+  color: var(--text);
+  background: var(--surface-high);
+}
+
+@keyframes gd-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ——— Skeletons (shimmer Green Deck) ——— */
+@keyframes gd-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.skeleton {
+  display: block;
+  border-radius: var(--radius);
+  background: linear-gradient(
+    90deg,
+    var(--surface-elevated) 0%,
+    color-mix(in srgb, var(--accent) 14%, var(--surface-high)) 45%,
+    var(--surface-elevated) 90%
+  );
+  background-size: 220% 100%;
+  animation: gd-shimmer 1.35s var(--ease-out) infinite;
+}
+
+.skeleton-dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.skeleton-row {
+  pointer-events: none;
+  cursor: default;
+}
+
+.skeleton-main {
+  display: grid;
+  gap: 0.35rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.skeleton-line {
+  height: 0.7rem;
+}
+
+.skeleton-line-title {
+  width: 58%;
+  height: 0.8rem;
+}
+
+.skeleton-line-meta {
+  width: 42%;
+  height: 0.55rem;
+  opacity: 0.85;
+}
+
+.skeleton-line-amount {
+  width: 4.25rem;
+  height: 0.85rem;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.skeleton-line-label {
+  width: 4rem;
+  height: 0.55rem;
+  margin-bottom: 0.35rem;
+}
+
+.skeleton-line-hero {
+  width: min(12rem, 70%);
+  height: 1.85rem;
+  margin: 0.25rem 0;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-line-period {
+  width: 70%;
+  height: 1rem;
+  margin: 0.25rem 0;
+}
+
+.skeleton-line-section {
+  width: 6rem;
+  height: 0.85rem;
+}
+
+.skeleton-hero {
+  padding: var(--card-pad-y) var(--card-pad-x);
+}
+
+.skeleton-card {
+  padding: var(--card-pad-y) var(--card-pad-x);
+}
+
+.skeleton-list {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none !important;
+  }
+
+  .skeleton {
+    animation: none !important;
+    background: var(--surface-elevated);
+  }
+}

@@ -6,6 +6,8 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { Input } from '@/components/ui/Input'
 import { Sheet } from '@/components/ui/Sheet'
+import { MoneyListSkeleton } from '@/components/ui/Skeleton'
+import { useToast } from '@/contexts/ToastContext'
 import { useMoneyData } from '@/hooks/useMoneyData'
 import { MoneyApiError } from '@/lib/moneyApi'
 import { createTag, deleteTag, updateTag } from '@/lib/tagApi'
@@ -24,6 +26,7 @@ const emptyDraft = (): Draft => ({
 
 export function EtiquetasPage() {
   const money = useMoneyData()
+  const toast = useToast()
   const [sheetOpen, setSheetOpen] = useState(false)
   const [draft, setDraft] = useState<Draft>(emptyDraft())
   const [formError, setFormError] = useState<string | null>(null)
@@ -54,6 +57,7 @@ export function EtiquetasPage() {
 
     setSaving(true)
     setFormError(null)
+    const wasEdit = Boolean(draft.id)
     try {
       if (draft.id) {
         await updateTag(draft.id, { name, color: draft.color })
@@ -65,6 +69,7 @@ export function EtiquetasPage() {
         })
       }
       setSheetOpen(false)
+      toast.success(wasEdit ? 'Etiqueta actualizada' : 'Etiqueta creada')
       await money.refresh()
     } catch (err) {
       setFormError(err instanceof MoneyApiError ? err.message : 'No se pudo guardar.')
@@ -81,6 +86,7 @@ export function EtiquetasPage() {
     try {
       await deleteTag(draft.id)
       setSheetOpen(false)
+      toast.success('Etiqueta eliminada')
       await money.refresh()
     } catch (err) {
       setFormError(err instanceof MoneyApiError ? err.message : 'No se pudo eliminar.')
@@ -105,7 +111,7 @@ export function EtiquetasPage() {
         <ConfigBanner configured={money.configured} error={money.error} />
 
         {money.loading ? (
-          <p className="muted">Cargando…</p>
+          <MoneyListSkeleton rows={4} withAmount={false} />
         ) : money.tags.length === 0 ? (
           <EmptyState
             title="Sin etiquetas"

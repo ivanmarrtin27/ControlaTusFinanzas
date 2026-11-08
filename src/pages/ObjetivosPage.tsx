@@ -8,7 +8,9 @@ import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Sheet } from '@/components/ui/Sheet'
+import { MoneyListSkeleton } from '@/components/ui/Skeleton'
 import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/contexts/ToastContext'
 import { usePlanData } from '@/hooks/usePlanData'
 import { formatMoney } from '@/lib/currency'
 import { formatShortDate, toDateInputValue } from '@/lib/dates'
@@ -56,6 +58,7 @@ export function ObjetivosPage() {
   const { profile } = useAuth()
   const currency = profile?.currency ?? 'EUR'
   const plan = usePlanData()
+  const toast = useToast()
 
   const [statusTab, setStatusTab] = useState<GoalStatus | 'all'>('active')
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -144,6 +147,7 @@ export function ObjetivosPage() {
 
     setSaving(true)
     setFormError(null)
+    const wasEdit = Boolean(draft.id)
     try {
       let status = draft.status
       if (current >= target) status = 'completed'
@@ -163,6 +167,7 @@ export function ObjetivosPage() {
         await createGoal({ user_id: plan.userId, ...payload })
       }
       setSheetOpen(false)
+      toast.success(wasEdit ? 'Objetivo actualizado' : 'Objetivo creado')
       await plan.refresh()
     } catch (err) {
       setFormError(err instanceof MoneyApiError || err instanceof Error ? err.message : 'Error')
@@ -197,6 +202,7 @@ export function ObjetivosPage() {
         createTransaction: contrib.createTransaction,
       })
       setSheetOpen(false)
+      toast.success('Aportación guardada')
       await plan.refresh()
     } catch (err) {
       setFormError(err instanceof MoneyApiError || err instanceof Error ? err.message : 'Error')
@@ -213,6 +219,7 @@ export function ObjetivosPage() {
     try {
       await deleteGoal(draft.id)
       setSheetOpen(false)
+      toast.success('Objetivo eliminado')
       await plan.refresh()
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'No se pudo eliminar.')
@@ -224,6 +231,7 @@ export function ObjetivosPage() {
   async function togglePause(goal: Goal) {
     const next = goal.status === 'paused' ? 'active' : 'paused'
     await updateGoal(goal.id, { status: next })
+    toast.success(next === 'paused' ? 'Objetivo pausado' : 'Objetivo reanudado')
     await plan.refresh()
   }
 
@@ -267,7 +275,7 @@ export function ObjetivosPage() {
 
         <div key={statusTab} className="subsection-enter">
           {plan.loading ? (
-            <p className="muted">Cargando objetivos…</p>
+            <MoneyListSkeleton rows={4} />
           ) : visible.length === 0 ? (
             <EmptyState
               title="Sin objetivos"

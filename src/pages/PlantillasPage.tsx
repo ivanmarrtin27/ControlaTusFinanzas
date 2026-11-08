@@ -6,8 +6,10 @@ import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Sheet } from '@/components/ui/Sheet'
+import { MoneyListSkeleton } from '@/components/ui/Skeleton'
 import { Textarea } from '@/components/ui/Textarea'
 import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/contexts/ToastContext'
 import { useMoneyData } from '@/hooks/useMoneyData'
 import { formatMoney } from '@/lib/currency'
 import { MoneyApiError } from '@/lib/moneyApi'
@@ -45,6 +47,7 @@ export function PlantillasPage() {
   const { profile } = useAuth()
   const currency = profile?.currency ?? 'EUR'
   const money = useMoneyData()
+  const toast = useToast()
   const [templates, setTemplates] = useState<TransactionTemplate[]>([])
   const [loading, setLoading] = useState(true)
   const [listError, setListError] = useState<string | null>(null)
@@ -116,6 +119,7 @@ export function PlantillasPage() {
 
     setSaving(true)
     setFormError(null)
+    const wasEdit = Boolean(draft.id)
     try {
       const payload = {
         name,
@@ -132,6 +136,7 @@ export function PlantillasPage() {
         await createTemplate({ ...payload, user_id: money.userId })
       }
       setSheetOpen(false)
+      toast.success(wasEdit ? 'Plantilla actualizada' : 'Plantilla creada')
       await refresh()
     } catch (err) {
       setFormError(err instanceof MoneyApiError ? err.message : 'No se pudo guardar.')
@@ -148,6 +153,7 @@ export function PlantillasPage() {
     try {
       await deleteTemplate(draft.id)
       setSheetOpen(false)
+      toast.success('Plantilla eliminada')
       await refresh()
     } catch (err) {
       setFormError(err instanceof MoneyApiError ? err.message : 'No se pudo eliminar.')
@@ -162,6 +168,7 @@ export function PlantillasPage() {
     setListError(null)
     try {
       await seedExampleTemplates(money.userId)
+      toast.success('Ejemplos añadidos')
       await refresh()
     } catch (err) {
       setListError(err instanceof Error ? err.message : 'No se pudieron crear los ejemplos.')
@@ -197,7 +204,7 @@ export function PlantillasPage() {
         <ConfigBanner configured={money.configured} error={money.error ?? listError} />
 
         {loading ? (
-          <p className="muted">Cargando…</p>
+          <MoneyListSkeleton rows={4} />
         ) : templates.length === 0 ? (
           <EmptyState
             title="Sin plantillas"

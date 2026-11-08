@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useToast } from '@/contexts/ToastContext'
 import { useMoneyData } from '@/hooks/useMoneyData'
 import { ConfigBanner } from '@/components/money/ConfigBanner'
 import { Button } from '@/components/ui/Button'
@@ -8,6 +9,7 @@ import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Sheet } from '@/components/ui/Sheet'
+import { MoneyListSkeleton } from '@/components/ui/Skeleton'
 import { CATEGORY_KIND_LABELS } from '@/lib/labels'
 import {
   createCategory,
@@ -35,6 +37,7 @@ const emptyDraft = (kind: CategoryKind = 'expense'): Draft => ({
 
 export function CategoriasPage() {
   const money = useMoneyData()
+  const toast = useToast()
   const [kindTab, setKindTab] = useState<CategoryKind>('expense')
   const [showInactive, setShowInactive] = useState(false)
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -82,6 +85,7 @@ export function CategoriasPage() {
 
     setSaving(true)
     setFormError(null)
+    const wasEdit = Boolean(draft.id)
     try {
       if (draft.id) {
         await updateCategory(draft.id, {
@@ -101,6 +105,7 @@ export function CategoriasPage() {
         })
       }
       setSheetOpen(false)
+      toast.success(wasEdit ? 'Categoría actualizada' : 'Categoría creada')
       await money.refresh()
     } catch (err) {
       setFormError(err instanceof MoneyApiError || err instanceof Error ? err.message : 'Error')
@@ -117,6 +122,7 @@ export function CategoriasPage() {
       try {
         await updateCategory(draft.id, { is_active: false })
         setSheetOpen(false)
+        toast.success('Categoría desactivada')
         await money.refresh()
       } catch (err) {
         setFormError(err instanceof Error ? err.message : 'No se pudo desactivar.')
@@ -134,11 +140,13 @@ export function CategoriasPage() {
     try {
       await deleteCategory(draft.id)
       setSheetOpen(false)
+      toast.success('Categoría eliminada')
       await money.refresh()
     } catch (err) {
       try {
         await updateCategory(draft.id, { is_active: false })
         setSheetOpen(false)
+        toast.success('Categoría desactivada')
         await money.refresh()
         setFormError(null)
       } catch {
@@ -196,7 +204,7 @@ export function CategoriasPage() {
 
         <div key={kindTab} className="subsection-enter">
           {money.loading ? (
-            <p className="muted">Cargando categorías…</p>
+            <MoneyListSkeleton rows={5} withAmount={false} />
           ) : visible.length === 0 ? (
             <EmptyState
               title={`Sin categorías de ${CATEGORY_KIND_LABELS[kindTab].toLowerCase()}`}

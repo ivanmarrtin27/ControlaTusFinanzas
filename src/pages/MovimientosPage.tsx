@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/contexts/ToastContext'
 import { useMoneyData } from '@/hooks/useMoneyData'
 import { ConfigBanner } from '@/components/money/ConfigBanner'
 import { TemplateChips } from '@/components/money/TemplateChips'
@@ -15,6 +16,7 @@ import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Sheet } from '@/components/ui/Sheet'
+import { MoneyListSkeleton } from '@/components/ui/Skeleton'
 import { formatMoney } from '@/lib/currency'
 import { formatShortDate } from '@/lib/dates'
 import {
@@ -54,6 +56,7 @@ export function MovimientosPage() {
   const { profile } = useAuth()
   const currency = profile?.currency ?? 'EUR'
   const money = useMoneyData()
+  const toast = useToast()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 
@@ -237,6 +240,7 @@ export function MovimientosPage() {
   async function handleSaveTransaction(values: TransactionSubmitValues) {
     if (!money.userId) throw new MoneyApiError('Inicia sesión para guardar movimientos.')
     setBusyError(null)
+    const wasEdit = Boolean(editingTx)
     const { tag_ids, receipt_file, clear_receipt, ...payload } = values
     let txId = editingTx?.id
     let previousPath = editingTx?.receipt_path ?? null
@@ -277,6 +281,7 @@ export function MovimientosPage() {
 
     setSheetMode(null)
     setEditingTx(null)
+    toast.success(wasEdit ? 'Movimiento actualizado' : 'Movimiento guardado')
     await money.refresh()
   }
 
@@ -289,6 +294,7 @@ export function MovimientosPage() {
   }) {
     if (!money.userId) throw new MoneyApiError('Inicia sesión para guardar transferencias.')
     setBusyError(null)
+    const wasEdit = Boolean(editingTransfer)
     if (editingTransfer) {
       await updateTransfer(editingTransfer.id, values)
     } else {
@@ -296,6 +302,7 @@ export function MovimientosPage() {
     }
     setSheetMode(null)
     setEditingTransfer(null)
+    toast.success(wasEdit ? 'Transferencia actualizada' : 'Transferencia guardada')
     await money.refresh()
   }
 
@@ -314,9 +321,10 @@ export function MovimientosPage() {
       }
       setSheetMode(null)
       setEditingTx(null)
+      toast.success('Movimiento eliminado')
       await money.refresh()
     } catch (err) {
-      setBusyError(err instanceof Error ? err.message : 'No se pudo eliminar.')
+      toast.error(err instanceof Error ? err.message : 'No se pudo eliminar.')
     }
   }
 
@@ -327,9 +335,10 @@ export function MovimientosPage() {
       await deleteTransfer(editingTransfer.id)
       setSheetMode(null)
       setEditingTransfer(null)
+      toast.success('Transferencia eliminada')
       await money.refresh()
     } catch (err) {
-      setBusyError(err instanceof Error ? err.message : 'No se pudo eliminar.')
+      toast.error(err instanceof Error ? err.message : 'No se pudo eliminar.')
     }
   }
 
@@ -467,7 +476,7 @@ export function MovimientosPage() {
         </div>
 
         {money.loading ? (
-          <p className="muted">Cargando movimientos…</p>
+          <MoneyListSkeleton rows={6} />
         ) : feed.length === 0 ? (
           <EmptyState
             title="Sin movimientos"
@@ -492,6 +501,8 @@ export function MovimientosPage() {
                 >
                   Limpiar filtros
                 </Button>
+              ) : money.activeAccounts.length === 0 ? (
+                <Button onClick={() => navigate('/cuentas')}>Crear cuenta</Button>
               ) : (
                 <div className="header-actions">
                   <Button variant="secondary" onClick={openNewTransfer}>

@@ -6,6 +6,8 @@ import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Sheet } from '@/components/ui/Sheet'
+import { MoneyListSkeleton } from '@/components/ui/Skeleton'
+import { useToast } from '@/contexts/ToastContext'
 import { formatMoney } from '@/lib/currency'
 import { formatShortDate, toDateInputValue } from '@/lib/dates'
 import {
@@ -76,6 +78,7 @@ export function RecurringPanel({
   categories,
   onChanged,
 }: RecurringPanelProps) {
+  const toast = useToast()
   const [sheetOpen, setSheetOpen] = useState(false)
   const [draft, setDraft] = useState<Draft>(emptyDraft())
   const [formError, setFormError] = useState<string | null>(null)
@@ -150,6 +153,7 @@ export function RecurringPanel({
 
     setSaving(true)
     setFormError(null)
+    const wasEdit = Boolean(draft.id)
     try {
       const payload = {
         type: draft.type,
@@ -167,6 +171,7 @@ export function RecurringPanel({
         await createRecurringRule({ user_id: userId, ...payload })
       }
       setSheetOpen(false)
+      toast.success(wasEdit ? 'Recurrente actualizado' : 'Recurrente creado')
       await onChanged()
     } catch (err) {
       setFormError(err instanceof MoneyApiError || err instanceof Error ? err.message : 'Error')
@@ -183,6 +188,7 @@ export function RecurringPanel({
     try {
       await deleteRecurringRule(draft.id)
       setSheetOpen(false)
+      toast.success('Recurrente eliminado')
       await onChanged()
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'No se pudo eliminar.')
@@ -253,7 +259,7 @@ export function RecurringPanel({
       </div>
 
       {loading ? (
-        <p className="muted">Cargando recurrentes…</p>
+        <MoneyListSkeleton rows={3} />
       ) : visible.length === 0 ? (
         <EmptyState
           title="Sin reglas recurrentes"
