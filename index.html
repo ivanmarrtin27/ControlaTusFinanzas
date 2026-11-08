@@ -5,7 +5,32 @@
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <script>
+      /* Preferencia ctf-zoom-lock: default ON (bloqueado). Solo '0' permite zoom. */
+      ;(function () {
+        try {
+          var locked = localStorage.getItem('ctf-zoom-lock') !== '0'
+          var meta = document.querySelector('meta[name="viewport"]')
+          if (!meta) return
+          if (locked) {
+            meta.setAttribute(
+              'content',
+              'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
+            )
+            document.documentElement.classList.add('zoom-locked')
+          } else {
+            meta.setAttribute(
+              'content',
+              'width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover',
+            )
+          }
+        } catch (e) {}
+      })()
+    </script>
     <meta name="theme-color" content="#121212" />
     <meta name="application-name" content="ControlaTusFinanzas" />
     <meta name="apple-mobile-web-app-capable" content="yes" />

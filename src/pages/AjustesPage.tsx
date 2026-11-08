@@ -16,11 +16,13 @@ import {
 } from '@/lib/accent'
 import { CURRENCY_OPTIONS, DEFAULT_CURRENCY } from '@/lib/currency'
 import { supabase } from '@/lib/supabase'
+import { readZoomLockEnabled, setZoomLockEnabled } from '@/lib/zoomLock'
 
 export function AjustesPage() {
   const { profile, user, signOut, configured, refreshProfile } = useAuth()
   const [accent, setAccent] = useState(normalizeAccent(profile?.accent_color))
   const [currency, setCurrency] = useState(profile?.currency ?? DEFAULT_CURRENCY)
+  const [zoomLock, setZoomLock] = useState(() => readZoomLockEnabled())
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -200,6 +202,41 @@ export function AjustesPage() {
             En el navegador móvil usa «Añadir a la pantalla de inicio» / Instalar. Los atajos del
             sistema abren registrar gasto (`/?quick=expense`) o ingreso (`/?quick=income`).
           </p>
+        </Card>
+
+        <Card>
+          <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>Pantalla táctil</h2>
+          <label
+            className="list-row"
+            htmlFor="zoom-lock-toggle"
+            style={{
+              padding: 0,
+              minHeight: 'auto',
+              gridTemplateColumns: '1fr auto',
+              cursor: 'pointer',
+            }}
+          >
+            <span>
+              <span style={{ display: 'block', fontWeight: 600 }}>Bloquear zoom</span>
+              <span className="field-hint" style={{ display: 'block', marginTop: '0.25rem' }}>
+                Evita zoom con pellizco o doble toque en iPhone/PWA. Útil para no mover la
+                interfaz, pero puede limitar la accesibilidad.
+              </span>
+            </span>
+            <input
+              id="zoom-lock-toggle"
+              type="checkbox"
+              className="checkbox"
+              role="switch"
+              checked={zoomLock}
+              aria-checked={zoomLock}
+              onChange={(e) => {
+                const next = e.target.checked
+                setZoomLock(next)
+                setZoomLockEnabled(next)
+              }}
+            />
+          </label>
         </Card>
 
         <Card>

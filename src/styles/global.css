@@ -31,6 +31,12 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Reduce double-tap zoom on iOS when the user keeps zoom lock enabled (default). */
+html.zoom-locked,
+html.zoom-locked body {
+  touch-action: manipulation;
+}
+
 h1,
 h2,
 h3,
