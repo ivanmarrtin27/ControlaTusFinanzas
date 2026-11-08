@@ -76,7 +76,9 @@ export function RecordatoriosPage() {
       <header className="page-header page-header-row">
         <div>
           <h1>Recordatorios</h1>
-          <p>Límites, recurrentes próximos, vencimientos e inactividad.</p>
+          <p className="page-header-lead">
+            Límites, recurrentes próximos, vencimientos e inactividad.
+          </p>
         </div>
         <Button size="sm" variant="secondary" onClick={() => void handleEnableBrowser()}>
           Activar avisos

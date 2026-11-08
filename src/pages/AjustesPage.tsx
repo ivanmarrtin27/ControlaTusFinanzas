@@ -79,7 +79,7 @@ export function AjustesPage() {
     <main className="page">
       <header className="page-header">
         <h1>Ajustes</h1>
-        <p>Perfil, color de acento, moneda, copia de seguridad y PWA.</p>
+        <p className="page-header-lead">Perfil, color de acento, moneda, copia de seguridad y PWA.</p>
       </header>
 
       <div className="stack-md" style={{ maxWidth: '36rem' }}>

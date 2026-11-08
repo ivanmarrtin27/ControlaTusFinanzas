@@ -94,7 +94,9 @@ export function EtiquetasPage() {
       <header className="page-header page-header-row">
         <div>
           <h1>Etiquetas</h1>
-          <p>Organiza movimientos con etiquetas además de las categorías.</p>
+          <p className="page-header-lead">
+            Organiza movimientos con etiquetas además de las categorías.
+          </p>
         </div>
         <Button size="sm" onClick={openCreate} disabled={!money.userId}>
           Nueva

@@ -6,7 +6,7 @@ export function PrivacidadPage() {
     <main className="page">
       <header className="page-header">
         <h1>Privacidad</h1>
-        <p>Cómo tratamos tus datos en ControlaTusFinanzas.</p>
+        <p className="page-header-lead">Cómo tratamos tus datos en ControlaTusFinanzas.</p>
       </header>
 
       <div className="stack-md" style={{ maxWidth: '40rem' }}>

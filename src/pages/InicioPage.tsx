@@ -82,7 +82,7 @@ export function InicioPage() {
       <header className="page-header page-header-row">
         <div>
           <h1>Inicio</h1>
-          <p>Hola, {name}. Resumen de patrimonio, hoy, semana y atajos.</p>
+          <p className="page-header-greeting">Hola, {name}</p>
         </div>
         <SyncStatus
           configured={money.configured}

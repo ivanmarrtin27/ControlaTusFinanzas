@@ -60,7 +60,10 @@ export function PlanificacionPage() {
     <main className="page">
       <header className="page-header">
         <h1>Planificación</h1>
-        <p>Límites de gasto, reglas recurrentes y deudas. Los objetivos de ahorro están en su propia sección.</p>
+        <p className="page-header-lead">
+          Límites de gasto, reglas recurrentes y deudas. Los objetivos de ahorro están en su propia
+          sección.
+        </p>
       </header>
 
       <div className="stack-md">

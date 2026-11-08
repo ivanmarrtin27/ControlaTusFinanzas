@@ -169,26 +169,47 @@ button {
   width: min(100%, var(--content-max));
   margin: 0 auto;
   /* Compact top on mobile: top-bar already owns safe-area + chrome. */
-  padding: var(--space-md) var(--space-md) var(--content-bottom-inset);
+  padding: var(--space-sm) var(--space-md) var(--content-bottom-inset);
 }
 
 .page-header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
-  margin-bottom: var(--space-md);
+  gap: 0.125rem;
+  margin-bottom: var(--space-sm);
   padding-bottom: 0;
 }
 
 .page-header h1 {
-  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-size: 1.2rem;
+  line-height: 1.2;
 }
 
-.page-header p {
+.page-header p,
+.page-header-lead,
+.page-header-greeting {
   color: var(--text-muted);
-  font-size: var(--text-md);
+  font-size: var(--text-sm);
   max-width: 40rem;
-  line-height: var(--lh-body);
+  line-height: var(--lh-tight);
+}
+
+/*
+  Row headers must beat .page-header { flex-direction: column } (same cascade
+  layer). A lone .page-header-row in components.css previously lost, so the
+  title child kept flex: 1 1 12rem as HEIGHT → exactly 192px empty block.
+*/
+.page-header.page-header-row {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm) var(--space-md);
+}
+
+.page-header.page-header-row > div:first-child {
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .placeholder-panel {
@@ -209,13 +230,35 @@ button {
   color: var(--accent);
 }
 
+@media (max-width: 959px) {
+  /* Long leads repeat what the page body already shows; keep only greetings. */
+  .page-header-lead {
+    display: none;
+  }
+}
+
 @media (min-width: 960px) {
   .page {
     padding: var(--space-xl) var(--space-2xl) var(--space-3xl);
   }
 
   .page-header {
-    gap: var(--space-sm);
-    margin-bottom: var(--space-lg);
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+  }
+
+  .page-header h1 {
+    font-size: clamp(1.35rem, 2vw, 1.75rem);
+  }
+
+  .page-header p,
+  .page-header-lead,
+  .page-header-greeting {
+    font-size: var(--text-md);
+    line-height: var(--lh-body);
+  }
+
+  .page-header.page-header-row {
+    flex-wrap: wrap;
   }
 }

@@ -170,7 +170,9 @@ export function CentroFinancieroPage() {
     <main className="page">
       <header className="page-header">
         <h1>Centro financiero</h1>
-        <p>Salud del mes, colchón de emergencia y previsión a 30 días.</p>
+        <p className="page-header-lead">
+          Salud del mes, colchón de emergencia y previsión a 30 días.
+        </p>
       </header>
 
       <div className="stack-md">

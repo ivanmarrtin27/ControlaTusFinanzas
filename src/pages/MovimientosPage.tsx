@@ -340,7 +340,7 @@ export function MovimientosPage() {
       <header className="page-header page-header-row">
         <div>
           <h1>Movimientos</h1>
-          <p>Ingresos, gastos y transferencias entre cuentas.</p>
+          <p className="page-header-lead">Ingresos, gastos y transferencias entre cuentas.</p>
         </div>
         <div className="header-actions">
           <Button variant="secondary" size="sm" onClick={openNewTransfer} disabled={!money.userId}>

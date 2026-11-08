@@ -558,33 +558,19 @@ button.chip:active {
   line-height: var(--lh-body);
 }
 
-.page-header-row {
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-sm) var(--space-md);
-}
-
-.page-header-row > div:first-child {
-  min-width: 0;
-  flex: 1 1 12rem;
-}
+/* Row layout lives on .page-header.page-header-row in global.css (cascade-safe). */
 
 .header-actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
   align-items: center;
+  flex-shrink: 0;
 }
 
 @media (max-width: 959px) {
-  .page-header-row .header-actions {
-    width: 100%;
-  }
-
-  .page-header-row .header-actions .btn {
-    flex: 1 1 auto;
+  .page-header.page-header-row .header-actions .btn {
+    min-height: var(--tap-min);
   }
 }
 
