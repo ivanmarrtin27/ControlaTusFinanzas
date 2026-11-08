@@ -74,23 +74,29 @@ export function TransferForm({
   }
 
   return (
-    <form className="money-form" onSubmit={(e) => void handleSubmit(e)}>
-      <Select
-        label="Desde"
-        name="from_account_id"
-        value={fromId}
-        onChange={(e) => setFromId(e.target.value)}
-        options={options}
-        required
-      />
-      <Select
-        label="Hacia"
-        name="to_account_id"
-        value={toId}
-        onChange={(e) => setToId(e.target.value)}
-        options={options}
-        required
-      />
+    <form className="money-form transfer-form" onSubmit={(e) => void handleSubmit(e)}>
+      <div className="transfer-route" role="group" aria-label="Cuentas de la transferencia">
+        <Select
+          label="Desde"
+          name="from_account_id"
+          value={fromId}
+          onChange={(e) => setFromId(e.target.value)}
+          options={options}
+          required
+        />
+        <div className="transfer-route-connector" aria-hidden="true">
+          <span className="transfer-route-arrow">↓</span>
+        </div>
+        <Select
+          label="Hacia"
+          name="to_account_id"
+          value={toId}
+          onChange={(e) => setToId(e.target.value)}
+          options={options}
+          required
+        />
+      </div>
+
       <Input
         label="Importe"
         name="amount"
@@ -101,19 +107,19 @@ export function TransferForm({
         required
       />
       <Input
-        label="Concepto (opcional)"
-        name="concept"
-        value={concept}
-        onChange={(e) => setConcept(e.target.value)}
-        placeholder="Transferencia"
-      />
-      <Input
         label="Fecha"
         name="occurred_at"
         type="date"
         value={occurredAt}
         onChange={(e) => setOccurredAt(e.target.value)}
         required
+      />
+      <Input
+        label="Concepto (opcional)"
+        name="concept"
+        value={concept}
+        onChange={(e) => setConcept(e.target.value)}
+        placeholder="Transferencia"
       />
 
       {error ? (

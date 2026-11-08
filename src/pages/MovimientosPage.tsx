@@ -574,15 +574,22 @@ export function MovimientosPage() {
                 <button
                   key={`tr-${tr.id}`}
                   type="button"
-                  className="money-row"
+                  className="money-row money-row-transfer"
                   aria-label={`Editar transferencia ${tr.concept?.trim() || ''}`}
                   onClick={() => openEditTransfer(tr)}
                 >
                   <span className="money-dot" style={{ background: 'var(--text-muted)' }} />
                   <span className="money-row-main">
                     <strong>{tr.concept?.trim() || 'Transferencia'}</strong>
-                    <span className="muted money-row-meta">
-                      {formatShortDate(tr.occurred_at)} · {from} → {to}
+                    <span className="muted money-row-meta money-row-meta-wrap">
+                      <span className="money-row-meta-date">{formatShortDate(tr.occurred_at)}</span>
+                      <span className="money-row-route">
+                        <span className="money-row-account">{from}</span>
+                        <span className="money-row-route-arrow" aria-hidden="true">
+                          →
+                        </span>
+                        <span className="money-row-account">{to}</span>
+                      </span>
                     </span>
                   </span>
                   <span className="money-row-end">

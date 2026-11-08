@@ -620,6 +620,42 @@ button.chip:active {
   gap: var(--page-stack-gap);
 }
 
+/* Transfer sheet: always stack origin → destination → amount → date/note */
+.transfer-form {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.transfer-form > * {
+  min-width: 0;
+}
+
+.transfer-route {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-xs);
+}
+
+.transfer-route-connector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: -0.15rem 0;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.transfer-route-arrow {
+  display: inline-grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-full);
+  background: var(--surface-elevated);
+  color: var(--accent);
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
 .form-actions {
   display: flex;
   flex-wrap: wrap;
@@ -627,6 +663,17 @@ button.chip:active {
   justify-content: flex-end;
   align-items: center;
   margin-top: var(--space-sm);
+}
+
+@media (max-width: 419px) {
+  .transfer-form .form-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .transfer-form .form-actions .btn {
+    width: 100%;
+  }
 }
 
 /* Destructive stays left; primary/cancel stay right */
@@ -866,6 +913,78 @@ button.chip:active {
 
 .money-row-meta {
   display: block;
+}
+
+/* Transfer list rows: wrap route text instead of truncating on phones */
+.money-row-transfer {
+  align-items: start;
+}
+
+.money-row-transfer .money-row-end {
+  align-self: center;
+  min-width: 0;
+}
+
+.money-row-meta-wrap {
+  display: grid;
+  gap: 0.15rem;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+.money-row-transfer .money-row-main .muted.money-row-meta-wrap {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+.money-row-meta-date {
+  display: block;
+}
+
+.money-row-route {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.35rem;
+  min-width: 0;
+}
+
+.money-row-account {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.money-row-route-arrow {
+  flex: 0 0 auto;
+  color: var(--text-neutral);
+}
+
+@media (max-width: 419px) {
+  .money-row-transfer {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'dot main'
+      '. end';
+    row-gap: 0.2rem;
+  }
+
+  .money-row-transfer .money-dot {
+    grid-area: dot;
+    margin-top: 0.35rem;
+  }
+
+  .money-row-transfer .money-row-main {
+    grid-area: main;
+  }
+
+  .money-row-transfer .money-row-end {
+    grid-area: end;
+    justify-items: start;
+    padding-left: 0;
+  }
 }
 
 .summary-grid {
