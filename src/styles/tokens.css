@@ -2,17 +2,18 @@
   /* Surfaces — elevation via brightness (Green Deck) */
   --bg: #121212;
   --surface: #181818;
-  --surface-elevated: #282828;
-  --surface-high: #333333;
+  --surface-elevated: #242424;
+  --surface-high: #2e2e2e;
   --rail-bg: #000000;
-  --border: #282828;
-  --border-muted: #282828;
-  --border-strong: #727272;
+  /* Borders — subtle by default; strong only for interactive outlines */
+  --border: #1f1f1f;
+  --border-muted: #1c1c1c;
+  --border-strong: #535353;
 
-  /* Text — light only on dark */
+  /* Text — #fff primary / #A7A7A7 secondary on dark */
   --text: #ffffff;
   --text-muted: #a7a7a7;
-  --text-neutral: #b3b3b3;
+  --text-neutral: #a7a7a7;
   --text-on-accent: #ffffff;
 
   /* Accent (overridable via --accent; default Spotify green) */
@@ -33,26 +34,32 @@
   --info: #3b82f6;
   --rare: #a855f7;
 
-  /* Typography — DM Sans + JetBrains Mono */
+  /* Typography — DM Sans + JetBrains Mono · clear hierarchy */
   --font-display: 'DM Sans', system-ui, sans-serif;
   --font-body: 'DM Sans', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  --text-display: 4rem;
-  --text-h1: 2rem;
-  --text-h2: 1.5rem;
-  --text-h3: 1rem;
-  --text-h4: 0.875rem;
+  --text-display: 3.5rem;
+  --text-h1: 1.75rem;
+  --text-h2: 1.25rem;
+  --text-h3: 1.0625rem;
+  --text-h4: 0.9375rem;
   --text-lg: 1rem;
-  --text-md: 0.875rem;
-  --text-sm: 0.75rem;
+  --text-md: 0.9375rem;
+  --text-sm: 0.8125rem;
   --text-xs: 0.6875rem;
-  --text-chip: 0.875rem;
+  --text-chip: 0.8125rem;
+  --text-label: 0.75rem;
 
-  --lh-display: 1.125;
+  --lh-display: 1.1;
   --lh-heading: 1.25;
   --lh-body: 1.5;
   --lh-tight: 1.35;
+
+  /* Icons — shared stroke set size */
+  --icon-sm: 1.125rem;
+  --icon-md: 1.25rem;
+  --icon-lg: 1.375rem;
 
   /* Spacing (8px base) */
   --space-xs: 0.25rem;

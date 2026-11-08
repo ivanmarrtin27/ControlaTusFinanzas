@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { IconBell } from '@/components/layout/icons'
 import { usePlanData } from '@/hooks/usePlanData'
 import {
   buildReminders,
@@ -51,10 +52,7 @@ export function NotificationBell() {
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-          <path d="M6 9a6 6 0 1 1 12 0c0 3.5 1.5 5 1.5 5H4.5S6 12.5 6 9Z" />
-          <path d="M10 19a2 2 0 0 0 4 0" />
-        </svg>
+        <IconBell />
         {count > 0 ? <span className="notif-badge">{count > 9 ? '9+' : count}</span> : null}
       </button>
 

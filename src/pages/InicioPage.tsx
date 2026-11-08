@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import {
+  IconExpense,
+  IconGoals,
+  IconIncome,
+  IconTransfer,
+} from '@/components/layout/icons'
 import { ConfigBanner } from '@/components/money/ConfigBanner'
 import { TemplateChips } from '@/components/money/TemplateChips'
 import { OnboardingWizard } from '@/components/OnboardingWizard'
@@ -136,6 +142,7 @@ export function InicioPage() {
               className="home-shortcut home-shortcut-primary"
               onClick={() => navigate('/movimientos?nuevo=1&quick=expense')}
             >
+              <IconExpense aria-hidden />
               <span className="home-shortcut-label">Gasto</span>
             </button>
             <button
@@ -143,6 +150,7 @@ export function InicioPage() {
               className="home-shortcut"
               onClick={() => navigate('/movimientos?nuevo=1&quick=income')}
             >
+              <IconIncome aria-hidden />
               <span className="home-shortcut-label">Ingreso</span>
             </button>
             <button
@@ -150,6 +158,7 @@ export function InicioPage() {
               className="home-shortcut"
               onClick={() => navigate('/movimientos?transferencia=1')}
             >
+              <IconTransfer aria-hidden />
               <span className="home-shortcut-label">Transferir</span>
             </button>
             <button
@@ -157,6 +166,7 @@ export function InicioPage() {
               className="home-shortcut"
               onClick={() => navigate('/objetivos')}
             >
+              <IconGoals aria-hidden />
               <span className="home-shortcut-label">Objetivos</span>
             </button>
           </div>

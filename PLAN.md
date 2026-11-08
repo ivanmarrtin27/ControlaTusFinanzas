@@ -1,6 +1,6 @@
 # Plan de implementación — ControlaTusFinanzas
 
-**Estado:** fases **0–6 implementadas** (v1 completa en el repo). Aplicar migraciones SQL en tu proyecto Supabase; proyecto remoto puede estar INACTIVE. Deploy: preparar Vercel (ver README).  
+**Estado:** fases **0–6 implementadas** (v1 completa en el repo). **UX dens./utilidad fases 1–6 completas.** Aplicar migraciones SQL en tu proyecto Supabase; proyecto remoto puede estar INACTIVE. Deploy: preparar Vercel (ver README).  
 **Referencia funcional (no visual/copyright):** [controlfinancieroapp.es](https://controlfinancieroapp.es/)  
 **Diseño:** Green Deck (DM Sans / JetBrains Mono, dark Spotify-like, acento verde configurable).
 
@@ -336,4 +336,6 @@ Green Deck se mantiene. Objetivo: más contenido útil por viewport en móvil, s
 | **3 · Movimientos** | Alta en menos taps, filtros sticky, edición más rápida | **Hecha** |
 | **4 · Feedback** | Toasts al guardar, vacíos con CTA, skeletons | **Hecha** (`ToastProvider`, `MoneyListSkeleton`, CTAs en vacíos clave) |
 | **5 · Onboarding** | 3 pasos: cuenta → primer gasto → listo | **Hecha** (`OnboardingWizard` en Inicio; skip + localStorage por usuario; reutiliza `createAccount` / `TransactionForm`) |
-| **6 · Polish** | Tipografía/contraste, iconos unificados, Green Deck más limpio | Pendiente |
+| **6 · Polish** | Tipografía/contraste, iconos unificados, Green Deck más limpio | **Hecha** |
+
+**UX 1–6:** completas (densidad → Inicio → movimientos → feedback → onboarding → polish).

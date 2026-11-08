@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { createPortal } from 'react-dom'
+import { IconClose } from '@/components/layout/icons'
 
 export type ToastTone = 'success' | 'error'
 
@@ -115,7 +116,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                     aria-label="Cerrar aviso"
                     onClick={() => dismiss(toast.id)}
                   >
-                    ×
+                    <IconClose />
                   </button>
                 </div>
               ))}

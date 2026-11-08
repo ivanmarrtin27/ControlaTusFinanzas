@@ -1,19 +1,47 @@
+import type { ComponentType } from 'react'
 import { Link } from 'react-router-dom'
+import {
+  IconAccounts,
+  IconBell,
+  IconCalendar,
+  IconCategories,
+  IconChevron,
+  IconGoals,
+  IconHealth,
+  IconPlan,
+  IconPrivacy,
+  IconReports,
+  IconSettings,
+  IconTags,
+  IconTemplates,
+  IconTransfer,
+  type IconProps,
+} from '@/components/layout/icons'
 
-const links = [
-  { to: '/cuentas', title: 'Cuentas', subtitle: 'Bancarias, efectivo, tarjetas' },
-  { to: '/categorias', title: 'Categorías', subtitle: 'Ingresos y gastos' },
-  { to: '/etiquetas', title: 'Etiquetas', subtitle: 'Tags en movimientos' },
-  { to: '/plantillas', title: 'Plantillas', subtitle: 'Atajos rápidos de movimientos' },
-  { to: '/movimientos?transferencia=1', title: 'Transferencias', subtitle: 'Mover dinero entre cuentas' },
-  { to: '/objetivos', title: 'Objetivos', subtitle: 'Metas de ahorro' },
-  { to: '/planificacion', title: 'Planificación', subtitle: 'Límites, recurrentes, deudas' },
-  { to: '/calendario', title: 'Calendario', subtitle: 'Vencimientos y agenda' },
-  { to: '/recordatorios', title: 'Recordatorios', subtitle: 'Avisos y notificaciones' },
-  { to: '/informes', title: 'Informes', subtitle: 'Descargar PDF y Excel (.xlsx)' },
-  { to: '/centro-financiero', title: 'Centro financiero', subtitle: 'Salud y previsión' },
-  { to: '/ajustes', title: 'Ajustes', subtitle: 'Perfil, privacidad y PWA' },
-  { to: '/privacidad', title: 'Privacidad', subtitle: 'Cómo tratamos tus datos' },
+const links: {
+  to: string
+  title: string
+  subtitle: string
+  Icon: ComponentType<IconProps>
+}[] = [
+  { to: '/cuentas', title: 'Cuentas', subtitle: 'Bancarias, efectivo, tarjetas', Icon: IconAccounts },
+  { to: '/categorias', title: 'Categorías', subtitle: 'Ingresos y gastos', Icon: IconCategories },
+  { to: '/etiquetas', title: 'Etiquetas', subtitle: 'Tags en movimientos', Icon: IconTags },
+  { to: '/plantillas', title: 'Plantillas', subtitle: 'Atajos rápidos de movimientos', Icon: IconTemplates },
+  {
+    to: '/movimientos?transferencia=1',
+    title: 'Transferencias',
+    subtitle: 'Mover dinero entre cuentas',
+    Icon: IconTransfer,
+  },
+  { to: '/objetivos', title: 'Objetivos', subtitle: 'Metas de ahorro', Icon: IconGoals },
+  { to: '/planificacion', title: 'Planificación', subtitle: 'Límites, recurrentes, deudas', Icon: IconPlan },
+  { to: '/calendario', title: 'Calendario', subtitle: 'Vencimientos y agenda', Icon: IconCalendar },
+  { to: '/recordatorios', title: 'Recordatorios', subtitle: 'Avisos y notificaciones', Icon: IconBell },
+  { to: '/informes', title: 'Informes', subtitle: 'Descargar PDF y Excel (.xlsx)', Icon: IconReports },
+  { to: '/centro-financiero', title: 'Centro financiero', subtitle: 'Salud y previsión', Icon: IconHealth },
+  { to: '/ajustes', title: 'Ajustes', subtitle: 'Perfil, privacidad y PWA', Icon: IconSettings },
+  { to: '/privacidad', title: 'Privacidad', subtitle: 'Cómo tratamos tus datos', Icon: IconPrivacy },
 ]
 
 export function MasPage() {
@@ -26,13 +54,16 @@ export function MasPage() {
       <div className="more-grid">
         {links.map((link) => (
           <Link key={link.to} className="more-link" to={link.to}>
-            <div>
+            <span className="more-link-icon" aria-hidden>
+              <link.Icon />
+            </span>
+            <div className="more-link-copy">
               <strong>{link.title}</strong>
-              <div className="muted" style={{ fontSize: '0.8rem', marginTop: '0.2rem' }}>
-                {link.subtitle}
-              </div>
+              <div className="more-link-sub">{link.subtitle}</div>
             </div>
-            <span>Abrir</span>
+            <span className="more-link-chevron" aria-hidden>
+              <IconChevron />
+            </span>
           </Link>
         ))}
       </div>
