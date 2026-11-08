@@ -168,14 +168,20 @@ export function CategoriasPage() {
           <button
             type="button"
             className={`chip${kindTab === 'expense' ? ' chip-active' : ''}`}
-            onClick={() => setKindTab('expense')}
+            onClick={() => {
+              setKindTab('expense')
+              window.scrollTo(0, 0)
+            }}
           >
             Gastos
           </button>
           <button
             type="button"
             className={`chip${kindTab === 'income' ? ' chip-active' : ''}`}
-            onClick={() => setKindTab('income')}
+            onClick={() => {
+              setKindTab('income')
+              window.scrollTo(0, 0)
+            }}
           >
             Ingresos
           </button>

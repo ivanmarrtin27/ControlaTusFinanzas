@@ -255,7 +255,10 @@ export function ObjetivosPage() {
               key={value}
               type="button"
               className={`chip${statusTab === value ? ' chip-active' : ''}`}
-              onClick={() => setStatusTab(value)}
+              onClick={() => {
+                setStatusTab(value)
+                window.scrollTo(0, 0)
+              }}
             >
               {label}
             </button>

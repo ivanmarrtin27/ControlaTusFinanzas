@@ -90,7 +90,10 @@ export function AnalisisPage() {
                 key={item.id}
                 type="button"
                 className={`chip${preset === item.id ? ' chip-active' : ''}`}
-                onClick={() => setPreset(item.id)}
+                onClick={() => {
+                  setPreset(item.id)
+                  window.scrollTo(0, 0)
+                }}
               >
                 {item.label}
               </button>

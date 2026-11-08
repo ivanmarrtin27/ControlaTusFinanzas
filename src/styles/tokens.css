@@ -79,7 +79,6 @@
   --shadow-bar: 0 -8px 24px rgba(0, 0, 0, 0.5);
 
   /* Layout */
-  --nav-height: 4.5rem;
   --rail-width: 15rem; /* 240px */
   --content-max: 100rem; /* ~1600px */
   --transition: 280ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -90,7 +89,19 @@
   --motion-slow: 560ms;
   --motion-page: 520ms;
 
-  /* Safe areas */
+  /* Safe areas + mobile chrome */
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  /* Bottom nav bar (padding + item row), without home-indicator */
+  --bottom-nav-height: 4.25rem;
+  /* FAB sits above the nav row */
+  --fab-clearance: 1.35rem;
+  /* Legacy alias used by page padding */
+  --nav-height: var(--bottom-nav-height);
+  /* Space so lists clear nav + FAB + home indicator */
+  --content-bottom-inset: calc(
+    var(--bottom-nav-height) + var(--fab-clearance) + var(--safe-bottom) + var(--space-xl)
+  );
 }

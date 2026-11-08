@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { Button } from '@/components/ui/Button'
 
 interface SheetProps {
@@ -56,18 +57,18 @@ export function Sheet({ open, title, onClose, children, footer }: SheetProps) {
     }
 
     document.addEventListener('keydown', onKey)
-    const prev = document.body.style.overflow
+    const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
       document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prev
+      document.body.style.overflow = prevOverflow
       previouslyFocused.current?.focus?.()
     }
   }, [open, onClose])
 
   if (!open) return null
 
-  return (
+  return createPortal(
     <div className="sheet-root" role="presentation">
       <button type="button" className="sheet-backdrop" aria-label="Cerrar panel" onClick={onClose} />
       <div
@@ -87,6 +88,7 @@ export function Sheet({ open, title, onClose, children, footer }: SheetProps) {
         <div className="sheet-body">{children}</div>
         {footer ? <footer className="sheet-footer">{footer}</footer> : null}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

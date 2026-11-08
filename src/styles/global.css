@@ -162,7 +162,7 @@ button {
 .page {
   width: min(100%, var(--content-max));
   margin: 0 auto;
-  padding: var(--space-lg) var(--space-md) calc(var(--nav-height) + var(--space-2xl) + var(--safe-bottom));
+  padding: var(--space-lg) var(--space-md) var(--content-bottom-inset);
 }
 
 .page-header {

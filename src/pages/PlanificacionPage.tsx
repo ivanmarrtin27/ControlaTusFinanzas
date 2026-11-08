@@ -53,6 +53,7 @@ export function PlanificacionPage() {
   function selectTab(next: Tab) {
     setTab(next)
     setSearchParams(next === 'limites' ? {} : { tab: next }, { replace: true })
+    window.scrollTo(0, 0)
   }
 
   return (

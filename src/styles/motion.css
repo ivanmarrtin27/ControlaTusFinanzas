@@ -60,9 +60,9 @@
   }
 }
 
-/* Page route enter */
+/* Page route enter — opacity only so fixed sheets aren't trapped by transform */
 .page-transition {
-  animation: gd-fade-up var(--motion-page) var(--ease-out) both;
+  animation: gd-fade-in var(--motion-page) var(--ease-out) both;
 }
 
 /* Soft enter helpers */
@@ -74,9 +74,10 @@
   animation: gd-fade-up var(--motion-med) var(--ease-out) both;
 }
 
-/* Nested tabs / subapartados (planificación, filtros de sección) */
+/* Nested tabs / subapartados — no translateY (avoids empty top gap) */
 .subsection-enter {
-  animation: gd-fade-up var(--motion-page) var(--ease-out) both;
+  animation: gd-fade-in var(--motion-med) var(--ease-out) both;
+  scroll-margin-top: var(--space-sm);
 }
 
 /* Staggered list rows — capped delays, transform/opacity only */
