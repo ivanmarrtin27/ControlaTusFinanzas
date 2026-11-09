@@ -399,7 +399,7 @@ export function MovimientosPage() {
           <h1>Movimientos</h1>
           <p className="page-header-lead">Ingresos, gastos y transferencias.</p>
         </div>
-        <div className="header-actions movimientos-actions">
+        <div className="header-actions action-pair movimientos-actions">
           <Button variant="secondary" size="sm" onClick={openNewTransfer} disabled={!money.userId}>
             Transferir
           </Button>
@@ -530,7 +530,7 @@ export function MovimientosPage() {
               ) : money.activeAccounts.length === 0 ? (
                 <Button onClick={() => navigate('/cuentas')}>Crear cuenta</Button>
               ) : (
-                <div className="empty-state-ctas">
+                <div className="empty-state-ctas action-pair">
                   <Button variant="secondary" onClick={openNewTransfer}>
                     Transferir
                   </Button>

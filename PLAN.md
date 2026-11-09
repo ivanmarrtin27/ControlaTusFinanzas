@@ -355,11 +355,10 @@ Evitar swipe lateral de página (~390px). Preferir `min-width: 0` / `max-width: 
 
 ## Polish portfolio-adjacent (créditos + Movimientos móvil)
 
-Skills/refs: `portfolio-visual-design` (Mi Págna Web), `frontend-design` + Green Deck (`green-deck-DESIGN.md`), lenguaje visual de https://ivanmartin.pages.dev. Green Deck se mantiene; solo harmonía móvil.
+Skills/refs: portfolio local (`Mi Págna Web` / https://ivanmartin.pages.dev — tipografía Manrope/Syne, letter-spacing, blur sticky, botones craft) + Green Deck activo (DM Sans, dark Spotify, acento verde). Blend: no QuestUI ni coral del portfolio.
 
 | Fase | Alcance | Estado |
 |---|---|---|
-| **1 · Créditos** | «Desarrollado por Iván Martín Molina» + GitHub/web en Ajustes «Acerca de», pie de Más y footers de auth | **Hecha** |
-| **2 · Movimientos móvil** | Botones Transferir/Añadir, chips, CTAs vacíos, filtros sticky y filas más homogéneos; sin overflow horizontal | **Hecha** |
-| **3 · Coherencia** | Top bar, empty state y listado alineados al resto de la app (pase ligero) | **Hecha** |
-|
+| **1 · Créditos** | «Desarrollado por Iván Martín Molina» + GitHub/Portfolio en Ajustes «Acerca de», pie de Más y footers de auth | **Hecha** |
+| **2 · Movimientos móvil** | `action-pair` Transferir/Añadir, chips con borde sutil, CTAs vacíos, filtros sticky y filas; sin corte/overflow | **Hecha** |
+| **3 · Coherencia** | `.action-pair` + `.btn`/chips/empty-state compartidos; top bar blur alineado | **Hecha** |

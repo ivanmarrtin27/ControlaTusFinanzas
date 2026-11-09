@@ -16,7 +16,7 @@ export function DeveloperCredit({ variant = 'default', className }: DeveloperCre
   return (
     <p className={rootClass}>
       Desarrollado por{' '}
-      <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
+      <a href={PORTFOLIO_URL} target="_blank" rel="noopener noreferrer">
         Iván Martín Molina
       </a>
       <span className="developer-credit-sep" aria-hidden>
@@ -29,7 +29,7 @@ export function DeveloperCredit({ variant = 'default', className }: DeveloperCre
         ·
       </span>
       <a href={PORTFOLIO_URL} target="_blank" rel="noopener noreferrer">
-        Web
+        Portfolio
       </a>
     </p>
   )

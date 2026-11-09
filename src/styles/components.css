@@ -6,7 +6,7 @@
   border-radius: var(--radius-full);
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   transition:
     background var(--transition),
@@ -17,6 +17,7 @@
     transform var(--transition);
   border: 1px solid transparent;
   white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .btn:disabled {
@@ -237,6 +238,8 @@ button.chip {
   min-height: var(--tap-min);
   padding: 0.4rem 1rem;
   font-weight: 600;
+  letter-spacing: 0.01em;
+  border-color: color-mix(in srgb, #fff 7%, transparent);
   cursor: pointer;
   transition:
     background var(--transition),
@@ -247,7 +250,8 @@ button.chip {
 
 button.chip:hover {
   background: var(--surface-high);
-  transform: scale(1.04);
+  border-color: color-mix(in srgb, #fff 14%, transparent);
+  transform: scale(1.03);
 }
 
 button.chip:active {
@@ -263,6 +267,34 @@ button.chip:active {
   color: #000000;
   border-color: transparent;
   font-weight: 700;
+}
+
+/* Dual CTA pair — header / empty states (shared, mobile-first) */
+.action-pair {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0.55rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.action-pair .btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .action-pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .action-pair .btn {
+    width: 100%;
+  }
 }
 
 .checkbox {
@@ -986,9 +1018,9 @@ button.chip:active {
   font: inherit;
 }
 
-/* Mobile-first polish for Movimientos actions / filters / list */
-.page-movimientos .movimientos-actions {
-  gap: 0.55rem;
+/* Movimientos — portfolio craft + Green Deck dark (hierarchy, chips, rows) */
+.page-movimientos .page-header h1 {
+  letter-spacing: -0.02em;
 }
 
 .page-movimientos .movimientos-actions .btn {
@@ -998,6 +1030,19 @@ button.chip:active {
 .page-movimientos .chip-row-scroll {
   gap: 0.45rem;
   margin: 0.05rem 0;
+  padding-inline: 0.05rem;
+}
+
+.page-movimientos .chip-row-scroll .chip {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #fff 4%, transparent);
+}
+
+.page-movimientos .chip-row-scroll .chip-active {
+  box-shadow: none;
+}
+
+.page-movimientos .filters-grid-compact .select {
+  min-height: var(--tap-min);
 }
 
 .page-movimientos .money-list {
@@ -1025,6 +1070,7 @@ button.chip:active {
 .page-movimientos .money-row-end .amount {
   font-size: 0.9375rem;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .page-movimientos .empty-state {
@@ -1039,22 +1085,11 @@ button.chip:active {
 }
 
 .page-movimientos .empty-state-ctas {
-  margin-top: 0.15rem;
-  gap: 0.55rem;
+  margin-top: 0.2rem;
 }
 
-@media (max-width: 480px) {
-  .page-movimientos .movimientos-actions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: 100%;
-  }
-
-  .page-movimientos .movimientos-actions .btn {
-    width: 100%;
-    min-width: 0;
-    justify-content: center;
-  }
+.page-movimientos .empty-state-ctas.action-pair {
+  width: 100%;
 }
 
 .form-grid-2 {
@@ -1300,8 +1335,8 @@ button.chip:active {
   min-width: 0;
 }
 
-/* Empty CTAs: stack full-width on phones (side-by-side + center clips both edges) */
-.empty-state-ctas,
+/* Empty CTAs: full-width stack on phones; action-pair keeps dual CTAs even */
+.empty-state-ctas:not(.action-pair),
 .empty-state-action .header-actions,
 .empty-state-action .form-actions {
   display: grid;
@@ -1313,7 +1348,7 @@ button.chip:active {
   justify-items: stretch;
 }
 
-.empty-state-ctas .btn,
+.empty-state-ctas:not(.action-pair) .btn,
 .empty-state-action .header-actions .btn,
 .empty-state-action .form-actions .btn,
 .empty-state-action > .btn {
@@ -1322,7 +1357,7 @@ button.chip:active {
 }
 
 @media (min-width: 481px) {
-  .empty-state-ctas,
+  .empty-state-ctas:not(.action-pair),
   .empty-state-action .header-actions,
   .empty-state-action .form-actions {
     display: flex;
@@ -1332,10 +1367,22 @@ button.chip:active {
     max-width: 100%;
   }
 
-  .empty-state-ctas .btn,
+  .empty-state-ctas:not(.action-pair) .btn,
   .empty-state-action .header-actions .btn,
   .empty-state-action .form-actions .btn {
     width: auto;
+  }
+
+  .empty-state-ctas.action-pair {
+    justify-content: center;
+    width: auto;
+    margin-inline: auto;
+  }
+
+  .empty-state-ctas.action-pair .btn {
+    flex: 0 1 auto;
+    width: auto;
+    min-width: 9.5rem;
   }
 }
 
