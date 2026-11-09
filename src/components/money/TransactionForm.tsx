@@ -109,6 +109,19 @@ export function TransactionForm({
     onBusyChange?.(saving)
   }, [saving, onBusyChange])
 
+  // Accounts often arrive after the sheet opens (cold navigate from Inicio/Cuentas).
+  // Without this sync, <select> can show the first label while account_id stays "".
+  useEffect(() => {
+    if (isEdit) return
+    setValues((v) => {
+      const active = accounts.filter((a) => a.is_active)
+      if (v.account_id && active.some((a) => a.id === v.account_id)) return v
+      const next = resolveDefaultAccountId(accounts, initial?.account_id)
+      if (next === v.account_id) return v
+      return { ...v, account_id: next }
+    })
+  }, [accounts, isEdit, initial?.account_id])
+
   useEffect(() => {
     if (isEdit) return
     const node = amountRef.current
@@ -152,12 +165,16 @@ export function TransactionForm({
       setError('El concepto es obligatorio.')
       return
     }
-    if (!values.account_id) {
-      setError('Selecciona una cuenta.')
-      return
-    }
     if (accountOptions.length === 0) {
       setError('Crea una cuenta antes de registrar un movimiento.')
+      return
+    }
+    const accountId =
+      values.account_id && accountOptions.some((o) => o.value === values.account_id)
+        ? values.account_id
+        : (accountOptions[0]?.value ?? '')
+    if (!accountId) {
+      setError('Selecciona una cuenta.')
       return
     }
     if (!values.occurred_at) {
@@ -172,14 +189,14 @@ export function TransactionForm({
         amount,
         concept: values.concept.trim(),
         note: values.note.trim() || null,
-        account_id: values.account_id,
+        account_id: accountId,
         category_id: values.category_id || null,
         occurred_at: dateInputToIso(values.occurred_at),
         tag_ids: values.tag_ids,
         receipt_file: receiptFile,
         clear_receipt: clearReceipt,
       })
-      setLastAccountId(values.account_id)
+      setLastAccountId(accountId)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo guardar el movimiento.')
       setSaving(false)

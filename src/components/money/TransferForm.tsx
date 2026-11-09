@@ -55,6 +55,34 @@ export function TransferForm({
     onBusyChange?.(saving)
   }, [saving, onBusyChange])
 
+  // Same cold-load race as TransactionForm: options appear before draft ids sync.
+  useEffect(() => {
+    const list = accounts.filter(
+      (a) => a.is_active || a.id === initial?.from_account_id || a.id === initial?.to_account_id,
+    )
+    if (list.length === 0) return
+    const ids = new Set(list.map((a) => a.id))
+
+    setFromId((prev) => {
+      if (prev && ids.has(prev)) return prev
+      if (initial?.from_account_id && ids.has(initial.from_account_id)) {
+        return initial.from_account_id
+      }
+      return list[0]?.id ?? ''
+    })
+    setToId((prev) => {
+      if (prev && ids.has(prev)) return prev
+      if (initial?.to_account_id && ids.has(initial.to_account_id)) {
+        return initial.to_account_id
+      }
+      const preferredFrom =
+        (initial?.from_account_id && ids.has(initial.from_account_id)
+          ? initial.from_account_id
+          : null) ?? list[0]?.id
+      return list.find((a) => a.id !== preferredFrom)?.id ?? ''
+    })
+  }, [accounts, initial?.from_account_id, initial?.to_account_id])
+
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError(null)
@@ -63,16 +91,22 @@ export function TransferForm({
       setError('Introduce un importe mayor que 0 (puedes usar coma o punto).')
       return
     }
-    if (!fromId || !toId) {
+    if (options.length < 2) {
+      setError('Necesitas al menos dos cuentas activas para transferir.')
+      return
+    }
+    const resolvedFrom =
+      fromId && options.some((o) => o.value === fromId) ? fromId : (options[0]?.value ?? '')
+    const resolvedTo =
+      toId && options.some((o) => o.value === toId)
+        ? toId
+        : (options.find((o) => o.value !== resolvedFrom)?.value ?? '')
+    if (!resolvedFrom || !resolvedTo) {
       setError('Selecciona cuenta origen y destino.')
       return
     }
-    if (fromId === toId) {
+    if (resolvedFrom === resolvedTo) {
       setError('Elige dos cuentas distintas.')
-      return
-    }
-    if (options.length < 2) {
-      setError('Necesitas al menos dos cuentas activas para transferir.')
       return
     }
     if (!occurredAt) {
@@ -83,8 +117,8 @@ export function TransferForm({
     setSaving(true)
     try {
       await onSubmit({
-        from_account_id: fromId,
-        to_account_id: toId,
+        from_account_id: resolvedFrom,
+        to_account_id: resolvedTo,
         amount: n,
         concept: concept.trim() || null,
         occurred_at: dateInputToIso(occurredAt),
