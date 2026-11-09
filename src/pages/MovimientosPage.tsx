@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
@@ -30,6 +30,13 @@ import {
   updateTransfer,
 } from '@/lib/moneyApi'
 import { deleteReceipt, uploadReceipt } from '@/lib/receiptApi'
+import {
+  consumeQuickAddIntent,
+  parseQuickParam,
+  peekQuickAddIntent,
+  setQuickAddIntent,
+  type QuickAddType,
+} from '@/lib/quickAdd'
 import { setTransactionTags } from '@/lib/tagApi'
 import { listTemplates } from '@/lib/templateApi'
 import type {
@@ -72,6 +79,7 @@ export function MovimientosPage() {
   const [formKey, setFormKey] = useState(0)
   const [busyError, setBusyError] = useState<string | null>(null)
   const [templates, setTemplates] = useState<TransactionTemplate[]>([])
+  const quickOpenHandledRef = useRef(false)
 
   const refreshTemplates = useCallback(async () => {
     if (!money.userId || !money.configured) {
@@ -105,7 +113,7 @@ export function MovimientosPage() {
 
   useEffect(() => {
     const nuevo = searchParams.get('nuevo')
-    const quick = searchParams.get('quick')
+    const quickFromUrl = parseQuickParam(searchParams.get('quick'))
     const transfer = searchParams.get('transferencia')
     const plantilla = searchParams.get('plantilla')
 
@@ -129,14 +137,32 @@ export function MovimientosPage() {
       return
     }
 
-    if (nuevo === '1' || quick === 'expense' || quick === 'income') {
-      const type: TransactionType =
-        quick === 'income' ? 'income' : quick === 'expense' ? 'expense' : 'expense'
-      setPrefill({ type, tag_ids: [] })
-      setEditingTx(null)
-      setFormKey((k) => k + 1)
-      setSheetMode('transaction')
+    if (quickFromUrl) setQuickAddIntent(quickFromUrl)
+
+    const storedQuick = peekQuickAddIntent()
+    const triggeredByUrl = nuevo === '1' || quickFromUrl != null
+    const shouldOpen = triggeredByUrl || storedQuick != null
+    if (!shouldOpen) return
+
+    // Same mount after cleaning the URL: don't reopen / reset the form.
+    if (quickOpenHandledRef.current) {
+      consumeQuickAddIntent()
+      return
+    }
+    quickOpenHandledRef.current = true
+
+    const type: TransactionType = (quickFromUrl ?? storedQuick ?? 'expense') satisfies QuickAddType
+    setPrefill({ type, tag_ids: [] })
+    setEditingTx(null)
+    setFormKey((k) => k + 1)
+    setSheetMode('transaction')
+
+    if (triggeredByUrl) {
       navigate('/movimientos', { replace: true })
+      // Keep intent briefly so a Strict Mode remount can reopen the sheet.
+      window.setTimeout(() => consumeQuickAddIntent(), 400)
+    } else {
+      consumeQuickAddIntent()
     }
   }, [searchParams, navigate, templates, money.userId])
 

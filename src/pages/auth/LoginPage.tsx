@@ -1,21 +1,37 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { Input } from '@/components/ui/Input'
 import { authErrorMessage } from '@/lib/authErrors'
+import { consumeAuthReturnTo, peekAuthReturnTo, peekQuickAddIntent } from '@/lib/quickAdd'
+
+function resolvePostLoginPath(stateFrom: string | undefined): string {
+  if (stateFrom && stateFrom.startsWith('/')) return stateFrom
+  const stored = peekAuthReturnTo()
+  if (stored) return stored
+  const quick = peekQuickAddIntent()
+  if (quick) return `/movimientos?nuevo=1&quick=${quick}`
+  return '/'
+}
 
 export function LoginPage() {
   const { signIn, signInWithGoogle, session, loading, configured } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const from = (location.state as { from?: string } | null)?.from ?? '/'
+  const stateFrom = (location.state as { from?: string } | null)?.from
+  const fromRef = useRef(resolvePostLoginPath(stateFrom))
+  const from = fromRef.current
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+
+  useEffect(() => {
+    if (!loading && session) consumeAuthReturnTo()
+  }, [loading, session])
 
   if (!loading && session) {
     return <Navigate to={from} replace />
@@ -31,6 +47,7 @@ export function LoginPage() {
       setError(authErrorMessage(err))
       return
     }
+    consumeAuthReturnTo()
     navigate(from, { replace: true })
   }
 

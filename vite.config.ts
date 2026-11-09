@@ -54,14 +54,14 @@ export default defineConfig({
           {
             name: 'Registrar gasto',
             short_name: 'Gasto',
-            description: 'Abrir alta rápida de gasto',
+            description: 'Abrir el formulario de nuevo gasto',
             url: '/?quick=expense',
             icons: [{ src: '/icons/shortcut-expense.svg', sizes: '96x96', type: 'image/svg+xml' }],
           },
           {
             name: 'Registrar ingreso',
             short_name: 'Ingreso',
-            description: 'Abrir alta rápida de ingreso',
+            description: 'Abrir el formulario de nuevo ingreso',
             url: '/?quick=income',
             icons: [{ src: '/icons/shortcut-income.svg', sizes: '96x96', type: 'image/svg+xml' }],
           },

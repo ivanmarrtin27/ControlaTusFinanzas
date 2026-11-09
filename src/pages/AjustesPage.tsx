@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BackupPanel } from '@/components/BackupPanel'
 import { DeleteAccountPanel } from '@/components/DeleteAccountPanel'
+import { IosShortcutsPanel } from '@/components/IosShortcutsPanel'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
@@ -79,7 +80,7 @@ export function AjustesPage() {
     <main className="page">
       <header className="page-header">
         <h1>Ajustes</h1>
-        <p className="page-header-lead">Perfil, acento, moneda y copia.</p>
+        <p className="page-header-lead">Perfil, acento, moneda, atajos iPhone y copia.</p>
       </header>
 
       <div className="stack-md" style={{ maxWidth: '36rem' }}>
@@ -189,10 +190,14 @@ export function AjustesPage() {
 
         <BackupPanel />
 
+        <IosShortcutsPanel />
+
         <Card>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>App instalable (PWA)</h2>
           <p className="field-hint" style={{ margin: 0 }}>
-            En el móvil: «Añadir a pantalla de inicio». Atajos: gasto e ingreso rápidos.
+            En el móvil: «Añadir a pantalla de inicio». Al mantener pulsado el icono puedes usar
+            los atajos de gasto e ingreso. Para el Centro de control, usa la sección de Atajos
+            iPhone de arriba.
           </p>
         </Card>
 

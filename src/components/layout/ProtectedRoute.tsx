@@ -6,10 +6,16 @@
 import type { ReactNode } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
+import { parseQuickParam, setAuthReturnTo, setQuickAddIntent } from '@/lib/quickAdd'
 
 export function ProtectedRoute({ children }: { children: ReactNode }) {
   const { session, loading, configured } = useAuth()
   const location = useLocation()
+  const returnTo = `${location.pathname}${location.search}`
+
+  // Capture deep-link intent as early as possible (incl. while session loads).
+  const quick = parseQuickParam(new URLSearchParams(location.search).get('quick'))
+  if (quick) setQuickAddIntent(quick)
 
   if (loading) {
     return (
@@ -27,11 +33,12 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
   }
 
   if (!session) {
+    setAuthReturnTo(returnTo)
     return (
       <Navigate
         to="/auth/login"
         replace
-        state={{ from: `${location.pathname}${location.search}` }}
+        state={{ from: returnTo }}
       />
     )
   }
