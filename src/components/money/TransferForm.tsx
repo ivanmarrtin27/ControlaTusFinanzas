@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { parseUserAmount } from '@/lib/currency'
 import { dateInputToIso, toDateInputValue } from '@/lib/dates'
+import { accountOptionLabel } from '@/lib/labels'
 import type { Account, Transfer } from '@/types/database'
 
 interface TransferFormProps {
@@ -48,7 +49,7 @@ export function TransferForm({
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
-  const options = active.map((a) => ({ value: a.id, label: a.name }))
+  const options = active.map((a) => ({ value: a.id, label: accountOptionLabel(a) }))
 
   useEffect(() => {
     onBusyChange?.(saving)

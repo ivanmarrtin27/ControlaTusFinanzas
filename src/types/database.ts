@@ -1,4 +1,4 @@
-export type AccountType = 'bank' | 'cash' | 'card' | 'other'
+export type AccountType = 'bank' | 'cash' | 'card' | 'savings' | 'other'
 export type CategoryKind = 'income' | 'expense'
 export type TransactionType = 'income' | 'expense'
 export type GoalStatus = 'active' | 'paused' | 'completed'

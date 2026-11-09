@@ -99,17 +99,14 @@ export function InicioPage() {
       ? 'Sin cuentas activas'
       : `${money.activeAccounts.length} cuenta${money.activeAccounts.length === 1 ? '' : 's'}`
 
-  const topAccounts = useMemo(() => {
+  /** All active accounts (incl. zero / ahorro); name order so none hide behind “top by balance”. */
+  const homeAccounts = useMemo(() => {
     return [...money.activeAccounts]
       .map((account) => ({
         account,
         balance: money.balancesByAccount.get(account.id) ?? 0,
       }))
-      .sort((a, b) => {
-        if (b.balance !== a.balance) return b.balance - a.balance
-        return a.account.name.localeCompare(b.account.name, 'es')
-      })
-      .slice(0, 3)
+      .sort((a, b) => a.account.name.localeCompare(b.account.name, 'es'))
   }, [money.activeAccounts, money.balancesByAccount])
 
   return (
@@ -150,7 +147,7 @@ export function InicioPage() {
           <p className="home-hero-meta muted">{accountsLabel}</p>
         </section>
 
-        {/* 2 · Cuentas (top 3) */}
+        {/* 2 · Cuentas activas */}
         <section className="home-accounts" aria-label="Cuentas">
           {money.loading ? (
             <div className="home-account-list" aria-hidden>
@@ -170,11 +167,11 @@ export function InicioPage() {
               <div className="section-head home-accounts-head">
                 <span className="muted home-accounts-label">Cuentas</span>
                 <Link to="/cuentas" className="text-link">
-                  Ver todas
+                  Gestionar
                 </Link>
               </div>
               <div className="home-account-list">
-                {topAccounts.map(({ account, balance }) => (
+                {homeAccounts.map(({ account, balance }) => (
                   <Link
                     key={account.id}
                     to="/cuentas"

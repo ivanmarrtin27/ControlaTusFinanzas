@@ -12,6 +12,7 @@ export const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
   bank: 'Bancaria',
   cash: 'Efectivo',
   card: 'Tarjeta',
+  savings: 'Ahorro',
   other: 'Otra',
 }
 
@@ -19,8 +20,18 @@ export const ACCOUNT_TYPE_OPTIONS: { value: AccountType; label: string }[] = [
   { value: 'bank', label: ACCOUNT_TYPE_LABELS.bank },
   { value: 'cash', label: ACCOUNT_TYPE_LABELS.cash },
   { value: 'card', label: ACCOUNT_TYPE_LABELS.card },
+  { value: 'savings', label: ACCOUNT_TYPE_LABELS.savings },
   { value: 'other', label: ACCOUNT_TYPE_LABELS.other },
 ]
+
+/** Label for selects: "Cuenta Ahorro · Ahorro". */
+export function accountOptionLabel(account: {
+  name: string
+  type: AccountType
+}): string {
+  const typeLabel = ACCOUNT_TYPE_LABELS[account.type] ?? account.type
+  return `${account.name} · ${typeLabel}`
+}
 
 export const CATEGORY_KIND_LABELS: Record<CategoryKind, string> = {
   expense: 'Gasto',

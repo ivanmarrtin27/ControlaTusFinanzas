@@ -6,6 +6,7 @@ import { Select } from '@/components/ui/Select'
 import { Textarea } from '@/components/ui/Textarea'
 import { parseUserAmount } from '@/lib/currency'
 import { dateInputToIso, toDateInputValue } from '@/lib/dates'
+import { accountOptionLabel } from '@/lib/labels'
 import { resolveDefaultAccountId, setLastAccountId } from '@/lib/txDefaults'
 import type { Account, Category, Tag, Transaction, TransactionType } from '@/types/database'
 
@@ -125,7 +126,7 @@ export function TransactionForm({
 
   const accountOptions = accounts
     .filter((a) => a.is_active || a.id === values.account_id)
-    .map((a) => ({ value: a.id, label: a.name }))
+    .map((a) => ({ value: a.id, label: accountOptionLabel(a) }))
 
   function toggleTag(tagId: string) {
     setValues((v) => {

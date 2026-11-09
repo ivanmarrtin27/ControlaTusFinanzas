@@ -56,6 +56,9 @@ export function humanizeSupabaseError(message: string): string {
   if (m.includes('foreign key') && m.includes('account')) {
     return 'La cuenta seleccionada no es válida o ya no existe.'
   }
+  if (m.includes('invalid input value for enum account_type')) {
+    return 'Tipo de cuenta no válido. Elige Bancaria, Efectivo, Tarjeta, Ahorro u Otra.'
+  }
   if (m.includes('foreign key') && m.includes('category')) {
     return 'La categoría seleccionada no es válida o ya no existe.'
   }

@@ -25,7 +25,7 @@ const links: {
   subtitle: string
   Icon: ComponentType<IconProps>
 }[] = [
-  { to: '/cuentas', title: 'Cuentas', subtitle: 'Bancarias, efectivo, tarjetas', Icon: IconAccounts },
+  { to: '/cuentas', title: 'Cuentas', subtitle: 'Bancarias, efectivo, ahorro…', Icon: IconAccounts },
   { to: '/categorias', title: 'Categorías', subtitle: 'Ingresos y gastos', Icon: IconCategories },
   { to: '/etiquetas', title: 'Etiquetas', subtitle: 'Tags en movimientos', Icon: IconTags },
   { to: '/plantillas', title: 'Plantillas', subtitle: 'Atajos rápidos de movimientos', Icon: IconTemplates },

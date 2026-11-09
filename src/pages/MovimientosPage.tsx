@@ -78,8 +78,10 @@ export function MovimientosPage() {
   const [sheetMode, setSheetMode] = useState<SheetMode>(null)
   const [editingTx, setEditingTx] = useState<Transaction | null>(null)
   const [editingTransfer, setEditingTransfer] = useState<Transfer | null>(null)
+  const [transferPrefill, setTransferPrefill] = useState<Partial<Transfer> | null>(null)
   const [prefill, setPrefill] = useState<Prefill>({ type: 'expense', tag_ids: [] })
   const [formKey, setFormKey] = useState(0)
+  const [transferFormKey, setTransferFormKey] = useState(0)
   const [busyError, setBusyError] = useState<string | null>(null)
   const [templates, setTemplates] = useState<TransactionTemplate[]>([])
   const [txBusy, setTxBusy] = useState(false)
@@ -121,9 +123,17 @@ export function MovimientosPage() {
     const quickFromUrl = parseQuickParam(searchParams.get('quick'))
     const transfer = searchParams.get('transferencia')
     const plantilla = searchParams.get('plantilla')
+    const cuenta = searchParams.get('cuenta') || undefined
+    const desde = searchParams.get('desde') || undefined
+    const hacia = searchParams.get('hacia') || undefined
 
     if (transfer === '1') {
       setEditingTransfer(null)
+      setTransferPrefill({
+        ...(desde ? { from_account_id: desde } : {}),
+        ...(hacia ? { to_account_id: hacia } : {}),
+      })
+      setTransferFormKey((k) => k + 1)
       setSheetMode('transfer')
       navigate('/movimientos', { replace: true })
       return
@@ -157,7 +167,11 @@ export function MovimientosPage() {
     quickOpenHandledRef.current = true
 
     const type: TransactionType = (quickFromUrl ?? storedQuick ?? 'expense') satisfies QuickAddType
-    setPrefill({ type, tag_ids: [] })
+    setPrefill({
+      type,
+      account_id: cuenta,
+      tag_ids: [],
+    })
     setEditingTx(null)
     setFormKey((k) => k + 1)
     setSheetMode('transaction')
@@ -254,6 +268,8 @@ export function MovimientosPage() {
 
   function openNewTransfer() {
     setEditingTransfer(null)
+    setTransferPrefill(null)
+    setTransferFormKey((k) => k + 1)
     setSheetMode('transfer')
   }
 
@@ -265,6 +281,8 @@ export function MovimientosPage() {
 
   function openEditTransfer(tr: Transfer) {
     setEditingTransfer(tr)
+    setTransferPrefill(null)
+    setTransferFormKey((k) => k + 1)
     setSheetMode('transfer')
   }
 
@@ -333,6 +351,7 @@ export function MovimientosPage() {
     }
     setSheetMode(null)
     setEditingTransfer(null)
+    setTransferPrefill(null)
     toast.success(wasEdit ? 'Transferencia actualizada' : 'Transferencia guardada')
     await money.refresh()
   }
@@ -713,6 +732,7 @@ export function MovimientosPage() {
         onClose={() => {
           setSheetMode(null)
           setEditingTransfer(null)
+          setTransferPrefill(null)
           setTransferBusy(false)
         }}
         footer={
@@ -734,6 +754,7 @@ export function MovimientosPage() {
               onClick={() => {
                 setSheetMode(null)
                 setEditingTransfer(null)
+                setTransferPrefill(null)
                 setTransferBusy(false)
               }}
             >
@@ -750,17 +771,18 @@ export function MovimientosPage() {
         }
       >
         <TransferForm
-          key={editingTransfer?.id ?? 'new-transfer'}
+          key={editingTransfer?.id ?? `new-transfer-${transferFormKey}`}
           formId={TRANSFER_FORM_ID}
           showActions={false}
           onBusyChange={setTransferBusy}
           accounts={money.accounts}
-          initial={editingTransfer ?? undefined}
+          initial={editingTransfer ?? transferPrefill ?? undefined}
           submitLabel={editingTransfer ? 'Guardar cambios' : 'Transferir'}
           onSubmit={handleSaveTransfer}
           onCancel={() => {
             setSheetMode(null)
             setEditingTransfer(null)
+            setTransferPrefill(null)
             setTransferBusy(false)
           }}
         />

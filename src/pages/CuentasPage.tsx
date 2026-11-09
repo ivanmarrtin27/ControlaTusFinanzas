@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { DeltaBadge } from '@/components/money/DeltaBadge'
 import { ConfigBanner } from '@/components/money/ConfigBanner'
 import { Button } from '@/components/ui/Button'
@@ -48,6 +49,7 @@ const emptyDraft = (): Draft => ({
 })
 
 export function CuentasPage() {
+  const navigate = useNavigate()
   const { profile } = useAuth()
   const currency = profile?.currency ?? 'EUR'
   const money = useMoneyData()
@@ -375,12 +377,37 @@ export function CuentasPage() {
           </label>
 
           {draft.id ? (
+            <div className="form-actions" style={{ marginTop: '0.15rem' }}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  setSheetOpen(false)
+                  navigate(`/movimientos?nuevo=1&quick=income&cuenta=${draft.id}`)
+                }}
+              >
+                Añadir ingreso
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  setSheetOpen(false)
+                  navigate(`/movimientos?transferencia=1&hacia=${draft.id}`)
+                }}
+              >
+                Transferir aquí
+              </Button>
+            </div>
+          ) : null}
+
+          {draft.id ? (
             <div className="reconcile-box">
               {!reconcileMode ? (
                 <>
                   <p className="muted">
-                    ¿El saldo del banco no coincide? Actualízalo sin reescribir el historial: se
-                    crea un movimiento «Ajuste de saldo» por la diferencia.
+                    Para meter dinero usa «Añadir ingreso» o «Transferir aquí». «Actualizar saldo»
+                    solo si el banco no coincide: crea un ajuste sin borrar historial.
                   </p>
                   <Button
                     type="button"
