@@ -16,8 +16,12 @@ const FOCUSABLE =
 export function Sheet({ open, title, onClose, children, footer }: SheetProps) {
   const panelRef = useRef<HTMLDivElement>(null)
   const previouslyFocused = useRef<HTMLElement | null>(null)
+  const onCloseRef = useRef(onClose)
   const titleId = useId()
+  onCloseRef.current = onClose
 
+  // Only re-run when `open` changes. Callers pass inline onClose lambdas; putting
+  // onClose in deps re-ran the trap on every keystroke and stole focus from inputs.
   useEffect(() => {
     if (!open) return
 
@@ -30,7 +34,7 @@ export function Sheet({ open, title, onClose, children, footer }: SheetProps) {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault()
-        onClose()
+        onCloseRef.current()
         return
       }
       if (event.key !== 'Tab' || !panel) return
@@ -64,7 +68,7 @@ export function Sheet({ open, title, onClose, children, footer }: SheetProps) {
       document.body.style.overflow = prevOverflow
       previouslyFocused.current?.focus?.()
     }
-  }, [open, onClose])
+  }, [open])
 
   if (!open) return null
 
