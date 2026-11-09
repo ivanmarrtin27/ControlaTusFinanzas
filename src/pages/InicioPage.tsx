@@ -99,6 +99,19 @@ export function InicioPage() {
       ? 'Sin cuentas activas'
       : `${money.activeAccounts.length} cuenta${money.activeAccounts.length === 1 ? '' : 's'}`
 
+  const topAccounts = useMemo(() => {
+    return [...money.activeAccounts]
+      .map((account) => ({
+        account,
+        balance: money.balancesByAccount.get(account.id) ?? 0,
+      }))
+      .sort((a, b) => {
+        if (b.balance !== a.balance) return b.balance - a.balance
+        return a.account.name.localeCompare(b.account.name, 'es')
+      })
+      .slice(0, 3)
+  }, [money.activeAccounts, money.balancesByAccount])
+
   return (
     <main className="page">
       <header className="page-header page-header-row">
@@ -134,20 +147,61 @@ export function InicioPage() {
           ) : (
             <p className="home-hero-amount amount">{formatMoney(money.totalBalance, currency)}</p>
           )}
-          <p className="home-hero-meta muted">
-            {accountsLabel}
-            {!money.loading && money.activeAccounts.length > 0 ? (
-              <>
-                {' · '}
-                <Link to="/cuentas" className="text-link">
-                  Ver cuentas
-                </Link>
-              </>
-            ) : null}
-          </p>
+          <p className="home-hero-meta muted">{accountsLabel}</p>
         </section>
 
-        {/* 2 · Atajos */}
+        {/* 2 · Cuentas (top 3) */}
+        <section className="home-accounts" aria-label="Cuentas">
+          {money.loading ? (
+            <div className="home-account-list" aria-hidden>
+              {[0, 1, 2].map((i) => (
+                <span key={i} className="skeleton skeleton-line skeleton-line-meta home-account-skel" />
+              ))}
+            </div>
+          ) : money.activeAccounts.length === 0 ? (
+            <div className="home-accounts-empty">
+              <p className="muted home-accounts-empty-text">Aún no tienes cuentas.</p>
+              <Button size="sm" onClick={() => navigate('/cuentas')}>
+                Crear cuenta
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div className="section-head home-accounts-head">
+                <span className="muted home-accounts-label">Cuentas</span>
+                <Link to="/cuentas" className="text-link">
+                  Ver todas
+                </Link>
+              </div>
+              <div className="home-account-list">
+                {topAccounts.map(({ account, balance }) => (
+                  <Link
+                    key={account.id}
+                    to="/cuentas"
+                    className="home-account-row"
+                    title={`${account.name}: ${formatMoney(balance, currency)}`}
+                  >
+                    <span
+                      className="money-dot"
+                      style={{ background: account.color || 'var(--accent)' }}
+                    />
+                    <span className="home-account-name">{account.name}</span>
+                    <span className="amount home-account-balance">
+                      {formatMoney(balance, currency)}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
+          {!money.loading ? (
+            <Link to="/planificacion?tab=importar" className="home-import-link">
+              Importar extracto
+            </Link>
+          ) : null}
+        </section>
+
+        {/* 3 · Atajos */}
         <section className="home-actions" aria-label="Atajos">
           <div className="home-shortcuts">
             <button
@@ -201,7 +255,7 @@ export function InicioPage() {
           ) : null}
         </section>
 
-        {/* 3 · Resumen periodo */}
+        {/* 4 · Resumen periodo */}
         <section className="home-period" aria-label="Resumen del periodo">
           <div className="home-period-cell">
             <p className="home-period-label">Hoy</p>
@@ -245,7 +299,7 @@ export function InicioPage() {
           </div>
         </section>
 
-        {/* 4 · Avisos */}
+        {/* 5 · Avisos */}
         {compactAlerts.length > 0 ? (
           <Card className="home-alerts">
             <div className="section-head">
@@ -277,7 +331,7 @@ export function InicioPage() {
           </Card>
         ) : null}
 
-        {/* 5 · Recientes */}
+        {/* 6 · Recientes */}
         <Card>
           <div className="section-head">
             <h2>Recientes</h2>
