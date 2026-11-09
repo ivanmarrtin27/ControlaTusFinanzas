@@ -175,6 +175,7 @@
 
 .select {
   appearance: none;
+  -webkit-appearance: none;
   background-image: linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
     linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
   background-position:
@@ -183,6 +184,10 @@
   background-size: 6px 6px;
   background-repeat: no-repeat;
   padding-right: 2rem;
+  /* Long option labels must not force layout wider than the field */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .card {
@@ -576,7 +581,9 @@ button.chip:active {
   flex-wrap: wrap;
   gap: var(--space-sm);
   align-items: center;
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 100%;
 }
 
 @media (max-width: 959px) {
@@ -605,7 +612,7 @@ button.chip:active {
   max-width: 100%;
 }
 
-/* Horizontal scroll rows (templates / dense filter chips) */
+/* Horizontal scroll rows (templates / dense filter chips) — scroll inside, never widen page */
 .chip-row-scroll,
 .chip-row.template-chips {
   flex-wrap: nowrap;
@@ -619,6 +626,8 @@ button.chip:active {
   scrollbar-width: none;
   padding-bottom: 0.2rem;
   touch-action: pan-x;
+  /* Keep scrollport from expanding ancestors on iOS */
+  contain: inline-size;
 }
 
 .chip-row-scroll::-webkit-scrollbar,
@@ -694,16 +703,27 @@ button.chip:active {
   justify-content: flex-end;
   align-items: center;
   margin-top: var(--space-sm);
+  min-width: 0;
+  max-width: 100%;
 }
 
-@media (max-width: 419px) {
+@media (max-width: 480px) {
+  .form-actions,
   .transfer-form .form-actions {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
+    justify-content: stretch;
   }
 
+  .form-actions .btn,
   .transfer-form .form-actions .btn {
     width: 100%;
+    min-width: 0;
+  }
+
+  .form-actions .btn-destructive {
+    margin-right: 0;
+    order: 1;
   }
 }
 
@@ -808,24 +828,27 @@ button.chip:active {
 
 .filters-grid-compact {
   gap: var(--space-sm);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* Mobile-first: full-width selects — 2-col clips on ~390px iPhones */
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .filters-grid-compact .field {
   gap: 0.2rem;
   min-width: 0;
   max-width: 100%;
+  overflow: hidden; /* Safari native <select> min-content otherwise expands the grid */
 }
 
 .filters-grid-compact .select {
   min-width: 0;
   max-width: 100%;
+  width: 100%;
+  text-overflow: ellipsis;
 }
 
-@media (max-width: 419px) {
-  /* Avoid native <select> intrinsic min-width blowing past the viewport */
+@media (min-width: 481px) {
   .filters-grid-compact {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -1065,6 +1088,8 @@ button.chip:active {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm) var(--space-md);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .section-head > :first-child {
@@ -1085,6 +1110,9 @@ button.chip:active {
   background: var(--surface);
   border-radius: var(--radius-md);
   animation: gd-fade-in var(--motion-med) var(--ease-out) both;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 .empty-state h2 {
@@ -1103,6 +1131,48 @@ button.chip:active {
   display: flex;
   justify-content: center;
   margin-top: var(--space-sm);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Empty CTAs: stack full-width on phones (side-by-side + center clips both edges) */
+.empty-state-ctas,
+.empty-state-action .header-actions,
+.empty-state-action .form-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  justify-items: stretch;
+}
+
+.empty-state-ctas .btn,
+.empty-state-action .header-actions .btn,
+.empty-state-action .form-actions .btn,
+.empty-state-action > .btn {
+  width: 100%;
+  min-width: 0;
+}
+
+@media (min-width: 481px) {
+  .empty-state-ctas,
+  .empty-state-action .header-actions,
+  .empty-state-action .form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .empty-state-ctas .btn,
+  .empty-state-action .header-actions .btn,
+  .empty-state-action .form-actions .btn {
+    width: auto;
+  }
 }
 
 .color-swatches {
@@ -2258,7 +2328,8 @@ button.chip:active {
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
-  width: min(22rem, calc(100vw - 1.5rem));
+  width: min(22rem, calc(100% - 1.5rem));
+  max-width: calc(100% - 1.5rem);
   pointer-events: none;
 }
 
