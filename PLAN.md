@@ -339,3 +339,15 @@ Green Deck se mantiene. Objetivo: más contenido útil por viewport en móvil, s
 | **6 · Polish** | Tipografía/contraste, iconos unificados, Green Deck más limpio | **Hecha** |
 
 **UX 1–6:** completas (densidad → Inicio → movimientos → feedback → onboarding → polish).
+
+---
+
+## Móvil iPhone — overflow horizontal (post UX)
+
+Evitar swipe lateral de página (~390px). Preferir `min-width: 0` / `max-width: 100%` / wrap; overflow-x solo como contención segura.
+
+| Fase | Alcance | Estado |
+|---|---|---|
+| **A · Movimientos** | Filtros sticky (chips scroll contenidos, selects apilados en pantallas ≤419px), filas/importes/badges sin ensanchar la página, bottom-nav con `minmax(0,1fr)` | **Hecha** |
+| **B · Transferencia** | Sheet de transferencia + filas de ruta apiladas a ancho completo; `field`/`select`/`sheet-body` con min-width 0 | **Hecha** |
+|

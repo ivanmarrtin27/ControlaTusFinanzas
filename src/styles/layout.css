@@ -7,6 +7,9 @@
 
 .app-main {
   min-width: 0;
+  max-width: 100%;
+  /* Contain accidental child overflow without enabling page swipe */
+  overflow-x: hidden;
 }
 
 .top-bar {
@@ -47,9 +50,11 @@
   bottom: 0;
   z-index: 40;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: end;
   gap: 0.15rem;
+  width: 100%;
+  max-width: 100%;
   min-height: calc(var(--bottom-nav-height) + var(--safe-bottom));
   padding: 0.4rem 0.35rem calc(0.45rem + var(--safe-bottom));
   padding-left: calc(0.35rem + var(--safe-left));
@@ -57,6 +62,8 @@
   background: var(--surface);
   border-top: 1px solid var(--border-muted);
   box-shadow: var(--shadow-bar);
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .nav-item {
@@ -65,6 +72,8 @@
   justify-items: center;
   align-content: center;
   gap: 0.2rem;
+  min-width: 0;
+  max-width: 100%;
   min-height: var(--tap-min);
   padding: 0.4rem 0.15rem;
   color: var(--text-muted);
@@ -84,6 +93,10 @@
   text-transform: none;
   font-weight: 700;
   color: inherit;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .nav-item .icon,

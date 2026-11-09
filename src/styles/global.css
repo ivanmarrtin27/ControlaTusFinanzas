@@ -191,6 +191,8 @@ button {
 
 .page {
   width: min(100%, var(--content-max));
+  max-width: 100%;
+  min-width: 0;
   margin: 0 auto;
   /* Compact top on mobile: top-bar already owns safe-area + chrome. */
   padding: var(--space-sm) var(--space-md) var(--content-bottom-inset);
@@ -230,10 +232,12 @@ button {
 */
 .page-header.page-header-row {
   flex-direction: row;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm) var(--space-md);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .page-header.page-header-row > div:first-child {
@@ -263,6 +267,11 @@ button {
   /* Long leads repeat what the page body already shows; keep only greetings. */
   .page-header-lead {
     display: none;
+  }
+
+  .page-header.page-header-row .header-actions {
+    flex: 0 1 auto;
+    max-width: 100%;
   }
 }
 
