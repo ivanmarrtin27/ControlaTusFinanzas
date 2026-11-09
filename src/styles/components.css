@@ -1981,6 +1981,19 @@ button.chip:active {
   opacity: 1;
 }
 
+.home-shortcut-expense {
+  background: var(--danger);
+  color: var(--text-on-accent);
+}
+
+.home-shortcut-expense:hover {
+  background: var(--danger-hover);
+}
+
+.home-shortcut-expense .icon {
+  opacity: 1;
+}
+
 .home-shortcut-label {
   pointer-events: none;
 }

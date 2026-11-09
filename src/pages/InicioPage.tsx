@@ -139,7 +139,7 @@ export function InicioPage() {
           <div className="home-shortcuts">
             <button
               type="button"
-              className="home-shortcut home-shortcut-primary"
+              className="home-shortcut home-shortcut-expense"
               onClick={() => navigate('/movimientos?nuevo=1&quick=expense')}
             >
               <IconExpense aria-hidden />
@@ -147,7 +147,7 @@ export function InicioPage() {
             </button>
             <button
               type="button"
-              className="home-shortcut"
+              className="home-shortcut home-shortcut-primary"
               onClick={() => navigate('/movimientos?nuevo=1&quick=income')}
             >
               <IconIncome aria-hidden />
