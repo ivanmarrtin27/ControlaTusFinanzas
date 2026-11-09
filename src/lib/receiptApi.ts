@@ -5,7 +5,7 @@
  * Solo se guarda el path en la fila del movimiento; la URL firmada se genera al ver.
  * Límites: imagen ≤ 5 MB (JPEG/PNG/WebP/HEIC).
  */
-import { MoneyApiError } from '@/lib/moneyApi'
+import { humanizeSupabaseError, MoneyApiError } from '@/lib/moneyApi'
 import { isSupabaseConfigured, supabase } from '@/lib/supabase'
 
 const BUCKET = 'receipts'
@@ -28,7 +28,7 @@ function ensureConfigured() {
 }
 
 function throwFromError(error: { message: string } | null): never {
-  throw new MoneyApiError(error?.message ?? 'Error desconocido de Storage')
+  throw new MoneyApiError(humanizeSupabaseError(error?.message ?? 'Error desconocido de Storage'))
 }
 
 /** Sanitiza el nombre y fuerza una extensión razonable. */

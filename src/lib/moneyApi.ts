@@ -45,8 +45,34 @@ function mapTransfer(row: Transfer): Transfer {
   return { ...row, amount: toNumber(row.amount) }
 }
 
+export function humanizeSupabaseError(message: string): string {
+  const m = message.toLowerCase()
+  if (m.includes('row-level security') || m.includes('violates row-level security')) {
+    return 'No tienes permiso para guardar. Cierra sesión y vuelve a entrar.'
+  }
+  if (m.includes('jwt') || m.includes('not authenticated') || m.includes('unauthorized')) {
+    return 'Tu sesión ha caducado. Vuelve a iniciar sesión.'
+  }
+  if (m.includes('foreign key') && m.includes('account')) {
+    return 'La cuenta seleccionada no es válida o ya no existe.'
+  }
+  if (m.includes('foreign key') && m.includes('category')) {
+    return 'La categoría seleccionada no es válida o ya no existe.'
+  }
+  if (m.includes('check constraint') && m.includes('amount')) {
+    return 'El importe debe ser mayor que 0.'
+  }
+  if (m.includes('check constraint') && m.includes('concept')) {
+    return 'El concepto es obligatorio.'
+  }
+  if (m.includes('failed to fetch') || m.includes('networkerror') || m.includes('network request failed')) {
+    return 'Sin conexión con el servidor. Comprueba tu red e inténtalo de nuevo.'
+  }
+  return message
+}
+
 function throwFromError(error: { message: string } | null): never {
-  throw new MoneyApiError(error?.message ?? 'Error desconocido de Supabase')
+  throw new MoneyApiError(humanizeSupabaseError(error?.message ?? 'Error desconocido de Supabase'))
 }
 
 export async function listAccounts(userId: string): Promise<Account[]> {

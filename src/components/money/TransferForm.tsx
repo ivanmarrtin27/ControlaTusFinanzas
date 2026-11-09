@@ -1,7 +1,8 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
+import { parseUserAmount } from '@/lib/currency'
 import { dateInputToIso, toDateInputValue } from '@/lib/dates'
 import type { Account, Transfer } from '@/types/database'
 
@@ -17,6 +18,9 @@ interface TransferFormProps {
     occurred_at: string
   }) => Promise<void>
   onCancel: () => void
+  formId?: string
+  showActions?: boolean
+  onBusyChange?: (busy: boolean) => void
 }
 
 export function TransferForm({
@@ -25,11 +29,18 @@ export function TransferForm({
   submitLabel,
   onSubmit,
   onCancel,
+  formId,
+  showActions = true,
+  onBusyChange,
 }: TransferFormProps) {
-  const active = accounts.filter((a) => a.is_active || a.id === initial?.from_account_id || a.id === initial?.to_account_id)
+  const active = accounts.filter(
+    (a) => a.is_active || a.id === initial?.from_account_id || a.id === initial?.to_account_id,
+  )
   const [fromId, setFromId] = useState(initial?.from_account_id ?? active[0]?.id ?? '')
   const [toId, setToId] = useState(
-    initial?.to_account_id ?? active.find((a) => a.id !== (initial?.from_account_id ?? active[0]?.id))?.id ?? '',
+    initial?.to_account_id ??
+      active.find((a) => a.id !== (initial?.from_account_id ?? active[0]?.id))?.id ??
+      '',
   )
   const [amount, setAmount] = useState(initial?.amount != null ? String(initial.amount) : '')
   const [concept, setConcept] = useState(initial?.concept ?? '')
@@ -39,12 +50,16 @@ export function TransferForm({
 
   const options = active.map((a) => ({ value: a.id, label: a.name }))
 
+  useEffect(() => {
+    onBusyChange?.(saving)
+  }, [saving, onBusyChange])
+
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError(null)
-    const n = Number(amount.replace(',', '.'))
-    if (!Number.isFinite(n) || n <= 0) {
-      setError('Introduce un importe mayor que 0.')
+    const n = parseUserAmount(amount)
+    if (n == null || !(n > 0)) {
+      setError('Introduce un importe mayor que 0 (puedes usar coma o punto).')
       return
     }
     if (!fromId || !toId) {
@@ -53,6 +68,14 @@ export function TransferForm({
     }
     if (fromId === toId) {
       setError('Elige dos cuentas distintas.')
+      return
+    }
+    if (options.length < 2) {
+      setError('Necesitas al menos dos cuentas activas para transferir.')
+      return
+    }
+    if (!occurredAt) {
+      setError('Selecciona una fecha.')
       return
     }
 
@@ -66,7 +89,7 @@ export function TransferForm({
         occurred_at: dateInputToIso(occurredAt),
       })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo guardar.')
+      setError(err instanceof Error ? err.message : 'No se pudo guardar la transferencia.')
       setSaving(false)
       return
     }
@@ -74,7 +97,12 @@ export function TransferForm({
   }
 
   return (
-    <form className="money-form transfer-form" onSubmit={(e) => void handleSubmit(e)}>
+    <form
+      id={formId}
+      className="money-form transfer-form"
+      onSubmit={(e) => void handleSubmit(e)}
+      noValidate
+    >
       <div className="transfer-route" role="group" aria-label="Cuentas de la transferencia">
         <Select
           label="Desde"
@@ -82,7 +110,6 @@ export function TransferForm({
           value={fromId}
           onChange={(e) => setFromId(e.target.value)}
           options={options}
-          required
         />
         <div className="transfer-route-connector" aria-hidden="true">
           <span className="transfer-route-arrow">↓</span>
@@ -93,7 +120,6 @@ export function TransferForm({
           value={toId}
           onChange={(e) => setToId(e.target.value)}
           options={options}
-          required
         />
       </div>
 
@@ -104,7 +130,7 @@ export function TransferForm({
         placeholder="0,00"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
-        required
+        autoComplete="off"
       />
       <Input
         label="Fecha"
@@ -112,7 +138,6 @@ export function TransferForm({
         type="date"
         value={occurredAt}
         onChange={(e) => setOccurredAt(e.target.value)}
-        required
       />
       <Input
         label="Concepto (opcional)"
@@ -128,14 +153,16 @@ export function TransferForm({
         </p>
       ) : null}
 
-      <div className="form-actions">
-        <Button type="button" variant="secondary" onClick={onCancel} disabled={saving}>
-          Cancelar
-        </Button>
-        <Button type="submit" disabled={saving || options.length < 2}>
-          {saving ? 'Guardando…' : submitLabel}
-        </Button>
-      </div>
+      {showActions ? (
+        <div className="form-actions">
+          <Button type="button" variant="secondary" onClick={onCancel} disabled={saving}>
+            Cancelar
+          </Button>
+          <Button type="submit" disabled={saving || options.length < 2}>
+            {saving ? 'Guardando…' : submitLabel}
+          </Button>
+        </div>
+      ) : null}
     </form>
   )
 }

@@ -59,6 +59,9 @@ const TYPE_FILTERS: { value: TypeFilter; label: string }[] = [
   { value: 'transfer', label: 'Transfer.' },
 ]
 
+const TX_FORM_ID = 'movimientos-tx-form'
+const TRANSFER_FORM_ID = 'movimientos-transfer-form'
+
 export function MovimientosPage() {
   const { profile } = useAuth()
   const currency = profile?.currency ?? 'EUR'
@@ -79,6 +82,8 @@ export function MovimientosPage() {
   const [formKey, setFormKey] = useState(0)
   const [busyError, setBusyError] = useState<string | null>(null)
   const [templates, setTemplates] = useState<TransactionTemplate[]>([])
+  const [txBusy, setTxBusy] = useState(false)
+  const [transferBusy, setTransferBusy] = useState(false)
   const quickOpenHandledRef = useRef(false)
 
   const refreshTemplates = useCallback(async () => {
@@ -635,13 +640,40 @@ export function MovimientosPage() {
         onClose={() => {
           setSheetMode(null)
           setEditingTx(null)
+          setTxBusy(false)
         }}
         footer={
-          editingTx ? (
-            <Button variant="destructive" block onClick={() => void handleDeleteTx()}>
-              Eliminar movimiento
+          <div className="form-actions">
+            {editingTx ? (
+              <Button
+                variant="destructive"
+                type="button"
+                disabled={txBusy}
+                onClick={() => void handleDeleteTx()}
+              >
+                Eliminar
+              </Button>
+            ) : null}
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={txBusy}
+              onClick={() => {
+                setSheetMode(null)
+                setEditingTx(null)
+                setTxBusy(false)
+              }}
+            >
+              Cancelar
             </Button>
-          ) : null
+            <Button
+              type="submit"
+              form={TX_FORM_ID}
+              disabled={txBusy || money.activeAccounts.length === 0}
+            >
+              {txBusy ? 'Guardando…' : editingTx ? 'Guardar cambios' : 'Crear movimiento'}
+            </Button>
+          </div>
         }
       >
         {!editingTx && templates.length > 0 ? (
@@ -658,6 +690,9 @@ export function MovimientosPage() {
         ) : null}
         <TransactionForm
           key={editingTx?.id ?? `new-${formKey}`}
+          formId={TX_FORM_ID}
+          showActions={false}
+          onBusyChange={setTxBusy}
           accounts={money.accounts}
           categories={money.categories}
           tags={money.tags}
@@ -667,6 +702,7 @@ export function MovimientosPage() {
           onCancel={() => {
             setSheetMode(null)
             setEditingTx(null)
+            setTxBusy(false)
           }}
         />
       </Sheet>
@@ -677,17 +713,47 @@ export function MovimientosPage() {
         onClose={() => {
           setSheetMode(null)
           setEditingTransfer(null)
+          setTransferBusy(false)
         }}
         footer={
-          editingTransfer ? (
-            <Button variant="destructive" block onClick={() => void handleDeleteTransfer()}>
-              Eliminar transferencia
+          <div className="form-actions">
+            {editingTransfer ? (
+              <Button
+                variant="destructive"
+                type="button"
+                disabled={transferBusy}
+                onClick={() => void handleDeleteTransfer()}
+              >
+                Eliminar
+              </Button>
+            ) : null}
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={transferBusy}
+              onClick={() => {
+                setSheetMode(null)
+                setEditingTransfer(null)
+                setTransferBusy(false)
+              }}
+            >
+              Cancelar
             </Button>
-          ) : null
+            <Button
+              type="submit"
+              form={TRANSFER_FORM_ID}
+              disabled={transferBusy || money.activeAccounts.length < 2}
+            >
+              {transferBusy ? 'Guardando…' : editingTransfer ? 'Guardar cambios' : 'Transferir'}
+            </Button>
+          </div>
         }
       >
         <TransferForm
           key={editingTransfer?.id ?? 'new-transfer'}
+          formId={TRANSFER_FORM_ID}
+          showActions={false}
+          onBusyChange={setTransferBusy}
           accounts={money.accounts}
           initial={editingTransfer ?? undefined}
           submitLabel={editingTransfer ? 'Guardar cambios' : 'Transferir'}
@@ -695,6 +761,7 @@ export function MovimientosPage() {
           onCancel={() => {
             setSheetMode(null)
             setEditingTransfer(null)
+            setTransferBusy(false)
           }}
         />
       </Sheet>

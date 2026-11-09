@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Textarea } from '@/components/ui/Textarea'
+import { parseUserAmount } from '@/lib/currency'
 import { dateInputToIso, toDateInputValue } from '@/lib/dates'
 import { resolveDefaultAccountId, setLastAccountId } from '@/lib/txDefaults'
 import type { Account, Category, Tag, Transaction, TransactionType } from '@/types/database'
@@ -45,6 +46,12 @@ interface TransactionFormProps {
   enableReceipt?: boolean
   /** Hide income/expense chips and keep `initial.type` (or expense). */
   lockType?: boolean
+  /** Associate external footer submit buttons via the HTML `form` attribute. */
+  formId?: string
+  /** When false, Cancel/Submit are omitted (use Sheet footer + formId). */
+  showActions?: boolean
+  /** Notify parent when saving starts/stops (for external footer buttons). */
+  onBusyChange?: (busy: boolean) => void
 }
 
 function buildInitial(
@@ -80,6 +87,9 @@ export function TransactionForm({
   onCancel,
   enableReceipt = true,
   lockType = false,
+  formId,
+  showActions = true,
+  onBusyChange,
 }: TransactionFormProps) {
   const [values, setValues] = useState(() => buildInitial(accounts, categories, initial))
   const [error, setError] = useState<string | null>(null)
@@ -93,6 +103,10 @@ export function TransactionForm({
     Boolean(initial?.receipt_path) ||
     Boolean(receiptFile) ||
     clearReceipt
+
+  useEffect(() => {
+    onBusyChange?.(saving)
+  }, [saving, onBusyChange])
 
   useEffect(() => {
     if (isEdit) return
@@ -127,9 +141,10 @@ export function TransactionForm({
     event.preventDefault()
     setError(null)
 
-    const amount = Number(values.amount.replace(',', '.'))
-    if (!Number.isFinite(amount) || amount <= 0) {
-      setError('Introduce un importe mayor que 0.')
+    const amount = parseUserAmount(values.amount)
+    if (amount == null || !(amount > 0)) {
+      setError('Introduce un importe mayor que 0 (puedes usar coma o punto).')
+      amountRef.current?.focus()
       return
     }
     if (!values.concept.trim()) {
@@ -138,6 +153,14 @@ export function TransactionForm({
     }
     if (!values.account_id) {
       setError('Selecciona una cuenta.')
+      return
+    }
+    if (accountOptions.length === 0) {
+      setError('Crea una cuenta antes de registrar un movimiento.')
+      return
+    }
+    if (!values.occurred_at) {
+      setError('Selecciona una fecha.')
       return
     }
 
@@ -157,7 +180,7 @@ export function TransactionForm({
       })
       setLastAccountId(values.account_id)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo guardar.')
+      setError(err instanceof Error ? err.message : 'No se pudo guardar el movimiento.')
       setSaving(false)
       return
     }
@@ -165,7 +188,12 @@ export function TransactionForm({
   }
 
   return (
-    <form className="money-form" onSubmit={(e) => void handleSubmit(e)}>
+    <form
+      id={formId}
+      className="money-form"
+      onSubmit={(e) => void handleSubmit(e)}
+      noValidate
+    >
       {!lockType ? (
         <div className="chip-row" role="group" aria-label="Tipo de movimiento">
           <button
@@ -215,16 +243,16 @@ export function TransactionForm({
         placeholder="0,00"
         value={values.amount}
         onChange={(e) => setValues((v) => ({ ...v, amount: e.target.value }))}
-        required
         autoComplete="off"
+        enterKeyHint="next"
       />
       <Input
         label="Concepto"
         name="concept"
         value={values.concept}
         onChange={(e) => setValues((v) => ({ ...v, concept: e.target.value }))}
-        required
         autoComplete="off"
+        enterKeyHint="next"
       />
 
       <div className="form-grid-2">
@@ -235,7 +263,6 @@ export function TransactionForm({
           onChange={(e) => setValues((v) => ({ ...v, account_id: e.target.value }))}
           options={accountOptions}
           placeholder={accountOptions.length ? undefined : 'Crea una cuenta primero'}
-          required
         />
         <Input
           label="Fecha"
@@ -243,7 +270,6 @@ export function TransactionForm({
           type="date"
           value={values.occurred_at}
           onChange={(e) => setValues((v) => ({ ...v, occurred_at: e.target.value }))}
-          required
         />
       </div>
 
@@ -315,14 +341,16 @@ export function TransactionForm({
         </p>
       ) : null}
 
-      <div className="form-actions">
-        <Button type="button" variant="secondary" onClick={onCancel} disabled={saving}>
-          {cancelLabel}
-        </Button>
-        <Button type="submit" disabled={saving || accountOptions.length === 0}>
-          {saving ? 'Guardando…' : submitLabel}
-        </Button>
-      </div>
+      {showActions ? (
+        <div className="form-actions">
+          <Button type="button" variant="secondary" onClick={onCancel} disabled={saving}>
+            {cancelLabel}
+          </Button>
+          <Button type="submit" disabled={saving || accountOptions.length === 0}>
+            {saving ? 'Guardando…' : submitLabel}
+          </Button>
+        </div>
+      ) : null}
     </form>
   )
 }

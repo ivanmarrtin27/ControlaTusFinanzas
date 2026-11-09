@@ -1539,6 +1539,12 @@ button.chip:active {
   border-top: 1px solid var(--border);
 }
 
+/* Actions live in the non-scrolling footer so Guardar stays tappable above the keyboard */
+.sheet-footer .form-actions {
+  margin-top: 0;
+  width: 100%;
+}
+
 .sheet-footer .btn {
   min-height: var(--tap-min);
 }

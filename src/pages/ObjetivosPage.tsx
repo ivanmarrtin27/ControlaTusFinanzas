@@ -12,7 +12,7 @@ import { MoneyListSkeleton } from '@/components/ui/Skeleton'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
 import { usePlanData } from '@/hooks/usePlanData'
-import { formatMoney } from '@/lib/currency'
+import { formatMoney, parseUserAmount } from '@/lib/currency'
 import { formatShortDate, toDateInputValue } from '@/lib/dates'
 import { GOAL_STATUS_LABELS } from '@/lib/labels'
 import { MoneyApiError } from '@/lib/moneyApi'
@@ -134,13 +134,13 @@ export function ObjetivosPage() {
       setFormError('El nombre es obligatorio.')
       return
     }
-    const target = Number(draft.target_amount.replace(',', '.'))
-    const current = Number(draft.current_amount.replace(',', '.'))
-    if (!Number.isFinite(target) || target <= 0) {
-      setFormError('La meta debe ser mayor que 0.')
+    const target = parseUserAmount(draft.target_amount)
+    const current = parseUserAmount(draft.current_amount || '0')
+    if (target == null || !(target > 0)) {
+      setFormError('La meta debe ser mayor que 0 (puedes usar coma o punto).')
       return
     }
-    if (!Number.isFinite(current) || current < 0) {
+    if (current == null || current < 0) {
       setFormError('El progreso actual no es válido.')
       return
     }
@@ -180,13 +180,17 @@ export function ObjetivosPage() {
     if (!plan.userId || !contrib || !draft.id) return
     const goal = plan.goals.find((g) => g.id === draft.id)
     if (!goal) return
-    const amount = Number(contrib.amount.replace(',', '.'))
-    if (!Number.isFinite(amount) || amount <= 0) {
-      setFormError('Importe no válido.')
+    const amount = parseUserAmount(contrib.amount)
+    if (amount == null || !(amount > 0)) {
+      setFormError('Introduce un importe mayor que 0 (puedes usar coma o punto).')
       return
     }
     if (!contrib.account_id) {
-      setFormError('Elige una cuenta.')
+      setFormError('Elige una cuenta para la aportación.')
+      return
+    }
+    if (accountOptions.length === 0) {
+      setFormError('Crea una cuenta antes de aportar a un objetivo.')
       return
     }
 
@@ -370,19 +374,18 @@ export function ObjetivosPage() {
               </p>
               <Input
                 label="Importe"
-                type="number"
                 inputMode="decimal"
-                min="0"
-                step="0.01"
+                placeholder="0,00"
                 value={contrib.amount}
                 onChange={(e) => setContrib((c) => (c ? { ...c, amount: e.target.value } : c))}
+                autoComplete="off"
               />
               <Select
                 label="Desde la cuenta"
                 value={contrib.account_id}
                 onChange={(e) => setContrib((c) => (c ? { ...c, account_id: e.target.value } : c))}
                 options={accountOptions}
-                placeholder="Elige cuenta"
+                placeholder={accountOptions.length ? 'Elige cuenta' : 'Crea una cuenta primero'}
               />
               <Input
                 label="Fecha"
@@ -412,22 +415,20 @@ export function ObjetivosPage() {
               />
               <Input
                 label="Meta"
-                type="number"
                 inputMode="decimal"
-                min="0"
-                step="0.01"
+                placeholder="0,00"
                 value={draft.target_amount}
                 onChange={(e) => setDraft((d) => ({ ...d, target_amount: e.target.value }))}
+                autoComplete="off"
               />
               <Input
                 label="Ahorrado ahora"
-                type="number"
                 inputMode="decimal"
-                min="0"
-                step="0.01"
+                placeholder="0,00"
                 value={draft.current_amount}
                 onChange={(e) => setDraft((d) => ({ ...d, current_amount: e.target.value }))}
                 hint="También puedes usar el botón Aportar desde la lista."
+                autoComplete="off"
               />
               <Input
                 label="Fecha límite (opcional)"

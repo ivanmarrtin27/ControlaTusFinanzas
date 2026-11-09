@@ -1,6 +1,6 @@
 import { toNumber, roundMoney } from '@/lib/balances'
 import { dateInputToIso } from '@/lib/dates'
-import { MoneyApiError } from '@/lib/moneyApi'
+import { humanizeSupabaseError, MoneyApiError } from '@/lib/moneyApi'
 import { resolveGoalStatusAfterContribution } from '@/lib/planning'
 import { isSupabaseConfigured, supabase } from '@/lib/supabase'
 import type {
@@ -32,7 +32,7 @@ function ensureConfigured() {
 }
 
 function throwFromError(error: { message: string } | null): never {
-  throw new MoneyApiError(error?.message ?? 'Error desconocido de Supabase')
+  throw new MoneyApiError(humanizeSupabaseError(error?.message ?? 'Error desconocido de Supabase'))
 }
 
 function mapBudget(row: Budget): Budget {

@@ -1,4 +1,4 @@
-import { MoneyApiError } from '@/lib/moneyApi'
+import { humanizeSupabaseError, MoneyApiError } from '@/lib/moneyApi'
 import { isSupabaseConfigured, supabase } from '@/lib/supabase'
 import type { Database, Tag, TransactionTag } from '@/types/database'
 
@@ -14,7 +14,7 @@ function ensureConfigured() {
 }
 
 function throwFromError(error: { message: string } | null): never {
-  throw new MoneyApiError(error?.message ?? 'Error desconocido de Supabase')
+  throw new MoneyApiError(humanizeSupabaseError(error?.message ?? 'Error desconocido de Supabase'))
 }
 
 export async function listTags(userId: string): Promise<Tag[]> {

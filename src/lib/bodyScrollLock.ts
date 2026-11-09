@@ -2,6 +2,10 @@
  * iOS Safari / PWA–friendly body scroll lock.
  * `overflow: hidden` alone still allows rubber-band scroll on iOS;
  * freezing the body with position:fixed + restoring scrollY is the reliable fix.
+ *
+ * Important: never preventDefault touchmove inside dialogs/sheets. Doing so when
+ * the panel content does not overflow (or while typing in inputs) breaks taps and
+ * form submit on iPhone.
  */
 
 let lockCount = 0
@@ -20,26 +24,17 @@ type SavedStyles = {
 
 let saved: SavedStyles | null = null
 
-function isScrollable(el: HTMLElement): boolean {
-  const style = window.getComputedStyle(el)
-  const overflowY = style.overflowY
-  if (overflowY !== 'auto' && overflowY !== 'scroll' && overflowY !== 'overlay') return false
-  return el.scrollHeight > el.clientHeight
-}
+const INTERACTIVE_ROOT =
+  '[role="dialog"], .sheet-panel, .notif-panel, .sheet-body, .notif-list'
 
-function findScrollableAncestor(target: EventTarget | null): HTMLElement | null {
-  let node = target instanceof HTMLElement ? target : null
-  while (node && node !== document.body && node !== document.documentElement) {
-    if (isScrollable(node)) return node
-    node = node.parentElement
-  }
-  return null
+function isInsideInteractiveSurface(target: EventTarget | null): boolean {
+  return target instanceof Element && Boolean(target.closest(INTERACTIVE_ROOT))
 }
 
 function onTouchMove(event: TouchEvent) {
   if (lockCount === 0) return
-  // Allow scrolling inside sheet/modal panels; block background rubber-banding.
-  if (findScrollableAncestor(event.target)) return
+  // Allow all interaction inside sheets/dialogs/notification panels.
+  if (isInsideInteractiveSurface(event.target)) return
   event.preventDefault()
 }
 
