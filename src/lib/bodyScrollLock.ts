@@ -6,6 +6,9 @@
  * Important: never preventDefault touchmove inside dialogs/sheets. Doing so when
  * the panel content does not overflow (or while typing in inputs) breaks taps and
  * form submit on iPhone.
+ *
+ * While locked, never change document scrollY (iOS focus/keyboard can try to).
+ * Sheets pin themselves to visualViewport separately so the overlay stays stable.
  */
 
 let lockCount = 0
@@ -36,6 +39,14 @@ function onTouchMove(event: TouchEvent) {
   // Allow all interaction inside sheets/dialogs/notification panels.
   if (isInsideInteractiveSurface(event.target)) return
   event.preventDefault()
+}
+
+/** Keep document scroll frozen while body is position:fixed (keyboard focus can nudge it). */
+function onWindowScroll() {
+  if (lockCount === 0) return
+  if (window.scrollY !== 0) {
+    window.scrollTo(0, 0)
+  }
 }
 
 export function lockBodyScroll() {
@@ -70,6 +81,7 @@ export function lockBodyScroll() {
   html.style.overscrollBehavior = 'none'
 
   document.addEventListener('touchmove', onTouchMove, { passive: false })
+  window.addEventListener('scroll', onWindowScroll, { passive: true })
 }
 
 export function unlockBodyScroll() {
@@ -79,6 +91,7 @@ export function unlockBodyScroll() {
   if (lockCount > 0) return
 
   document.removeEventListener('touchmove', onTouchMove)
+  window.removeEventListener('scroll', onWindowScroll)
 
   const { body } = document
   const html = document.documentElement

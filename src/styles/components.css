@@ -1426,17 +1426,23 @@ button.chip:active {
   padding: 0;
 }
 
-/* Shared sheet/modal — portaled to body; covers bottom nav on mobile */
+/* Shared sheet/modal — portaled to body; covers bottom nav on mobile.
+   While open, Sheet.tsx pins top/left/width/height to visualViewport so the
+   iOS keyboard never yanks the overlay (and we do NOT pad/resize via --keyboard-inset). */
 .sheet-root {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: 200;
   display: grid;
   align-items: end;
   justify-items: stretch;
   padding: var(--safe-top) var(--safe-right) 0 var(--safe-left);
-  /* Keep sheet clear of browser UI / keyboard when possible */
-  padding-bottom: max(0px, var(--keyboard-inset));
+  overflow: hidden;
+  /* Avoid rubber-band translating the sheet chrome with the page behind. */
+  overscroll-behavior: none;
 }
 
 .sheet-backdrop {
@@ -1454,7 +1460,8 @@ button.chip:active {
   width: min(100%, 32rem);
   max-width: 100%;
   min-width: 0;
-  max-height: calc(100dvh - var(--safe-top) - 0.75rem - max(0px, var(--keyboard-inset)));
+  /* Parent is already visualViewport-sized; keep a small gap under the status area. */
+  max-height: calc(100% - 0.75rem);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -1559,7 +1566,8 @@ button.chip:active {
   .sheet-panel {
     width: min(100%, 32rem);
     border-radius: var(--radius-md);
-    max-height: min(85dvh, 42rem);
+    /* % of sheet-root (visualViewport-pinned), not layout dvh — avoids keyboard jump. */
+    max-height: min(85%, 42rem);
     animation-name: gd-sheet-in;
   }
 

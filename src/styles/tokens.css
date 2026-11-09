@@ -123,8 +123,9 @@
   --content-bottom-inset: calc(
     var(--bottom-nav-height) + var(--fab-clearance) + var(--safe-bottom) + var(--space-xl)
   );
-  /* Sheet / sticky footers above home indicator + keyboard */
-  --sheet-footer-pad: calc(var(--space-md) + max(var(--safe-bottom), var(--keyboard-inset)));
+  /* Sheet footers: home indicator only. Keyboard is handled by pinning the
+     sheet-root to visualViewport (do not also pad with --keyboard-inset). */
+  --sheet-footer-pad: calc(var(--space-md) + var(--safe-bottom));
   /* Sticky toolbars sit below the app top-bar (safe-top + bar chrome). */
   --top-bar-offset: calc(var(--safe-top) + 3.5rem);
 }

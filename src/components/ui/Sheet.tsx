@@ -14,20 +14,50 @@ interface SheetProps {
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
-function syncKeyboardInset() {
-  if (typeof window === 'undefined') return
-  const root = document.documentElement
-  const viewport = window.visualViewport
-  if (!viewport) {
-    root.style.setProperty('--keyboard-inset', '0px')
+/**
+ * Pin the overlay to the visual viewport so iOS keyboard open/close does not
+ * yank `position: fixed` sheets (layout viewport stays put; VV offset moves).
+ */
+function pinSheetToVisualViewport(root: HTMLElement) {
+  const vv = window.visualViewport
+  if (!vv) {
+    root.style.top = '0px'
+    root.style.left = '0px'
+    root.style.width = '100%'
+    root.style.height = '100%'
     return
   }
-  // Layout viewport height minus visible viewport → approximate soft keyboard.
-  const occluded = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop)
-  root.style.setProperty('--keyboard-inset', `${Math.round(occluded)}px`)
+  root.style.top = `${Math.round(vv.offsetTop)}px`
+  root.style.left = `${Math.round(vv.offsetLeft)}px`
+  root.style.width = `${Math.round(vv.width)}px`
+  root.style.height = `${Math.round(vv.height)}px`
+}
+
+/** Scroll only inside `.sheet-body` — never call scrollIntoView (moves the page on iOS). */
+function scrollFieldIntoSheetBody(target: HTMLElement) {
+  const scroller = target.closest('.sheet-body')
+  if (!(scroller instanceof HTMLElement)) return
+
+  const scrollerRect = scroller.getBoundingClientRect()
+  const targetRect = target.getBoundingClientRect()
+  const edge = 16
+
+  if (targetRect.bottom > scrollerRect.bottom - edge) {
+    scroller.scrollTop += targetRect.bottom - (scrollerRect.bottom - edge)
+  } else if (targetRect.top < scrollerRect.top + edge) {
+    scroller.scrollTop -= scrollerRect.top + edge - targetRect.top
+  }
+}
+
+function clearSheetViewportStyles(root: HTMLElement) {
+  root.style.removeProperty('top')
+  root.style.removeProperty('left')
+  root.style.removeProperty('width')
+  root.style.removeProperty('height')
 }
 
 export function Sheet({ open, title, onClose, children, footer }: SheetProps) {
+  const rootRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
   const previouslyFocused = useRef<HTMLElement | null>(null)
   const onCloseRef = useRef(onClose)
@@ -40,6 +70,7 @@ export function Sheet({ open, title, onClose, children, footer }: SheetProps) {
     if (!open) return
 
     previouslyFocused.current = document.activeElement as HTMLElement | null
+    const root = rootRef.current
     const panel = panelRef.current
     const focusables = panel ? Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE)) : []
     // Prefer the first field, not the header "Cerrar" button.
@@ -83,10 +114,10 @@ export function Sheet({ open, title, onClose, children, footer }: SheetProps) {
       const target = event.target
       if (!(target instanceof HTMLElement)) return
       if (!panel?.contains(target)) return
-      // Keep focused controls visible above the iOS keyboard.
-      window.setTimeout(() => {
-        target.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'smooth' })
-      }, 50)
+      // Keep the field visible inside the sheet scroller only (no window scroll).
+      requestAnimationFrame(() => scrollFieldIntoSheetBody(target))
+      // iOS keyboard animation finishes later; nudge again without touching document scroll.
+      window.setTimeout(() => scrollFieldIntoSheetBody(target), 280)
     }
 
     const onAnimEnd = (event: AnimationEvent) => {
@@ -97,11 +128,15 @@ export function Sheet({ open, title, onClose, children, footer }: SheetProps) {
       panel.style.transform = 'none'
     }
 
-    syncKeyboardInset()
+    const syncViewport = () => {
+      if (root) pinSheetToVisualViewport(root)
+    }
+
+    syncViewport()
     const viewport = window.visualViewport
-    viewport?.addEventListener('resize', syncKeyboardInset)
-    viewport?.addEventListener('scroll', syncKeyboardInset)
-    window.addEventListener('resize', syncKeyboardInset)
+    viewport?.addEventListener('resize', syncViewport)
+    viewport?.addEventListener('scroll', syncViewport)
+    window.addEventListener('resize', syncViewport)
 
     document.addEventListener('keydown', onKey)
     document.addEventListener('focusin', onFocusIn)
@@ -111,9 +146,11 @@ export function Sheet({ open, title, onClose, children, footer }: SheetProps) {
       document.removeEventListener('keydown', onKey)
       document.removeEventListener('focusin', onFocusIn)
       panel?.removeEventListener('animationend', onAnimEnd)
-      viewport?.removeEventListener('resize', syncKeyboardInset)
-      viewport?.removeEventListener('scroll', syncKeyboardInset)
-      window.removeEventListener('resize', syncKeyboardInset)
+      viewport?.removeEventListener('resize', syncViewport)
+      viewport?.removeEventListener('scroll', syncViewport)
+      window.removeEventListener('resize', syncViewport)
+      if (root) clearSheetViewportStyles(root)
+      // Ensure any legacy global inset from older builds is cleared.
       document.documentElement.style.setProperty('--keyboard-inset', '0px')
       unlockBodyScroll()
       previouslyFocused.current?.focus?.()
@@ -123,7 +160,7 @@ export function Sheet({ open, title, onClose, children, footer }: SheetProps) {
   if (!open) return null
 
   return createPortal(
-    <div className="sheet-root" role="presentation">
+    <div ref={rootRef} className="sheet-root" role="presentation">
       <button type="button" className="sheet-backdrop" aria-label="Cerrar panel" onClick={onClose} />
       <div
         ref={panelRef}
