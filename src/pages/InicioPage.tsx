@@ -7,7 +7,6 @@ import {
   IconTransfer,
 } from '@/components/layout/icons'
 import { ConfigBanner } from '@/components/money/ConfigBanner'
-import { DeltaBadge } from '@/components/money/DeltaBadge'
 import { TemplateChips } from '@/components/money/TemplateChips'
 import { OnboardingWizard } from '@/components/OnboardingWizard'
 import { SyncStatus } from '@/components/SyncStatus'
@@ -25,9 +24,6 @@ import {
   deltaToneClass,
   deltaVerb,
   formatDeltaArrow,
-  monthStartAsOf,
-  netWorthDeltaSince,
-  todayStartAsOf,
 } from '@/lib/delta'
 import {
   buildReminders,
@@ -78,30 +74,6 @@ export function InicioPage() {
   const monthDelta = useMemo(
     () => buildMoneyDelta(money.monthSummary.balance, 0),
     [money.monthSummary.balance],
-  )
-
-  const netWorthMonthDelta = useMemo(
-    () =>
-      netWorthDeltaSince(
-        money.activeAccounts,
-        money.balancesByAccount,
-        money.transactions,
-        money.transfers,
-        monthStartAsOf(),
-      ),
-    [money.activeAccounts, money.balancesByAccount, money.transactions, money.transfers],
-  )
-
-  const netWorthTodayDelta = useMemo(
-    () =>
-      netWorthDeltaSince(
-        money.activeAccounts,
-        money.balancesByAccount,
-        money.transactions,
-        money.transfers,
-        todayStartAsOf(),
-      ),
-    [money.activeAccounts, money.balancesByAccount, money.transactions, money.transfers],
   )
 
   const compactAlerts = useMemo(() => {
@@ -162,22 +134,6 @@ export function InicioPage() {
           ) : (
             <p className="home-hero-amount amount">{formatMoney(money.totalBalance, currency)}</p>
           )}
-          {!money.loading && money.activeAccounts.length > 0 ? (
-            <div className="home-hero-deltas" aria-label="Variación del patrimonio">
-              <DeltaBadge
-                delta={netWorthMonthDelta}
-                currency={currency}
-                label="este mes"
-                compact
-              />
-              <DeltaBadge
-                delta={netWorthTodayDelta}
-                currency={currency}
-                label="vs ayer"
-                compact
-              />
-            </div>
-          ) : null}
           <p className="home-hero-meta muted">
             {accountsLabel}
             {!money.loading && money.activeAccounts.length > 0 ? (

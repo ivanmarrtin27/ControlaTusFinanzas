@@ -2003,13 +2003,6 @@ button.chip:active {
   font-size: var(--text-sm);
 }
 
-.home-hero-deltas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 0.85rem;
-  margin: 0.55rem 0 0;
-}
-
 .delta-badge {
   margin: 0;
   font-size: var(--text-sm);

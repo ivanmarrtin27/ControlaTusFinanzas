@@ -1,10 +1,8 @@
 import type { Account, Transaction, Transfer } from '@/types/database'
 import {
   computeAccountBalanceAsOf,
-  dayBounds,
   monthBounds,
   roundMoney,
-  sumActiveBalances,
   toNumber,
 } from '@/lib/balances'
 import { formatMoney } from '@/lib/currency'
@@ -32,26 +30,6 @@ export function buildMoneyDelta(current: number, previous: number): MoneyDelta {
   return { absolute, ratio, direction }
 }
 
-/**
- * Patrimonio (cuentas activas) vs un instante `asOf` (exclusive).
- * currentBalances: mapa ya calculado del saldo actual.
- */
-export function netWorthDeltaSince(
-  accounts: Pick<Account, 'id' | 'opening_balance' | 'is_active'>[],
-  currentBalances: Map<string, number>,
-  transactions: Pick<Transaction, 'account_id' | 'type' | 'amount' | 'occurred_at'>[],
-  transfers: Pick<Transfer, 'from_account_id' | 'to_account_id' | 'amount' | 'occurred_at'>[],
-  asOf: Date,
-): MoneyDelta {
-  const current = sumActiveBalances(accounts, currentBalances)
-  let previous = 0
-  for (const account of accounts) {
-    if (!account.is_active) continue
-    previous += computeAccountBalanceAsOf(account, transactions, transfers, asOf)
-  }
-  return buildMoneyDelta(current, roundMoney(previous))
-}
-
 export function accountDeltaSince(
   account: Pick<Account, 'id' | 'opening_balance'>,
   currentBalance: number,
@@ -65,10 +43,6 @@ export function accountDeltaSince(
 
 export function monthStartAsOf(reference = new Date()): Date {
   return monthBounds(reference).start
-}
-
-export function todayStartAsOf(reference = new Date()): Date {
-  return dayBounds(reference).start
 }
 
 /** Clase CSS: verde si sube el patrimonio / baja el coste; rojo al revés. */
