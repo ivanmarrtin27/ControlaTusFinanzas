@@ -298,8 +298,8 @@
     position: relative;
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
-    padding: 0.7rem 0.8rem;
+    gap: 0.65rem;
+    padding: 0.55rem 0.7rem 0.55rem 0.75rem;
     border-radius: var(--radius);
     color: var(--text-muted);
     text-decoration: none;
@@ -315,6 +315,28 @@
       transform var(--motion-fast) var(--ease-press);
   }
 
+  .rail-link-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: inherit;
+  }
+
+  .rail-link-icon .icon,
+  .rail-link-icon svg {
+    width: var(--icon-md);
+    height: var(--icon-md);
+  }
+
+  .rail-link-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .rail-link:hover {
     color: var(--text);
   }
@@ -326,6 +348,10 @@
   .rail-link.active {
     color: var(--text);
     background: var(--surface-elevated);
+  }
+
+  .rail-link.active .rail-link-icon {
+    color: var(--accent);
   }
 
   .rail-link.active::before {

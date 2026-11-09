@@ -1,31 +1,49 @@
+import type { ComponentType } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { NotificationBell } from '@/components/NotificationBell'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/Button'
 import { PageTransition } from '@/components/layout/PageTransition'
 import {
+  IconAccounts,
   IconAnalysis,
+  IconBell,
+  IconCalendar,
+  IconCategories,
+  IconGoals,
+  IconHealth,
   IconHome,
   IconMore,
   IconMovements,
+  IconPlan,
   IconPlus,
+  IconReports,
+  IconSettings,
+  IconTags,
+  IconTemplates,
+  type IconProps,
 } from '@/components/layout/icons'
 
-const railLinks = [
-  { to: '/', label: 'Inicio', end: true },
-  { to: '/movimientos', label: 'Movimientos' },
-  { to: '/analisis', label: 'Análisis' },
-  { to: '/informes', label: 'Informes' },
-  { to: '/calendario', label: 'Calendario' },
-  { to: '/recordatorios', label: 'Recordatorios' },
-  { to: '/cuentas', label: 'Cuentas' },
-  { to: '/categorias', label: 'Categorías' },
-  { to: '/etiquetas', label: 'Etiquetas' },
-  { to: '/plantillas', label: 'Plantillas' },
-  { to: '/objetivos', label: 'Objetivos' },
-  { to: '/planificacion', label: 'Planificación' },
-  { to: '/centro-financiero', label: 'Centro financiero' },
-  { to: '/ajustes', label: 'Ajustes' },
+const railLinks: {
+  to: string
+  label: string
+  end?: boolean
+  Icon: ComponentType<IconProps>
+}[] = [
+  { to: '/', label: 'Inicio', end: true, Icon: IconHome },
+  { to: '/movimientos', label: 'Movimientos', Icon: IconMovements },
+  { to: '/analisis', label: 'Análisis', Icon: IconAnalysis },
+  { to: '/informes', label: 'Informes', Icon: IconReports },
+  { to: '/calendario', label: 'Calendario', Icon: IconCalendar },
+  { to: '/recordatorios', label: 'Recordatorios', Icon: IconBell },
+  { to: '/cuentas', label: 'Cuentas', Icon: IconAccounts },
+  { to: '/categorias', label: 'Categorías', Icon: IconCategories },
+  { to: '/etiquetas', label: 'Etiquetas', Icon: IconTags },
+  { to: '/plantillas', label: 'Plantillas', Icon: IconTemplates },
+  { to: '/objetivos', label: 'Objetivos', Icon: IconGoals },
+  { to: '/planificacion', label: 'Planificación', Icon: IconPlan },
+  { to: '/centro-financiero', label: 'Centro financiero', Icon: IconHealth },
+  { to: '/ajustes', label: 'Ajustes', Icon: IconSettings },
 ]
 
 export function AppShell() {
@@ -37,14 +55,17 @@ export function AppShell() {
       <aside className="side-rail" aria-label="Navegación principal">
         <div className="brand-mark">ControlaTusFinanzas</div>
         <nav aria-label="Secciones de la app">
-          {railLinks.map((link) => (
+          {railLinks.map(({ Icon, ...link }) => (
             <NavLink
               key={link.to}
               to={link.to}
               end={link.end}
               className={({ isActive }) => `rail-link${isActive ? ' active' : ''}`}
             >
-              {link.label}
+              <span className="rail-link-icon" aria-hidden>
+                <Icon />
+              </span>
+              <span className="rail-link-label">{link.label}</span>
             </NavLink>
           ))}
         </nav>
