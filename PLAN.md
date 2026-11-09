@@ -1,6 +1,6 @@
 # Plan de implementación — ControlaTusFinanzas
 
-**Estado:** fases **0–6 implementadas** (v1 completa en el repo). **UX dens./utilidad fases 1–6 completas.** **Control financiero A–C hechas.** Aplicar migraciones SQL en tu proyecto Supabase; proyecto remoto puede estar INACTIVE. Deploy: preparar Vercel (ver README).  
+**Estado:** fases **0–6 implementadas** (v1 completa en el repo). **UX dens./utilidad fases 1–6 completas.** **Control financiero A–C + Importar extracto (fase 3) hechas.** Aplicar migraciones SQL en tu proyecto Supabase; proyecto remoto puede estar INACTIVE. Deploy: preparar Vercel (ver README).  
 **Referencia funcional (no visual/copyright):** [controlfinancieroapp.es](https://controlfinancieroapp.es/)  
 **Diseño:** Green Deck (DM Sans / JetBrains Mono, dark Spotify-like, acento verde configurable).
 
@@ -374,6 +374,7 @@ Principio transversal: el usuario debe **ver** si el dinero sube o baja (deltas 
 | **A · Deltas** | Inicio: patrimonio vs inicio de mes y vs ayer (↑/↓, € y %). Franjas Hoy/Semana/Mes con indicador sube/baja. Cuentas: variación «este mes» por cuenta. Sin datos inventados. | **Hecha** |
 | **B · Actualizar saldo** | En editar cuenta → «Actualizar saldo»: introduce saldo real; se crea movimiento «Ajuste de saldo» (ingreso/gasto) por la diferencia. Confirmación + copy que explica que no se borra historial. | **Hecha** |
 | **C · Consistencia** | Helpers compartidos (`lib/delta.ts`, `DeltaBadge`). Análisis y Centro financiero usan el mismo lenguaje sube/baja y colores (verde/rojo; en gastos bajar = bueno). | **Hecha** |
+| **3 · Importar extracto** | Planificación → **Importar** (+ Más). CSV/`.xlsx` → movimientos en cuenta destino; auto-columnas o mapeo; preview; dedupe fecha+importe+concepto; sin Open Banking. | **Hecha** |
 
 ### Cómo se calculan los deltas
 - Saldo actual = `opening_balance` + ingresos − gastos ± transferencias.
@@ -385,3 +386,10 @@ Principio transversal: el usuario debe **ver** si el dinero sube o baja (deltas 
 1. Cuentas → tocar la cuenta → **Actualizar saldo**.
 2. Indicar el saldo real del banco/efectivo.
 3. Confirmar: se crea un movimiento «Ajuste de saldo» por la diferencia (visible en Movimientos). El saldo inicial no se reescribe; el historial previo se conserva.
+
+### Cómo importar un extracto
+1. Planificación → **Importar** (o Más → Importar extracto).
+2. Elige la cuenta de destino (p. ej. Tarjeta).
+3. Sube un `.csv` o `.xlsx` descargado de la app/web del banco.
+4. Si hace falta, asigna columnas Fecha / Concepto / Importe (o Cargo+Abono).
+5. Revisa la vista previa, confirma → se insertan movimientos; patrimonio y deltas se actualizan solos.

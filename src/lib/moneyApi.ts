@@ -140,6 +140,26 @@ export async function createTransaction(payload: TransactionInsert): Promise<Tra
   return mapTransaction(data as Transaction)
 }
 
+/** Inserción por lotes (p. ej. importación de extracto). Máx. 100 por request. */
+export async function createTransactionsBulk(
+  payloads: TransactionInsert[],
+): Promise<Transaction[]> {
+  ensureConfigured()
+  if (payloads.length === 0) return []
+
+  const created: Transaction[] = []
+  const chunkSize = 100
+  for (let i = 0; i < payloads.length; i += chunkSize) {
+    const chunk = payloads.slice(i, i + chunkSize)
+    const { data, error } = await supabase.from('transactions').insert(chunk).select('*')
+    if (error) throwFromError(error)
+    for (const row of (data as Transaction[]) ?? []) {
+      created.push(mapTransaction(row))
+    }
+  }
+  return created
+}
+
 /**
  * Reconcilia el saldo de una cuenta creando un movimiento de ajuste
  * (ingreso o gasto) por la diferencia. No altera el historial previo

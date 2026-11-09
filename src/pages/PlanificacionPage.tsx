@@ -2,22 +2,26 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { BudgetsPanel } from '@/components/plan/BudgetsPanel'
 import { DebtsPanel } from '@/components/plan/DebtsPanel'
+import { ImportPanel } from '@/components/plan/ImportPanel'
 import { RecurringPanel } from '@/components/plan/RecurringPanel'
 import { ConfigBanner } from '@/components/money/ConfigBanner'
 import { Card } from '@/components/ui/Card'
 import { useAuth } from '@/contexts/AuthContext'
 import { usePlanData } from '@/hooks/usePlanData'
 
-type Tab = 'limites' | 'recurrentes' | 'deudas'
+type Tab = 'limites' | 'recurrentes' | 'deudas' | 'importar'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'limites', label: 'Límites' },
   { id: 'recurrentes', label: 'Recurrentes' },
   { id: 'deudas', label: 'Deudas' },
+  { id: 'importar', label: 'Importar' },
 ]
 
 function parseTab(value: string | null): Tab {
-  if (value === 'recurrentes' || value === 'deudas' || value === 'limites') return value
+  if (value === 'recurrentes' || value === 'deudas' || value === 'limites' || value === 'importar') {
+    return value
+  }
   return 'limites'
 }
 
@@ -60,7 +64,7 @@ export function PlanificacionPage() {
     <main className="page">
       <header className="page-header">
         <h1>Planificación</h1>
-        <p className="page-header-lead">Límites, recurrentes y deudas.</p>
+        <p className="page-header-lead">Límites, recurrentes, deudas e importar extracto.</p>
       </header>
 
       <div className="stack-md">
@@ -135,6 +139,18 @@ export function PlanificacionPage() {
               loading={plan.loading}
               debts={plan.debts}
               accounts={plan.activeAccounts}
+              onChanged={plan.refresh}
+            />
+          ) : null}
+
+          {tab === 'importar' ? (
+            <ImportPanel
+              currency={currency}
+              userId={plan.userId}
+              configured={plan.configured}
+              loading={plan.loading}
+              accounts={plan.activeAccounts}
+              transactions={plan.transactions}
               onChanged={plan.refresh}
             />
           ) : null}
