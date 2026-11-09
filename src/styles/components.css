@@ -33,8 +33,9 @@
 .btn-sm {
   min-height: var(--tap-min);
   min-width: var(--tap-min);
-  padding: 0.35rem 1rem;
+  padding: 0.4rem 1.1rem;
   font-size: var(--text-sm);
+  letter-spacing: 0.04em;
 }
 
 .btn-md {
@@ -66,14 +67,14 @@
 }
 
 .btn-secondary {
-  background: transparent;
+  background: color-mix(in srgb, #fff 3%, transparent);
   color: var(--text);
-  border-color: color-mix(in srgb, var(--border-strong) 70%, transparent);
+  border-color: color-mix(in srgb, var(--border-strong) 55%, transparent);
 }
 
 .btn-secondary:hover:not(:disabled) {
   border-color: var(--text-muted);
-  background: color-mix(in srgb, #fff 4%, transparent);
+  background: color-mix(in srgb, #fff 6%, transparent);
   transform: scale(1.04);
 }
 
@@ -234,11 +235,13 @@
 
 button.chip {
   min-height: var(--tap-min);
-  padding: 0.35rem 0.9rem;
+  padding: 0.4rem 1rem;
+  font-weight: 600;
   cursor: pointer;
   transition:
     background var(--transition),
     color var(--transition),
+    border-color var(--transition),
     transform var(--transition);
 }
 
@@ -259,6 +262,7 @@ button.chip:active {
   background: var(--text);
   color: #000000;
   border-color: transparent;
+  font-weight: 700;
 }
 
 .checkbox {
@@ -495,6 +499,43 @@ button.chip:active {
 
 .auth-footer a {
   font-weight: 600;
+}
+
+.developer-credit {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.developer-credit a {
+  color: color-mix(in srgb, var(--text) 82%, var(--text-muted));
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.developer-credit a:hover,
+.developer-credit a:focus-visible {
+  color: var(--accent-hover);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.developer-credit-sep {
+  margin: 0 0.35rem;
+  color: color-mix(in srgb, var(--text-muted) 70%, transparent);
+}
+
+.developer-credit-compact {
+  margin-top: 0.85rem;
+  font-size: var(--text-xs);
+  letter-spacing: 0.01em;
+}
+
+.page-credit {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-muted);
 }
 
 .auth-alert {
@@ -814,6 +855,7 @@ button.chip:active {
   text-decoration: none;
   transition:
     background var(--transition),
+    box-shadow var(--transition),
     transform var(--motion-fast) var(--ease-press);
   cursor: pointer;
 }
@@ -917,16 +959,16 @@ button.chip:active {
   top: var(--top-bar-offset);
   z-index: 20;
   display: grid;
-  gap: var(--space-sm);
+  gap: 0.55rem;
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  padding: var(--space-sm) 0;
+  padding: 0.55rem 0 0.65rem;
   margin: calc(var(--space-xs) * -1) 0 0;
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border-muted);
 }
 
 @media (min-width: 960px) {
@@ -937,11 +979,82 @@ button.chip:active {
 
 .movimientos-clear-filters {
   justify-self: start;
-  padding: 0.15rem 0;
+  padding: 0.2rem 0;
   border: none;
   background: transparent;
   cursor: pointer;
   font: inherit;
+}
+
+/* Mobile-first polish for Movimientos actions / filters / list */
+.page-movimientos .movimientos-actions {
+  gap: 0.55rem;
+}
+
+.page-movimientos .movimientos-actions .btn {
+  font-weight: 700;
+}
+
+.page-movimientos .chip-row-scroll {
+  gap: 0.45rem;
+  margin: 0.05rem 0;
+}
+
+.page-movimientos .money-list {
+  gap: 0.4rem;
+  margin-top: 0.15rem;
+}
+
+.page-movimientos .money-row {
+  padding: 0.65rem 0.8rem;
+  background: color-mix(in srgb, var(--surface) 88%, #000);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #fff 3%, transparent);
+}
+
+.page-movimientos .money-row:hover,
+.page-movimientos .money-row:focus-visible {
+  background: var(--surface-elevated);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #fff 6%, transparent);
+}
+
+.page-movimientos .money-row-main strong {
+  font-size: 0.9375rem;
+  letter-spacing: -0.01em;
+}
+
+.page-movimientos .money-row-end .amount {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.page-movimientos .empty-state {
+  padding: 1.35rem 1rem;
+  gap: 0.5rem;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #fff 3.5%, transparent);
+}
+
+.page-movimientos .empty-state h2 {
+  font-size: 1.05rem;
+  letter-spacing: -0.015em;
+}
+
+.page-movimientos .empty-state-ctas {
+  margin-top: 0.15rem;
+  gap: 0.55rem;
+}
+
+@media (max-width: 480px) {
+  .page-movimientos .movimientos-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .page-movimientos .movimientos-actions .btn {
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+  }
 }
 
 .form-grid-2 {
@@ -1153,8 +1266,8 @@ button.chip:active {
 
 .empty-state {
   display: grid;
-  gap: 0.4rem;
-  padding: 1.15rem var(--card-pad-x);
+  gap: 0.45rem;
+  padding: 1.25rem var(--card-pad-x);
   text-align: center;
   background: var(--surface);
   border-radius: var(--radius-md);
@@ -1162,11 +1275,13 @@ button.chip:active {
   min-width: 0;
   max-width: 100%;
   overflow-x: clip;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #fff 2.5%, transparent);
 }
 
 .empty-state h2 {
   font-size: var(--text-h3);
   color: var(--text);
+  letter-spacing: -0.01em;
 }
 
 .empty-state > .muted {

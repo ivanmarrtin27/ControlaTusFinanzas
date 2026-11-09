@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import { Link } from 'react-router-dom'
+import { DeveloperCredit } from '@/components/DeveloperCredit'
 import {
   IconAccounts,
   IconBell,
@@ -67,6 +68,9 @@ export function MasPage() {
           </Link>
         ))}
       </div>
+      <footer className="page-credit">
+        <DeveloperCredit />
+      </footer>
     </main>
   )
 }

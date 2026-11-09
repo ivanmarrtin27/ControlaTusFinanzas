@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
+import { DeveloperCredit } from '@/components/DeveloperCredit'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { Input } from '@/components/ui/Input'
@@ -100,6 +101,7 @@ export function RegisterPage() {
           ¿Ya tienes cuenta? <Link to="/auth/login">Entrar</Link>
           <br />
           <Link to="/privacidad">Privacidad</Link>
+          <DeveloperCredit variant="compact" />
         </div>
       </div>
     </div>

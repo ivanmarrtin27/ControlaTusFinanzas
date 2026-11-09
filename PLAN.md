@@ -350,4 +350,16 @@ Evitar swipe lateral de página (~390px). Preferir `min-width: 0` / `max-width: 
 |---|---|---|
 | **A · Movimientos** | Filtros sticky (chips scroll contenidos, selects apilados en pantallas ≤419px), filas/importes/badges sin ensanchar la página, bottom-nav con `minmax(0,1fr)` | **Hecha** |
 | **B · Transferencia** | Sheet de transferencia + filas de ruta apiladas a ancho completo; `field`/`select`/`sheet-body` con min-width 0 | **Hecha** |
+
+---
+
+## Polish portfolio-adjacent (créditos + Movimientos móvil)
+
+Skills/refs: `portfolio-visual-design` (Mi Págna Web), `frontend-design` + Green Deck (`green-deck-DESIGN.md`), lenguaje visual de https://ivanmartin.pages.dev. Green Deck se mantiene; solo harmonía móvil.
+
+| Fase | Alcance | Estado |
+|---|---|---|
+| **1 · Créditos** | «Desarrollado por Iván Martín Molina» + GitHub/web en Ajustes «Acerca de», pie de Más y footers de auth | **Hecha** |
+| **2 · Movimientos móvil** | Botones Transferir/Añadir, chips, CTAs vacíos, filtros sticky y filas más homogéneos; sin overflow horizontal | **Hecha** |
+| **3 · Coherencia** | Top bar, empty state y listado alineados al resto de la app (pase ligero) | **Hecha** |
 |

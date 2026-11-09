@@ -393,13 +393,13 @@ export function MovimientosPage() {
   const filtersActive = Boolean(query || accountId || categoryId || tagId || typeFilter !== 'all')
 
   return (
-    <main className="page">
+    <main className="page page-movimientos">
       <header className="page-header page-header-row">
         <div>
           <h1>Movimientos</h1>
           <p className="page-header-lead">Ingresos, gastos y transferencias.</p>
         </div>
-        <div className="header-actions">
+        <div className="header-actions movimientos-actions">
           <Button variant="secondary" size="sm" onClick={openNewTransfer} disabled={!money.userId}>
             Transferir
           </Button>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BackupPanel } from '@/components/BackupPanel'
 import { DeleteAccountPanel } from '@/components/DeleteAccountPanel'
+import { DeveloperCredit } from '@/components/DeveloperCredit'
 import { IosShortcutsPanel } from '@/components/IosShortcutsPanel'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -232,6 +233,14 @@ export function AjustesPage() {
           <Link to="/privacidad" className="text-link">
             Cómo tratamos tus datos
           </Link>
+        </Card>
+
+        <Card>
+          <h2 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>Acerca de</h2>
+          <p className="muted" style={{ fontSize: '0.85rem', margin: '0 0 0.65rem' }}>
+            ControlaTusFinanzas — registro personal de ingresos y gastos.
+          </p>
+          <DeveloperCredit />
         </Card>
 
         <DeleteAccountPanel />

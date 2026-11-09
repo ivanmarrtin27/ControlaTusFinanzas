@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
+import { DeveloperCredit } from '@/components/DeveloperCredit'
 import { Button } from '@/components/ui/Button'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
 import { Input } from '@/components/ui/Input'
@@ -55,6 +56,7 @@ export function RecoverPage() {
 
         <div className="auth-footer">
           <Link to="/auth/login">Volver al inicio de sesión</Link>
+          <DeveloperCredit variant="compact" />
         </div>
       </div>
     </div>

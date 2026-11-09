@@ -36,10 +36,11 @@
   min-width: 0;
   box-sizing: border-box;
   /* Keep safe-area once; decorative padding stays on the 8px scale (sm, not md). */
-  padding: calc(var(--space-sm) + var(--safe-top)) calc(var(--space-md) + var(--safe-right))
-    var(--space-sm) calc(var(--space-md) + var(--safe-left));
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
-  backdrop-filter: blur(12px);
+  padding: calc(0.55rem + var(--safe-top)) calc(var(--space-md) + var(--safe-right)) 0.55rem
+    calc(var(--space-md) + var(--safe-left));
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border-muted);
   overflow-x: clip;
 }
@@ -47,9 +48,9 @@
 .top-bar .brand-mark {
   min-width: 0;
   flex: 1 1 auto;
-  font-size: 1rem;
+  font-size: 1.02rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
