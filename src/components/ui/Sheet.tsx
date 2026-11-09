@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { Button } from '@/components/ui/Button'
+import { lockBodyScroll, unlockBodyScroll } from '@/lib/bodyScrollLock'
 
 interface SheetProps {
   open: boolean
@@ -61,11 +62,10 @@ export function Sheet({ open, title, onClose, children, footer }: SheetProps) {
     }
 
     document.addEventListener('keydown', onKey)
-    const prevOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    lockBodyScroll()
     return () => {
       document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prevOverflow
+      unlockBodyScroll()
       previouslyFocused.current?.focus?.()
     }
   }, [open])

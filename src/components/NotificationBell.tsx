@@ -11,6 +11,7 @@ import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
 import { IconBell } from '@/components/layout/icons'
 import { usePlanData } from '@/hooks/usePlanData'
+import { lockBodyScroll, unlockBodyScroll } from '@/lib/bodyScrollLock'
 import {
   buildReminders,
   filterActiveReminders,
@@ -171,11 +172,10 @@ export function NotificationBell() {
     }
 
     document.addEventListener('keydown', onKey)
-    const prevOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    lockBodyScroll()
     return () => {
       document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prevOverflow
+      unlockBodyScroll()
       previouslyFocused.current?.focus?.()
     }
   }, [open])
