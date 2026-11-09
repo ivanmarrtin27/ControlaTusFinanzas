@@ -16,7 +16,6 @@ import {
   emergencyCushionMonths,
   formatMonths,
   formatPercent,
-  formatSignedPercent,
   lastMonthRange,
   relativeChange,
   resolveEmergencyTarget,
@@ -29,6 +28,13 @@ import {
 import { formatMoney } from '@/lib/currency'
 import { formatShortDate } from '@/lib/dates'
 import { toNumber } from '@/lib/balances'
+import {
+  buildMoneyDelta,
+  deltaToneClass,
+  deltaVerb,
+  formatDeltaArrow,
+  formatDeltaPercent,
+} from '@/lib/delta'
 import { supabase } from '@/lib/supabase'
 
 const LOCAL_EMERGENCY_KEY = 'ctf_emergency_fund_target'
@@ -92,6 +98,14 @@ export function CentroFinancieroPage() {
   )
   const cushionMonths = emergencyCushionMonths(plan.totalBalance, avgExpense)
   const expenseChange = relativeChange(month.expense, priorMonth.expense)
+  const expenseDelta = useMemo(
+    () => buildMoneyDelta(month.expense, priorMonth.expense),
+    [month.expense, priorMonth.expense],
+  )
+  const monthBalanceDelta = useMemo(
+    () => buildMoneyDelta(month.balance, 0),
+    [month.balance],
+  )
 
   const emergencyTarget = resolveEmergencyTarget(effectiveProfileTarget, avgExpense)
   const emergencyProgress =
@@ -203,10 +217,13 @@ export function CentroFinancieroPage() {
 
           <Card className={`indicator-card indicator-${indicatorTone.expense}`}>
             <p className="label muted" style={{ fontSize: '0.7rem', marginBottom: '0.35rem' }}>
-              Cambio de gastos
+              Gastos {deltaVerb(expenseDelta.direction)}
             </p>
-            <p className="amount" style={{ margin: 0, fontSize: '1.35rem' }}>
-              {formatSignedPercent(expenseChange)}
+            <p
+              className={`amount ${deltaToneClass(expenseDelta.direction, 'cost')}`}
+              style={{ margin: 0, fontSize: '1.35rem' }}
+            >
+              {formatDeltaArrow(expenseDelta.direction)} {formatDeltaPercent(expenseChange)}
             </p>
             <p className="muted" style={{ fontSize: '0.75rem', marginTop: '0.4rem' }}>
               Mes actual {formatMoney(month.expense, currency)} vs anterior{' '}
@@ -216,7 +233,7 @@ export function CentroFinancieroPage() {
 
           <Card className={`indicator-card indicator-${indicatorTone.balance}`}>
             <p className="label muted" style={{ fontSize: '0.7rem', marginBottom: '0.35rem' }}>
-              Balance del mes
+              Balance del mes {deltaVerb(monthBalanceDelta.direction)}
             </p>
             <p
               className={`amount${month.balance >= 0 ? ' amount-income' : ' amount-expense'}`}

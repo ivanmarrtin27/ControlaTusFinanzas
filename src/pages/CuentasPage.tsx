@@ -1,7 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
-import { useToast } from '@/contexts/ToastContext'
-import { useMoneyData } from '@/hooks/useMoneyData'
+import { DeltaBadge } from '@/components/money/DeltaBadge'
 import { ConfigBanner } from '@/components/money/ConfigBanner'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -12,12 +10,22 @@ import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import { Sheet } from '@/components/ui/Sheet'
 import { MoneyListSkeleton } from '@/components/ui/Skeleton'
+import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/contexts/ToastContext'
+import { useMoneyData } from '@/hooks/useMoneyData'
 import { formatMoney } from '@/lib/currency'
+import {
+  accountDeltaSince,
+  formatDeltaAbsolute,
+  monthStartAsOf,
+  reconcileDiff,
+} from '@/lib/delta'
 import { ACCOUNT_TYPE_LABELS, ACCOUNT_TYPE_OPTIONS } from '@/lib/labels'
 import {
   createAccount,
   deleteAccount,
   MoneyApiError,
+  reconcileAccountBalance,
   updateAccount,
 } from '@/lib/moneyApi'
 import type { Account, AccountType } from '@/types/database'
@@ -49,15 +57,50 @@ export function CuentasPage() {
   const [formError, setFormError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [showInactive, setShowInactive] = useState(false)
+  const [reconcileMode, setReconcileMode] = useState(false)
+  const [targetBalance, setTargetBalance] = useState('')
+
+  const monthStart = useMemo(() => monthStartAsOf(), [])
 
   const visible = useMemo(
     () => money.accounts.filter((a) => showInactive || a.is_active),
     [money.accounts, showInactive],
   )
 
+  const accountMonthDeltas = useMemo(() => {
+    const map = new Map<string, ReturnType<typeof accountDeltaSince>>()
+    for (const account of money.accounts) {
+      const current = money.balancesByAccount.get(account.id) ?? 0
+      map.set(
+        account.id,
+        accountDeltaSince(
+          account,
+          current,
+          money.transactions,
+          money.transfers,
+          monthStart,
+        ),
+      )
+    }
+    return map
+  }, [money.accounts, money.balancesByAccount, money.transactions, money.transfers, monthStart])
+
+  const editingBalance = draft.id
+    ? (money.balancesByAccount.get(draft.id) ?? 0)
+    : null
+
+  const reconcilePreview = useMemo(() => {
+    if (editingBalance == null) return null
+    const target = Number(targetBalance.replace(',', '.'))
+    if (!Number.isFinite(target)) return null
+    return reconcileDiff(editingBalance, target)
+  }, [editingBalance, targetBalance])
+
   function openCreate() {
     setDraft(emptyDraft())
     setFormError(null)
+    setReconcileMode(false)
+    setTargetBalance('')
     setSheetOpen(true)
   }
 
@@ -71,6 +114,8 @@ export function CuentasPage() {
       is_active: account.is_active,
     })
     setFormError(null)
+    setReconcileMode(false)
+    setTargetBalance(String(money.balancesByAccount.get(account.id) ?? 0))
     setSheetOpen(true)
   }
 
@@ -114,6 +159,49 @@ export function CuentasPage() {
       }
       setSheetOpen(false)
       toast.success(wasEdit ? 'Cuenta actualizada' : 'Cuenta creada')
+      await money.refresh()
+    } catch (err) {
+      setFormError(err instanceof MoneyApiError || err instanceof Error ? err.message : 'Error')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function handleReconcile() {
+    if (!money.userId || !draft.id || editingBalance == null) return
+    const target = Number(targetBalance.replace(',', '.'))
+    if (!Number.isFinite(target)) {
+      setFormError('Saldo objetivo no válido.')
+      return
+    }
+    const diff = reconcileDiff(editingBalance, target)
+    if (Math.abs(diff) < 0.005) {
+      setFormError('El saldo ya coincide; no hace falta ajuste.')
+      return
+    }
+
+    const signed = formatDeltaAbsolute(diff, currency)
+    const ok = window.confirm(
+      `Se creará un movimiento «Ajuste de saldo» de ${signed} para que el saldo pase de ${formatMoney(editingBalance, currency)} a ${formatMoney(target, currency)}.\n\nNo se borran movimientos anteriores. ¿Continuar?`,
+    )
+    if (!ok) return
+
+    setSaving(true)
+    setFormError(null)
+    try {
+      const created = await reconcileAccountBalance({
+        userId: money.userId,
+        accountId: draft.id,
+        currentBalance: editingBalance,
+        targetBalance: target,
+      })
+      if (!created) {
+        setFormError('El saldo ya coincide; no hace falta ajuste.')
+        return
+      }
+      setReconcileMode(false)
+      setSheetOpen(false)
+      toast.success('Saldo actualizado con ajuste')
       await money.refresh()
     } catch (err) {
       setFormError(err instanceof MoneyApiError || err instanceof Error ? err.message : 'Error')
@@ -193,6 +281,7 @@ export function CuentasPage() {
           <div className="money-list">
             {visible.map((account) => {
               const balance = money.balancesByAccount.get(account.id) ?? 0
+              const monthDelta = accountMonthDeltas.get(account.id)
               return (
                 <button
                   key={account.id}
@@ -207,6 +296,16 @@ export function CuentasPage() {
                       {ACCOUNT_TYPE_LABELS[account.type]}
                       {!account.is_active ? ' · Inactiva' : ''}
                     </span>
+                    {monthDelta ? (
+                      <span className="money-row-delta">
+                        <DeltaBadge
+                          delta={monthDelta}
+                          currency={currency}
+                          label="este mes"
+                          compact
+                        />
+                      </span>
+                    ) : null}
                   </span>
                   <span className="amount">{formatMoney(balance, currency)}</span>
                 </button>
@@ -221,6 +320,10 @@ export function CuentasPage() {
           </p>
           <p className="amount" style={{ fontSize: '1.35rem', margin: 0 }}>
             {formatMoney(money.totalBalance, currency)}
+          </p>
+          <p className="muted" style={{ fontSize: '0.75rem', marginTop: '0.45rem', lineHeight: 1.4 }}>
+            El saldo de cada cuenta = saldo inicial + ingresos − gastos ± transferencias. Usa
+            «Actualizar saldo» si el banco no coincide: se crea un ajuste sin borrar historial.
           </p>
         </Card>
       </div>
@@ -253,8 +356,14 @@ export function CuentasPage() {
             inputMode="decimal"
             value={draft.opening_balance}
             onChange={(e) => setDraft((d) => ({ ...d, opening_balance: e.target.value }))}
-            hint="El saldo actual se deriva de este valor más movimientos y transferencias."
+            hint="Punto de partida. El saldo actual se deriva de este valor más movimientos y transferencias."
           />
+          {draft.id && editingBalance != null ? (
+            <p className="muted" style={{ margin: 0, fontSize: '0.8rem' }}>
+              Saldo actual derivado:{' '}
+              <strong className="amount">{formatMoney(editingBalance, currency)}</strong>
+            </p>
+          ) : null}
           <label className="check-row">
             <input
               type="checkbox"
@@ -265,22 +374,85 @@ export function CuentasPage() {
             <span>Cuenta activa</span>
           </label>
 
+          {draft.id ? (
+            <div className="reconcile-box">
+              {!reconcileMode ? (
+                <>
+                  <p className="muted">
+                    ¿El saldo del banco no coincide? Actualízalo sin reescribir el historial: se
+                    crea un movimiento «Ajuste de saldo» por la diferencia.
+                  </p>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => {
+                      setReconcileMode(true)
+                      setTargetBalance(String(editingBalance ?? 0))
+                      setFormError(null)
+                    }}
+                  >
+                    Actualizar saldo
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Input
+                    label="Saldo real (objetivo)"
+                    inputMode="decimal"
+                    value={targetBalance}
+                    onChange={(e) => setTargetBalance(e.target.value)}
+                    hint="Importe que quieres ver en la app tras el ajuste."
+                  />
+                  {reconcilePreview != null && Math.abs(reconcilePreview) >= 0.005 ? (
+                    <p>
+                      Diferencia:{' '}
+                      <strong className={reconcilePreview > 0 ? 'amount-income' : 'amount-expense'}>
+                        {formatDeltaAbsolute(reconcilePreview, currency)}
+                      </strong>{' '}
+                      → movimiento de {reconcilePreview > 0 ? 'ingreso' : 'gasto'} «Ajuste de saldo».
+                    </p>
+                  ) : (
+                    <p className="muted">Introduce el saldo real para ver la diferencia.</p>
+                  )}
+                  <div className="form-actions">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => {
+                        setReconcileMode(false)
+                        setFormError(null)
+                      }}
+                      disabled={saving}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button type="button" onClick={() => void handleReconcile()} disabled={saving}>
+                      {saving ? 'Ajustando…' : 'Confirmar ajuste'}
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : null}
+
           <ErrorBanner message={formError} />
 
-          <div className="form-actions">
-            {draft.id ? (
-              <Button type="button" variant="destructive" onClick={() => void handleDelete()} disabled={saving}>
-                Eliminar
+          {!reconcileMode ? (
+            <div className="form-actions">
+              {draft.id ? (
+                <Button type="button" variant="destructive" onClick={() => void handleDelete()} disabled={saving}>
+                  Eliminar
+                </Button>
+              ) : (
+                <Button type="button" variant="secondary" onClick={() => setSheetOpen(false)}>
+                  Cancelar
+                </Button>
+              )}
+              <Button type="button" onClick={() => void handleSave()} disabled={saving}>
+                {saving ? 'Guardando…' : 'Guardar'}
               </Button>
-            ) : (
-              <Button type="button" variant="secondary" onClick={() => setSheetOpen(false)}>
-                Cancelar
-              </Button>
-            )}
-            <Button type="button" onClick={() => void handleSave()} disabled={saving}>
-              {saving ? 'Guardando…' : 'Guardar'}
-            </Button>
-          </div>
+            </div>
+          ) : null}
         </div>
       </Sheet>
     </main>

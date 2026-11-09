@@ -10,7 +10,6 @@ import {
   comparativeInsight,
   expenseByCategory,
   formatPercent,
-  formatSignedPercent,
   previousEqualRange,
   relativeChange,
   resolvePeriodRange,
@@ -19,6 +18,14 @@ import {
 } from '@/lib/analysis'
 import { formatMoney } from '@/lib/currency'
 import { toDateInputValue } from '@/lib/dates'
+import {
+  buildMoneyDelta,
+  deltaToneClass,
+  deltaVerb,
+  formatDeltaAbsolute,
+  formatDeltaArrow,
+  formatDeltaPercent,
+} from '@/lib/delta'
 
 const PRESETS: { id: PeriodPreset; label: string }[] = [
   { id: 'this_month', label: 'Este mes' },
@@ -62,6 +69,18 @@ export function AnalisisPage() {
   const insight = useMemo(() => comparativeInsight(current, previous), [current, previous])
   const expenseChange = relativeChange(current.expense, previous.expense)
   const incomeChange = relativeChange(current.income, previous.income)
+  const incomeDelta = useMemo(
+    () => buildMoneyDelta(current.income, previous.income),
+    [current.income, previous.income],
+  )
+  const expenseDelta = useMemo(
+    () => buildMoneyDelta(current.expense, previous.expense),
+    [current.expense, previous.expense],
+  )
+  const balanceCmpDelta = useMemo(
+    () => buildMoneyDelta(current.balance, previous.balance),
+    [current.balance, previous.balance],
+  )
 
   const totalExpenseShare = current.expense
 
@@ -127,8 +146,12 @@ export function AnalisisPage() {
               {formatMoney(current.income, currency)}
             </p>
             {previous.count > 0 ? (
-              <p className="muted" style={{ fontSize: '0.75rem', marginTop: '0.35rem' }}>
-                vs ant. {formatSignedPercent(incomeChange)}
+              <p
+                className={deltaToneClass(incomeDelta.direction, 'wealth')}
+                style={{ fontSize: '0.75rem', marginTop: '0.35rem' }}
+              >
+                {formatDeltaArrow(incomeDelta.direction)} {deltaVerb(incomeDelta.direction)}{' '}
+                {formatDeltaPercent(incomeChange)} vs ant.
               </p>
             ) : null}
           </Card>
@@ -140,8 +163,12 @@ export function AnalisisPage() {
               {formatMoney(current.expense, currency)}
             </p>
             {previous.count > 0 ? (
-              <p className="muted" style={{ fontSize: '0.75rem', marginTop: '0.35rem' }}>
-                vs ant. {formatSignedPercent(expenseChange)}
+              <p
+                className={deltaToneClass(expenseDelta.direction, 'cost')}
+                style={{ fontSize: '0.75rem', marginTop: '0.35rem' }}
+              >
+                {formatDeltaArrow(expenseDelta.direction)} {deltaVerb(expenseDelta.direction)}{' '}
+                {formatDeltaPercent(expenseChange)} vs ant.
               </p>
             ) : null}
           </Card>
@@ -197,13 +224,14 @@ export function AnalisisPage() {
               </div>
               <div>
                 <p className="label muted" style={{ fontSize: '0.7rem', marginBottom: '0.25rem' }}>
-                  Δ balance
+                  Balance {deltaVerb(balanceCmpDelta.direction)}
                 </p>
                 <p
-                  className={`amount${insight.balanceDelta >= 0 ? ' amount-income' : ' amount-expense'}`}
+                  className={`amount ${deltaToneClass(balanceCmpDelta.direction, 'wealth')}`}
                   style={{ margin: 0, fontSize: '0.95rem' }}
                 >
-                  {formatMoney(insight.balanceDelta, currency)}
+                  {formatDeltaArrow(balanceCmpDelta.direction)}{' '}
+                  {formatDeltaAbsolute(insight.balanceDelta, currency)}
                 </p>
               </div>
             </div>

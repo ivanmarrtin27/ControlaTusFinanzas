@@ -1920,6 +1920,60 @@ button.chip:active {
   font-size: var(--text-sm);
 }
 
+.home-hero-deltas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.85rem;
+  margin: 0.55rem 0 0;
+}
+
+.delta-badge {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.delta-badge strong {
+  font-weight: 700;
+}
+
+.delta-badge-compact {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.delta-badge-label {
+  font-weight: 500;
+}
+
+.delta-flat {
+  color: var(--text-muted);
+}
+
+.money-row-delta {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.reconcile-box {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface-elevated);
+}
+
+.reconcile-box p {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
 .home-actions {
   display: grid;
   gap: 0.5rem;

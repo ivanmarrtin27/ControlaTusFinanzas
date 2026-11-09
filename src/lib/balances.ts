@@ -28,6 +28,48 @@ export function computeAccountBalance(
   return roundMoney(balance)
 }
 
+/**
+ * Saldo de la cuenta justo antes de `asOf` (exclusive):
+ * opening_balance + movimientos/transferencias con occurred_at < asOf.
+ */
+export function computeAccountBalanceAsOf(
+  account: Pick<Account, 'id' | 'opening_balance'>,
+  transactions: Pick<Transaction, 'account_id' | 'type' | 'amount' | 'occurred_at'>[],
+  transfers: Pick<Transfer, 'from_account_id' | 'to_account_id' | 'amount' | 'occurred_at'>[],
+  asOf: Date,
+): number {
+  let balance = toNumber(account.opening_balance)
+
+  for (const tx of transactions) {
+    if (tx.account_id !== account.id) continue
+    if (new Date(tx.occurred_at) >= asOf) continue
+    const amount = toNumber(tx.amount)
+    balance += tx.type === 'income' ? amount : -amount
+  }
+
+  for (const tr of transfers) {
+    if (new Date(tr.occurred_at) >= asOf) continue
+    const amount = toNumber(tr.amount)
+    if (tr.from_account_id === account.id) balance -= amount
+    if (tr.to_account_id === account.id) balance += amount
+  }
+
+  return roundMoney(balance)
+}
+
+export function computeBalancesByAccountAsOf(
+  accounts: Pick<Account, 'id' | 'opening_balance'>[],
+  transactions: Pick<Transaction, 'account_id' | 'type' | 'amount' | 'occurred_at'>[],
+  transfers: Pick<Transfer, 'from_account_id' | 'to_account_id' | 'amount' | 'occurred_at'>[],
+  asOf: Date,
+): Map<string, number> {
+  const map = new Map<string, number>()
+  for (const account of accounts) {
+    map.set(account.id, computeAccountBalanceAsOf(account, transactions, transfers, asOf))
+  }
+  return map
+}
+
 export function computeBalancesByAccount(
   accounts: Pick<Account, 'id' | 'opening_balance'>[],
   transactions: Pick<Transaction, 'account_id' | 'type' | 'amount'>[],

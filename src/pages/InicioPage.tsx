@@ -7,6 +7,7 @@ import {
   IconTransfer,
 } from '@/components/layout/icons'
 import { ConfigBanner } from '@/components/money/ConfigBanner'
+import { DeltaBadge } from '@/components/money/DeltaBadge'
 import { TemplateChips } from '@/components/money/TemplateChips'
 import { OnboardingWizard } from '@/components/OnboardingWizard'
 import { SyncStatus } from '@/components/SyncStatus'
@@ -19,6 +20,15 @@ import { usePlanData } from '@/hooks/usePlanData'
 import { dayBounds, summarizeRange, weekBounds } from '@/lib/balances'
 import { formatMoney } from '@/lib/currency'
 import { formatShortDate } from '@/lib/dates'
+import {
+  buildMoneyDelta,
+  deltaToneClass,
+  deltaVerb,
+  formatDeltaArrow,
+  monthStartAsOf,
+  netWorthDeltaSince,
+  todayStartAsOf,
+} from '@/lib/delta'
 import {
   buildReminders,
   filterActiveReminders,
@@ -62,6 +72,37 @@ export function InicioPage() {
     const { start, end } = weekBounds()
     return summarizeRange(money.transactions, start, end)
   }, [money.transactions])
+
+  const todayDelta = useMemo(() => buildMoneyDelta(today.balance, 0), [today.balance])
+  const weekDelta = useMemo(() => buildMoneyDelta(week.balance, 0), [week.balance])
+  const monthDelta = useMemo(
+    () => buildMoneyDelta(money.monthSummary.balance, 0),
+    [money.monthSummary.balance],
+  )
+
+  const netWorthMonthDelta = useMemo(
+    () =>
+      netWorthDeltaSince(
+        money.activeAccounts,
+        money.balancesByAccount,
+        money.transactions,
+        money.transfers,
+        monthStartAsOf(),
+      ),
+    [money.activeAccounts, money.balancesByAccount, money.transactions, money.transfers],
+  )
+
+  const netWorthTodayDelta = useMemo(
+    () =>
+      netWorthDeltaSince(
+        money.activeAccounts,
+        money.balancesByAccount,
+        money.transactions,
+        money.transfers,
+        todayStartAsOf(),
+      ),
+    [money.activeAccounts, money.balancesByAccount, money.transactions, money.transfers],
+  )
 
   const compactAlerts = useMemo(() => {
     const all = buildReminders({
@@ -121,6 +162,22 @@ export function InicioPage() {
           ) : (
             <p className="home-hero-amount amount">{formatMoney(money.totalBalance, currency)}</p>
           )}
+          {!money.loading && money.activeAccounts.length > 0 ? (
+            <div className="home-hero-deltas" aria-label="Variación del patrimonio">
+              <DeltaBadge
+                delta={netWorthMonthDelta}
+                currency={currency}
+                label="este mes"
+                compact
+              />
+              <DeltaBadge
+                delta={netWorthTodayDelta}
+                currency={currency}
+                label="vs ayer"
+                compact
+              />
+            </div>
+          ) : null}
           <p className="home-hero-meta muted">
             {accountsLabel}
             {!money.loading && money.activeAccounts.length > 0 ? (
@@ -192,11 +249,16 @@ export function InicioPage() {
         <section className="home-period" aria-label="Resumen del periodo">
           <div className="home-period-cell">
             <p className="home-period-label">Hoy</p>
-            <p className="home-period-value amount amount-income">
-              {formatMoney(today.income, currency)}
+            <p
+              className={`home-period-value amount${today.balance >= 0 ? ' amount-income' : ' amount-expense'}`}
+            >
+              {formatMoney(today.balance, currency)}
+            </p>
+            <p className={`home-period-sub ${deltaToneClass(todayDelta.direction)}`}>
+              {formatDeltaArrow(todayDelta.direction)} {deltaVerb(todayDelta.direction)}
             </p>
             <p className="home-period-sub muted">
-              −{formatMoney(today.expense, currency)}
+              {formatMoney(today.income, currency)} − {formatMoney(today.expense, currency)}
             </p>
           </div>
           <div className="home-period-cell">
@@ -206,7 +268,9 @@ export function InicioPage() {
             >
               {formatMoney(week.balance, currency)}
             </p>
-            <p className="home-period-sub muted">balance</p>
+            <p className={`home-period-sub ${deltaToneClass(weekDelta.direction)}`}>
+              {formatDeltaArrow(weekDelta.direction)} {deltaVerb(weekDelta.direction)}
+            </p>
           </div>
           <div className="home-period-cell">
             <p className="home-period-label">Mes</p>
@@ -214,6 +278,9 @@ export function InicioPage() {
               className={`home-period-value amount${money.monthSummary.balance >= 0 ? ' amount-income' : ' amount-expense'}`}
             >
               {formatMoney(money.monthSummary.balance, currency)}
+            </p>
+            <p className={`home-period-sub ${deltaToneClass(monthDelta.direction)}`}>
+              {formatDeltaArrow(monthDelta.direction)} {deltaVerb(monthDelta.direction)}
             </p>
             <p className="home-period-sub muted">
               {formatMoney(money.monthSummary.income, currency)} −{' '}

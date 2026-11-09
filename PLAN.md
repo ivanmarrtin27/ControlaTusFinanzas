@@ -1,6 +1,6 @@
 # Plan de implementación — ControlaTusFinanzas
 
-**Estado:** fases **0–6 implementadas** (v1 completa en el repo). **UX dens./utilidad fases 1–6 completas.** Aplicar migraciones SQL en tu proyecto Supabase; proyecto remoto puede estar INACTIVE. Deploy: preparar Vercel (ver README).  
+**Estado:** fases **0–6 implementadas** (v1 completa en el repo). **UX dens./utilidad fases 1–6 completas.** **Control financiero A–C hechas.** Aplicar migraciones SQL en tu proyecto Supabase; proyecto remoto puede estar INACTIVE. Deploy: preparar Vercel (ver README).  
 **Referencia funcional (no visual/copyright):** [controlfinancieroapp.es](https://controlfinancieroapp.es/)  
 **Diseño:** Green Deck (DM Sans / JetBrains Mono, dark Spotify-like, acento verde configurable).
 
@@ -362,3 +362,26 @@ Skills/refs: portfolio local (`Mi Págna Web` / https://ivanmartin.pages.dev —
 | **1 · Créditos** | «Desarrollado por Iván Martín Molina» + GitHub/Portfolio en Ajustes «Acerca de», pie de Más y footers de auth | **Hecha** |
 | **2 · Movimientos móvil** | `action-pair` Transferir/Añadir, chips con borde sutil, CTAs vacíos, filtros sticky y filas; sin corte/overflow | **Hecha** |
 | **3 · Coherencia** | `.action-pair` + `.btn`/chips/empty-state compartidos; top bar blur alineado | **Hecha** |
+
+---
+
+## Control financiero — ver si sube/baja + actualizar saldos
+
+Principio transversal: el usuario debe **ver** si el dinero sube o baja (deltas reales derivados de movimientos) y **controlar** el saldo de cada cuenta sin romper historial.
+
+| Fase | Alcance | Estado |
+|---|---|---|
+| **A · Deltas** | Inicio: patrimonio vs inicio de mes y vs ayer (↑/↓, € y %). Franjas Hoy/Semana/Mes con indicador sube/baja. Cuentas: variación «este mes» por cuenta. Sin datos inventados. | **Hecha** |
+| **B · Actualizar saldo** | En editar cuenta → «Actualizar saldo»: introduce saldo real; se crea movimiento «Ajuste de saldo» (ingreso/gasto) por la diferencia. Confirmación + copy que explica que no se borra historial. | **Hecha** |
+| **C · Consistencia** | Helpers compartidos (`lib/delta.ts`, `DeltaBadge`). Análisis y Centro financiero usan el mismo lenguaje sube/baja y colores (verde/rojo; en gastos bajar = bueno). | **Hecha** |
+
+### Cómo se calculan los deltas
+- Saldo actual = `opening_balance` + ingresos − gastos ± transferencias.
+- Saldo «en un instante» = mismo cálculo filtrando `occurred_at < asOf`.
+- Delta mes = saldo ahora − saldo al 1º del mes; delta «vs ayer» = ahora − saldo al inicio de hoy.
+- Colores: patrimonio/balance → subir verde / bajar rojo; gastos → bajar verde / subir rojo (`polarity: cost`).
+
+### Cómo actualizar un saldo
+1. Cuentas → tocar la cuenta → **Actualizar saldo**.
+2. Indicar el saldo real del banco/efectivo.
+3. Confirmar: se crea un movimiento «Ajuste de saldo» por la diferencia (visible en Movimientos). El saldo inicial no se reescribe; el historial previo se conserva.

@@ -1,5 +1,5 @@
 import { isSupabaseConfigured, supabase } from '@/lib/supabase'
-import { toNumber } from '@/lib/balances'
+import { roundMoney, toNumber } from '@/lib/balances'
 import type {
   Account,
   Category,
@@ -138,6 +138,41 @@ export async function createTransaction(payload: TransactionInsert): Promise<Tra
   const { data, error } = await supabase.from('transactions').insert(payload).select('*').single()
   if (error) throwFromError(error)
   return mapTransaction(data as Transaction)
+}
+
+/**
+ * Reconcilia el saldo de una cuenta creando un movimiento de ajuste
+ * (ingreso o gasto) por la diferencia. No altera el historial previo
+ * ni el opening_balance: el saldo derivado converge al objetivo.
+ * Devuelve null si no hay diferencia.
+ */
+export async function reconcileAccountBalance(params: {
+  userId: string
+  accountId: string
+  currentBalance: number
+  targetBalance: number
+}): Promise<Transaction | null> {
+  const diff = roundMoney(toNumber(params.targetBalance) - toNumber(params.currentBalance))
+  if (Math.abs(diff) < 0.005) return null
+
+  const abs = Math.abs(diff)
+  const type: TransactionType = diff > 0 ? 'income' : 'expense'
+  const signedLabel = diff > 0 ? `+${abs.toFixed(2)}` : `−${abs.toFixed(2)}`
+
+  return createTransaction({
+    user_id: params.userId,
+    account_id: params.accountId,
+    category_id: null,
+    type,
+    amount: abs,
+    concept: 'Ajuste de saldo',
+    note: `Reconciliación: saldo en app ${toNumber(params.currentBalance).toFixed(2)} → ${toNumber(params.targetBalance).toFixed(2)} (diferencia ${signedLabel}). No borra movimientos anteriores.`,
+    occurred_at: new Date().toISOString(),
+    is_cleared: true,
+    recurring_id: null,
+    debt_id: null,
+    receipt_path: null,
+  })
 }
 
 export async function updateTransaction(
