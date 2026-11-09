@@ -1,7 +1,15 @@
-# ControlaTusFinanzas
+<p align="center">
+  <a href="https://controlatusfinanzas.vercel.app">
+    <img src="docs/logo.png" alt="ControlaTusFinanzas" width="160" height="160" />
+  </a>
+</p>
 
-App web personal de finanzas (español). Stack: **Vite + React + TypeScript + Supabase**.  
-Diseño **Green Deck** (sin paywalls, sin hogares compartidos). Hosting: **Vercel** (Hobby / gratis).
+<h1 align="center">ControlaTusFinanzas</h1>
+
+<p align="center">
+  App web personal de finanzas (español). Stack: <strong>Vite + React + TypeScript + Supabase</strong>.<br />
+  Diseño <strong>Green Deck</strong> (sin paywalls, sin hogares compartidos). Hosting: <strong>Vercel</strong> (Hobby / gratis).
+</p>
 
 ## Enlaces
 
