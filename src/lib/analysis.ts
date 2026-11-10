@@ -350,6 +350,129 @@ export function summarizeCashflow(items: CashflowItem[]): {
   }
 }
 
+export type TrendGranularity = 'day' | 'week'
+
+export interface PeriodTrendPoint {
+  key: string
+  label: string
+  income: number
+  expense: number
+  net: number
+  cumulative: number
+}
+
+export interface PeriodTrend {
+  granularity: TrendGranularity
+  points: PeriodTrendPoint[]
+}
+
+function rangeDayCount(range: DateRange): number {
+  return Math.max(
+    1,
+    Math.round((range.end.getTime() - range.start.getTime()) / 86_400_000),
+  )
+}
+
+function startOfLocalWeek(date: Date): Date {
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0)
+  const day = d.getDay()
+  const mondayOffset = day === 0 ? -6 : 1 - day
+  d.setDate(d.getDate() + mondayOffset)
+  return d
+}
+
+function formatTrendLabel(date: Date, granularity: TrendGranularity): string {
+  try {
+    if (granularity === 'week') {
+      return new Intl.DateTimeFormat('es-ES', {
+        day: 'numeric',
+        month: 'short',
+      }).format(date)
+    }
+    return new Intl.DateTimeFormat('es-ES', {
+      day: 'numeric',
+      month: 'short',
+    }).format(date)
+  } catch {
+    return formatDateOnly(date)
+  }
+}
+
+/**
+ * Serie temporal del periodo: diaria si ≤45 días, semanal si es más largo.
+ * Incluye flujo neto por bucket y balance acumulado desde el inicio del rango.
+ */
+export function buildPeriodTrend(
+  transactions: Pick<Transaction, 'type' | 'amount' | 'occurred_at'>[],
+  range: DateRange,
+): PeriodTrend {
+  const days = rangeDayCount(range)
+  const granularity: TrendGranularity = days > 45 ? 'week' : 'day'
+  const buckets = new Map<string, { income: number; expense: number; sort: number }>()
+  const rangeStartNoon = new Date(
+    range.start.getFullYear(),
+    range.start.getMonth(),
+    range.start.getDate(),
+    12,
+    0,
+    0,
+    0,
+  )
+  const endExclusive = new Date(
+    range.end.getFullYear(),
+    range.end.getMonth(),
+    range.end.getDate(),
+    12,
+    0,
+    0,
+    0,
+  )
+
+  const cursor = new Date(rangeStartNoon)
+  while (cursor < endExclusive) {
+    let bucketDate =
+      granularity === 'week' ? startOfLocalWeek(cursor) : new Date(cursor)
+    if (bucketDate < rangeStartNoon) bucketDate = new Date(rangeStartNoon)
+    const key = formatDateOnly(bucketDate)
+    if (!buckets.has(key)) {
+      buckets.set(key, { income: 0, expense: 0, sort: bucketDate.getTime() })
+    }
+    cursor.setDate(cursor.getDate() + 1)
+  }
+
+  for (const tx of transactions) {
+    const at = new Date(tx.occurred_at)
+    if (at < range.start || at >= range.end) continue
+    const local = new Date(at.getFullYear(), at.getMonth(), at.getDate(), 12, 0, 0, 0)
+    let bucketDate = granularity === 'week' ? startOfLocalWeek(local) : local
+    if (bucketDate < rangeStartNoon) bucketDate = new Date(rangeStartNoon)
+    const key = formatDateOnly(bucketDate)
+    const bucket = buckets.get(key)
+    if (!bucket) continue
+    const amount = toNumber(tx.amount)
+    if (tx.type === 'income') bucket.income += amount
+    else bucket.expense += amount
+  }
+
+  const sorted = [...buckets.entries()].sort((a, b) => a[1].sort - b[1].sort)
+  let cumulative = 0
+  const points: PeriodTrendPoint[] = sorted.map(([key, bucket]) => {
+    const net = roundMoney(bucket.income - bucket.expense)
+    cumulative = roundMoney(cumulative + net)
+    const date = parseDateOnly(key)
+    return {
+      key,
+      label: formatTrendLabel(date, granularity),
+      income: roundMoney(bucket.income),
+      expense: roundMoney(bucket.expense),
+      net,
+      cumulative,
+    }
+  })
+
+  return { granularity, points }
+}
+
 export function comparativeInsight(
   current: PeriodSummary,
   previous: PeriodSummary,

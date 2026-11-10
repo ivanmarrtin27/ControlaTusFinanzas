@@ -1730,6 +1730,170 @@ button.chip:active {
   font-family: var(--font-mono);
 }
 
+/* Informes — gráfico del periodo (SVG + barras CSS, sin libs) */
+.period-chart-card {
+  overflow: hidden;
+}
+
+.period-vs-bars {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+  margin-top: 0.95rem;
+  align-items: end;
+}
+
+.period-vs-col {
+  display: grid;
+  gap: 0.35rem;
+  justify-items: center;
+  min-width: 0;
+}
+
+.period-vs-track {
+  width: 100%;
+  max-width: 4.5rem;
+  height: 7.5rem;
+  border-radius: var(--radius-md, 0.65rem);
+  background: var(--surface-elevated);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.period-vs-fill {
+  width: 100%;
+  min-height: 0.25rem;
+  border-radius: var(--radius-md, 0.65rem) var(--radius-md, 0.65rem) 0 0;
+  transform-origin: bottom center;
+  animation: gd-progress-reveal var(--motion-slow) var(--ease-out) both;
+  transition: height var(--motion-slow) var(--ease-out);
+}
+
+.period-vs-fill-income {
+  background: linear-gradient(180deg, var(--accent-hover), var(--success));
+}
+
+.period-vs-fill-expense {
+  background: linear-gradient(180deg, #fca5a5, #f87171);
+}
+
+.period-vs-label {
+  font-size: 0.7rem;
+  margin: 0;
+}
+
+.period-vs-value {
+  margin: 0;
+  font-size: 0.9rem;
+  text-align: center;
+  word-break: break-word;
+}
+
+.period-trend {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+
+.period-trend-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: 0.45rem;
+}
+
+.period-trend-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 11rem;
+  touch-action: manipulation;
+}
+
+.period-trend-zero {
+  stroke: var(--border-strong);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  opacity: 0.55;
+}
+
+.period-trend-area {
+  pointer-events: none;
+}
+
+.period-trend-line {
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 35%, transparent));
+}
+
+.period-trend-dot {
+  pointer-events: none;
+  stroke: var(--surface);
+  stroke-width: 1.5;
+  transition: r 120ms var(--ease-out);
+}
+
+.period-trend-tick {
+  fill: var(--text-muted);
+  font-size: 9px;
+  font-family: var(--font-mono);
+}
+
+.period-trend-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  margin-top: 0.55rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.period-trend-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.period-legend-swatch {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+}
+
+.period-legend-income {
+  background: var(--success);
+}
+
+.period-legend-expense {
+  background: #f87171;
+}
+
+.period-legend-trend {
+  background: linear-gradient(90deg, var(--success), color-mix(in srgb, var(--success) 30%, transparent));
+}
+
+@media (min-width: 640px) {
+  .period-vs-track {
+    height: 8.5rem;
+    max-width: 5.5rem;
+  }
+
+  .period-trend-svg {
+    max-height: 12.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .period-vs-fill {
+    animation: none;
+    transition: none;
+  }
+}
+
 .indicator-grid {
   display: grid;
   gap: var(--space-sm);

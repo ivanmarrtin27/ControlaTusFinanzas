@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { ConfigBanner } from '@/components/money/ConfigBanner'
+import { PeriodReportChart } from '@/components/money/PeriodReportChart'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { ErrorBanner } from '@/components/ui/ErrorBanner'
@@ -7,6 +8,7 @@ import { Input } from '@/components/ui/Input'
 import { useAuth } from '@/contexts/AuthContext'
 import { useMoneyData } from '@/hooks/useMoneyData'
 import {
+  buildPeriodTrend,
   resolvePeriodRange,
   summarizePeriod,
   type PeriodPreset,
@@ -47,6 +49,10 @@ export function InformesPage() {
   )
   const summary = useMemo(
     () => summarizePeriod(money.transactions, range),
+    [money.transactions, range],
+  )
+  const trend = useMemo(
+    () => buildPeriodTrend(money.transactions, range),
     [money.transactions, range],
   )
 
@@ -219,6 +225,13 @@ export function InformesPage() {
             </p>
           </Card>
         </div>
+
+        <PeriodReportChart
+          summary={summary}
+          trend={trend}
+          currency={currency}
+          rangeLabel={rangeLabel}
+        />
 
         <Card>
           <h2 style={{ fontSize: '1rem', marginBottom: '0.75rem' }}>Descargas</h2>
